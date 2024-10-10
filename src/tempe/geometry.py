@@ -1,4 +1,4 @@
-from .dataview import DataView
+from .data_view import DataView
 
 from array import array
 

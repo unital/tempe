@@ -42,7 +42,20 @@ class ColoredGeometry(Shape):
         yield from zip(self.geometry, self.colors)
 
 
-class StrokedLines(ColoredGeometry):
+class FillableGeometry(Shape):
+    """ABC for geometries which can either be filled or stroked.
+
+    Stroked outlines always have line with 1.
+    """
+
+    def __init__(self, surface, geometry, colors, *, fill=True, clip=None):
+        super().__init__(surface, clip=clip)
+        self.geometry = geometry
+        self.colors = colors
+        self.fill = fill
+
+
+class Lines(ColoredGeometry):
     """Render multiple colored line segments with line-width 1.
 
     Geometry should produce x0, y0, x1, y1 arrays.
@@ -57,7 +70,7 @@ class StrokedLines(ColoredGeometry):
             buffer.line(x0, y0, x1, y1, color)
 
 
-class StrokedHLines(ColoredGeometry):
+class HLines(ColoredGeometry):
     """Render multiple colored horizontal line segments with line-width 1.
 
     Geometry should produce x0, y0, l arrays.
@@ -71,7 +84,7 @@ class StrokedHLines(ColoredGeometry):
             buffer.hline(px, py, l, color)
 
 
-class StrokedVLines(ColoredGeometry):
+class VLines(ColoredGeometry):
     """Render multiple colored vertical line segments with line-width 1.
 
     Geometry should produce x0, y0, l arrays.
@@ -83,18 +96,6 @@ class StrokedVLines(ColoredGeometry):
             py = geometry[1] - y
             l = geometry[2]
             buffer.vline(px, py, l, color)
-
-class FillableGeometry(Shape):
-    """ABC for geometries which can either be filled or stroked.
-
-    Stroked outlines always have line with 1.
-    """
-
-    def __init__(self, surface, geometry, colors, *, fill=True, clip=None):
-        super().__init__(surface, clip=clip)
-        self.geometry = geometry
-        self.colors = colors
-        self.fill = fill
 
 
 class Polygons(FillableGeometry):

@@ -214,6 +214,28 @@ class Repeat(DataView):
         return Repeat(~self.data)
 
 
+class Count(DataView):
+
+    def __init__(self, start=0, step=1):
+        self.start = 0
+        self.step = 1
+
+    def __iter__(self):
+        i = self.start
+        while True:
+            yield i
+            i += 1
+
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [
+                self.start + self.step * index
+                for index in range(slice.start, slice.stop, slice,step)
+            ]
+        else:
+            return self.start + self.step * index
+
+
 class Range(DataView):
 
     def __init__(self, start, stop=None, step=1):

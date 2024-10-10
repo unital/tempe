@@ -1,0 +1,6 @@
+{
+    "urls": [
+        ["tempe/__init__.py", "github:unital/tempe/src/tempe/__init__.py"],
+    ],
+    "version": "0.1"
+}

@@ -2,7 +2,7 @@ import framebuf
 
 
 class Raster:
-    """A rectangular region that can be drawn on by a surface."""
+    """A rectangular buffer that can be drawn on by a surface."""
 
     def __init__(self, buf, x, y, w, h, stride=None, offset=0):
         stride = stride if stride is not None else w
