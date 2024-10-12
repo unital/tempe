@@ -18,6 +18,9 @@ class DataView:
     def __init__(self, data):
         self.data = data
 
+    def __len__(self):
+        return len(self.data)
+
     def __iter__(self):
         yield from self.data
 

@@ -41,10 +41,8 @@ class ColumnGeometry(Geometry):
     """Geometry where coordinates are provided as ragged columns"""
 
     def __iter__(self):
-        buf = array('h', bytearray(2*len(self.geometry)))
         for coords in zip(*self.geometry):
-            buf[:] = coords
-            yield buf
+            yield array('h', coords)
 
     def __len__(self):
         return max(len(coord) for coord in self.geometry)
@@ -55,6 +53,8 @@ class GeometryStrip(Geometry):
 
     Iterator provides vertex point buffers of the form [x0, y0, x1, y1, ...].
     """
+    n_coords = 2
+    step = 1
 
     def __init__(self, geometry, n_vertices=2):
         super().__init__(geometry)

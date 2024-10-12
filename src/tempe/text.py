@@ -1,3 +1,6 @@
+from array import array
+import framebuf
+
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 

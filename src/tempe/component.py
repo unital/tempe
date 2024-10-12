@@ -1,12 +1,14 @@
+from array import array
 
-from .colors import grey_1, grey_2, grey_f
-from .geometry import RowGeometry, VertexStrip
-from .data_view import DataView, LinearMap, Range
+from .colors import grey_1, grey_2, grey_e, grey_f
+from .geometry import RowGeometry, LineStrip, ColumnGeometry
+from .data_view import DataView, Range
+from .markers import Marker
 
 try:
     from .fonts import roboto16
     default_font = roboto16
-except ImportError, MemoryError:
+except ImportError:
     default_font = None
 
 
@@ -42,17 +44,17 @@ class Style:
 
 class Component:
 
-    style = Style(None, background_color=grey_f)
+    style = Style(None, background_color=grey_e)
 
     def __init__(self, surface, bounds, **style):
         self.surface = surface
         self.bounds = bounds
-        self.style = Style(type(self).style, style)
+        self.style = Style(type(self).style, **style)
+        self.shapes = {}
 
     def draw(self):
-        self.shapes = {}
         if self.style['background_color'] is not None:
-            self.shapes['background'] = self.surface.rectangles(
+            self.shapes['background'] = self.surface.rects(
                 'BACKGROUND',
                 RowGeometry.from_lists([self.bounds]),
                 [self.style['background_color']],
@@ -68,7 +70,13 @@ class Component:
         self.update()
 
     def update(self):
-        self.shapes['background'].colors = [self.style['background_color']]
+        if 'background' in self.shapes:
+            if self.style['background_color'] is not None:
+                self.shapes['background'].colors = [self.style['background_color']]
+            else:
+                del self.shapes['background']
+        elif self.style['background_color'] is not None:
+            self.draw()
         for shape in self.shapes.values():
             shape.update()
 
@@ -88,8 +96,8 @@ class Label(Component):
         self.shapes['text'] = self.surface.text(
             'DRAWING',
             RowGeometry.from_lists([self.bounds[:2]]),
-            [self.format(self.value)],
             [self.style['color']],
+            [self.format(self.value)],
             font=self.style['font'],
             clip=self.bounds,
         )
@@ -100,18 +108,23 @@ class Label(Component):
         super().move(bounds)
 
     def update(self):
-        self.shapes['text'].texts = self.format(self.value)
-        self.shapes['text'].colors[0] = self.style['color']
-        self.shapes['text'].font = self.style['font']
+        if 'text' not in self.shapes:
+            self.draw()
+        else:
+            self.shapes['text'].texts = [self.format(self.value)]
+            self.shapes['text'].colors[0] = self.style['color']
+            self.shapes['text'].font = self.style['font']
         super().update()
 
+
+# TODO: Refactor these plot classes into a more refined approach
 
 class LinePlot(Component):
     """Single line plot."""
 
     style = Style(Component.style, background_color=grey_f)
 
-    def __init__(self, surface, bounds, values, index=None, colors=(grey_2,), value_range=None, index_range=None, orientation='horizontal', x_origin='left', y_origin='bottom', **kwargs):
+    def __init__(self, surface, bounds, values, index=None, colors=grey_2, value_range=None, index_range=None, orientation='horizontal', x_origin='left', y_origin='bottom', **kwargs):
         super().__init__(surface, bounds, **kwargs)
         if not isinstance(values, DataView):
             values = DataView(values)
@@ -122,30 +135,24 @@ class LinePlot(Component):
         if index is None:
             index = Range(len(values))
             index_range = (min(index), max(index))
+        if not isinstance(index, DataView):
+            index = DataView(index)
         self.index = index
         self.index_range = index_range
+        if not isinstance(colors, DataView):
+            colors = DataView.create(colors)
         self.colors = colors
+        self.orientation = orientation
+        self.x_origin = x_origin
+        self.y_origin = y_origin
 
     def map_xy(self):
-        normalized_values = (self.values - self.value_range[0])/(self.value_range[1] - self.value_range[0])
-        normalized_index = (self.index - self.index_range[0])/(self.index_range[1] - self.index_range[0])
-        x, y, w, h = self.bounds
-        if self.orientation == 'horizontal':
-            y_source = normalized_values
-            x_source = normalized_index
-        else:
-            y_source = normalized_index
-            x_source = normalized_values
-
-        vertex_strip = array('h', bytearray(8 * len(self.values)))
-        if y_origin = 'bottom':
-            vertex_strip[1::2] = (y + h * y_source)
-        else:
-            vertex_strip[1::2] = (y + h - h * y_source)
-        if x_origin = 'left':
-            vertex_strip[::2] = (x + w * x_origin)
-        else:
-            vertex_strip[::2] = (x + w - w * x_origin)
+        vertex_strip = array('h', bytearray(4 * len(self.values)))
+        for i, (index, value) in enumerate(zip(self.index, self.values)):
+            x = (self.bounds[0] + self.bounds[2] * (index - self.index_range[0])/(self.index_range[1] - self.index_range[0]))
+            y = (self.bounds[1] + self.bounds[3] - self.bounds[3] * (value - self.value_range[0])/(self.value_range[1] - self.value_range[0]))
+            vertex_strip[2*i] = int(x)
+            vertex_strip[2*i + 1] = int(y)
 
         return vertex_strip
 
@@ -164,6 +171,145 @@ class LinePlot(Component):
         super().move(bounds)
 
     def update(self):
-        self.shapes['lines'].geometry.geometry = self.map_xy()
-        self.shapes['lines'].colors = self.colors
+        if 'lines' not in self.shapes:
+            self.draw()
+        else:
+            self.shapes['lines'].geometry.geometry = self.map_xy()
+            self.shapes['lines'].colors = self.colors
+        super().update()
+
+
+class ScatterPlot(Component):
+    """Single scatter plot."""
+
+    style = Style(Component.style, background_color=grey_f)
+
+    def __init__(self, surface, bounds, values, index=None, sizes=1, colors=grey_2, markers=Marker.VLINE, value_range=None, index_range=None, orientation='horizontal', x_origin='left', y_origin='bottom', **kwargs):
+        super().__init__(surface, bounds, **kwargs)
+        if not isinstance(values, DataView):
+            values = DataView(values)
+        self.values = values
+        if value_range is None:
+            value_range = (min(values), max(values))
+        self.value_range = value_range
+        if index is None:
+            index = Range(len(values))
+            index_range = (min(index), max(index))
+        if not isinstance(index, DataView):
+            index = DataView(index)
+        self.index = index
+        self.index_range = index_range
+        if not isinstance(sizes, DataView):
+            sizes = DataView.create(sizes)
+        self.sizes = sizes
+        if not isinstance(colors, DataView):
+            colors = DataView.create(colors)
+        self.colors = colors
+        if not isinstance(markers, DataView):
+            markers = DataView.create(markers)
+        self.markers = markers
+        self.orientation = orientation
+        self.x_origin = x_origin
+        self.y_origin = y_origin
+
+    def map_xy(self):
+        xs = array('h', bytearray(2 * len(self.values)))
+        ys = array('h', bytearray(2 * len(self.values)))
+        for i, (index, value) in enumerate(zip(self.index, self.values)):
+            x = (self.bounds[0] + self.bounds[2] * (index - self.index_range[0])/(self.index_range[1] - self.index_range[0]))
+            y = (self.bounds[1] + self.bounds[3] - self.bounds[3] * (value - self.value_range[0])/(self.value_range[1] - self.value_range[0]))
+            xs[i] = int(x)
+            ys[i] = int(y)
+
+        return xs, ys, self.sizes
+
+    def draw(self):
+        super().draw()
+        xs, ys, sizes = self.map_xy()
+        self.shapes['markers'] = self.surface.points(
+            'DRAWING',
+            ColumnGeometry([xs, ys, sizes]),
+            self.colors,
+            self.markers,
+            clip=self.bounds,
+        )
+
+    def move(self, bounds):
+        self.shapes['markers'].clip = bounds
+        super().move(bounds)
+
+    def update(self):
+        if 'markers' not in self.shapes:
+            self.draw()
+        else:
+            self.shapes['markers'].geometry.geometry = self.map_xy()
+            self.shapes['markers'].colors = self.colors
+            self.shapes['markers'].markers = self.markers
+        super().update()
+
+
+class BarPlot(Component):
+    """Single bar plot."""
+
+    style = Style(Component.style, background_color=grey_f)
+
+    def __init__(self, surface, bounds, values, index=None, sizes=1, colors=grey_2, markers=Marker.VLINE, value_range=None, index_range=None, orientation='horizontal', x_origin='left', y_origin='bottom', **kwargs):
+        super().__init__(surface, bounds, **kwargs)
+        if not isinstance(values, DataView):
+            values = DataView(values)
+        self.values = values
+        if value_range is None:
+            value_range = (min(values), max(values))
+        self.value_range = value_range
+        if index is None:
+            index = Range(len(values))
+            index_range = (min(index), max(index))
+        if not isinstance(index, DataView):
+            index = DataView(index)
+        self.index = index
+        self.index_range = index_range
+        if not isinstance(sizes, DataView):
+            sizes = DataView.create(sizes)
+        self.sizes = sizes
+        if not isinstance(colors, DataView):
+            colors = DataView.create(colors)
+        self.colors = colors
+        if not isinstance(markers, DataView):
+            markers = DataView.create(markers)
+        self.markers = markers
+        self.orientation = orientation
+        self.x_origin = x_origin
+        self.y_origin = y_origin
+
+    def map_xy(self):
+        xs = array('h', bytearray(2 * len(self.values)))
+        hs = array('h', bytearray(2 * len(self.values)))
+        for i, (index, value) in enumerate(zip(self.index, self.values)):
+            x = (self.bounds[0] + self.bounds[2] * (index - self.index_range[0])/(self.index_range[1] - self.index_range[0]))
+            h = - self.bounds[3] * (value - self.value_range[0])/(self.value_range[1] - self.value_range[0])
+            xs[i] = int(x)
+            hs[i] = int(h)
+
+        return xs, DataView.create(self.bounds[1] + self.bounds[3]), DataView.create(3), hs
+
+    def draw(self):
+        super().draw()
+        geometry = self.map_xy()
+        self.shapes['rects'] = self.surface.rects(
+            'DRAWING',
+            ColumnGeometry(geometry),
+            self.colors,
+            clip=self.bounds,
+        )
+
+    def move(self, bounds):
+        self.shapes['rects'].clip = bounds
+        super().move(bounds)
+
+    def update(self):
+        if 'rects' not in self.shapes:
+            self.draw()
+        else:
+            self.shapes['rects'].geometry.geometry = self.map_xy()
+            self.shapes['rects'].colors = self.colors
         super().update()

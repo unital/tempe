@@ -15,6 +15,8 @@ def deploy():
         deploy_py_files(Path("examples"), ":", clear=False)
         deploy_py_files(Path("examples/devices"), ":/devices")
         deploy_py_files(Path("src/tempe"), ":/lib/tempe")
+        #deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts")
+        #deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps")
     except subprocess.CalledProcessError as exc:
         print("Error:")
         print(exc.stderr)
@@ -29,7 +31,7 @@ def deploy_py_files(path: Path, destination, clear=True):
             print('remove', destination, '...')
             for file in listdir(destination):
                 file = file.decode('utf-8')
-                if not file.endswith('.py'):
+                if not (file.endswith('.py') or file.endswith('.mpy')):
                     continue
                 print('remove', f"{destination}/{file}")
                 try:
@@ -40,6 +42,9 @@ def deploy_py_files(path: Path, destination, clear=True):
                     pass
 
     for file in path.glob("*.py"):
+        mpremote("cp", str(file), f"{destination}/{file.name}")
+
+    for file in path.glob("*.mpy"):
         mpremote("cp", str(file), f"{destination}/{file.name}")
 
 

@@ -36,12 +36,12 @@ class Surface:
         for rect in self._damage:
             x, y, w, h = rect
             # handle buffer too small
-            buffer_rows = len(working_buffer) // (w - 1)
+            buffer_rows = (len(working_buffer) // w) - 1
             for start_row in range(0, h, buffer_rows):
                 raster_rows = min(buffer_rows, h - start_row)
-                raster = Raster(buffer, x, y + start_row, w, raster_rows)
+                raster = Raster(working_buffer, x, y + start_row, w, raster_rows)
                 self.draw(raster)
-                display.blit(buffer, x, y, w, h)
+                display.blit(working_buffer, x, y + start_row, w, raster_rows)
         self._damage = []
         self.refresh_needed.clear()
 
@@ -83,7 +83,7 @@ class Surface:
 
     def points(self, layer, geometry, colors, markers, clip=None):
         points = Markers(self, geometry, colors, markers, clip=clip)
-        self.add_shape(layer)
+        self.add_shape(layer, points)
         return points
 
     def text(self, layer, geometry, colors, texts, bold=False, font=None, clip=None):

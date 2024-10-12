@@ -1,5 +1,7 @@
 """Shape classes which efficiently draw primitives."""
 
+import asyncio
+
 #: Transparent color when blitting bitmaps.
 BLIT_KEY_RGB565 = 0b0000000000100000
 
@@ -42,16 +44,14 @@ class ColoredGeometry(Shape):
         yield from zip(self.geometry, self.colors)
 
 
-class FillableGeometry(Shape):
+class FillableGeometry(ColoredGeometry):
     """ABC for geometries which can either be filled or stroked.
 
     Stroked outlines always have line with 1.
     """
 
     def __init__(self, surface, geometry, colors, *, fill=True, clip=None):
-        super().__init__(surface, clip=clip)
-        self.geometry = geometry
-        self.colors = colors
+        super().__init__(surface, geometry, colors, clip=clip)
         self.fill = fill
 
 

@@ -1,3 +1,6 @@
+from array import array
+import framebuf
+
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 
@@ -46,7 +49,7 @@ class Markers(ColoredGeometry):
                 buffer.line(px - d, py - d, px + d, py + d, color)
                 buffer.line(px - d, py + d, px + d, py - d, color)
             elif isinstance(marker, str):
-                buffer.text(marker, px, py, color)
+                buffer.text(marker, px-4, py-4, color)
             elif isinstance(marker, framebuf.FrameBuffer):
                 # assume 1-bit framebuffer - no way to test!
                 palette[1] = color
