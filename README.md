@@ -2,7 +2,7 @@
 
 Beautiful Micropython Graphics
 
-<img src='./pico-tempe.png" alt="A Raspberry Pi Pico with a data visualization on a screen" />
+<img src="./pico-tempe.png" alt="A Raspberry Pi Pico with a data visualization on a screen" />
 
 This is a graphics library designed to produce crisp, clear graphics,
 subject to the following constraints:
