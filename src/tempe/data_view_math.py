@@ -1,7 +1,4 @@
-"""The DataView class and its subclasses."""
-
-
-""" Classes that implement numerical operations on DataViews.
+"""Classes that implement numerical operations on DataViews.
 
 These classes are largely an internal implementation detail.
 """
@@ -17,6 +14,9 @@ class UnaryOp(DataView):
     def __getitem__(self, index):
         raise NotImplementedError()
 
+    def __len__(self):
+        return len(self.data)
+
 
 class BinOp(DataView):
 
@@ -29,6 +29,9 @@ class BinOp(DataView):
 
     def __getitem__(self, index):
         raise NotImplementedError()
+
+    def __len__(self):
+        return min(len(data) for data in (self.data1, self.data2) if len(data) is not None)
 
 
 class Neg(UnaryOp):
