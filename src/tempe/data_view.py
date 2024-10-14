@@ -1,5 +1,6 @@
 """The DataView class and its subclasses."""
 
+
 class DataView:
     """The base dataview class"""
 
@@ -29,6 +30,7 @@ class DataView:
 
     def __add__(self, other):
         from .data_view_math import Add
+
         try:
             iter(other)
             return Add(self, other)
@@ -37,6 +39,7 @@ class DataView:
 
     def __radd__(self, other):
         from .data_view_math import Add
+
         try:
             iter(other)
             return Add(other, self)
@@ -45,6 +48,7 @@ class DataView:
 
     def __sub__(self, other):
         from .data_view_math import Subtract
+
         try:
             iter(other)
             return Subtract(self, other)
@@ -53,6 +57,7 @@ class DataView:
 
     def __rsub__(self, other):
         from .data_view_math import Subtract
+
         try:
             iter(other)
             return Subtract(other, self)
@@ -61,6 +66,7 @@ class DataView:
 
     def __mul__(self, other):
         from .data_view_math import Multiply
+
         try:
             iter(other)
             return Multiply(self, other)
@@ -69,6 +75,7 @@ class DataView:
 
     def __rmul__(self, other):
         from .data_view_math import Multiply
+
         try:
             iter(other)
             return Multiply(self, other)
@@ -77,6 +84,7 @@ class DataView:
 
     def __floordiv__(self, other):
         from .data_view_math import FloorDivide
+
         try:
             iter(other)
             return FloorDivide(self, other)
@@ -85,6 +93,7 @@ class DataView:
 
     def __rfloordiv__(self, other):
         from .data_view_math import FloorDivide
+
         try:
             iter(other)
             return FloorDivide(other, self)
@@ -93,6 +102,7 @@ class DataView:
 
     def __truediv__(self, other):
         from .data_view_math import Divide
+
         try:
             iter(other)
             return Divide(self, other)
@@ -101,6 +111,7 @@ class DataView:
 
     def __rtruediv__(self, other):
         from .data_view_math import Divide
+
         try:
             iter(other)
             return Divide(other, self)
@@ -109,18 +120,22 @@ class DataView:
 
     def __neg__(self):
         from .data_view_math import Neg
+
         return Neg(self)
 
     def __pos__(self):
         from .data_view_math import Pos
+
         return Pos(self)
 
     def __abs__(self):
         from .data_view_math import Abs
+
         return Abs(self)
 
     def __invert__(self):
         from .data_view_math import Invert
+
         return Invert(self)
 
 
@@ -136,7 +151,9 @@ class Cycle(DataView):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            return [self[index] for index in range(slice.start, slice.stop, slice,step)]
+            return [
+                self[index] for index in range(slice.start, slice.stop, slice, step)
+            ]
         else:
             return self.data[index % len(self.data)]
 
@@ -155,7 +172,9 @@ class ReflectedCycle(DataView):
 
     def __getitem__(self, index):
         if isinstance(index, slice):
-            return [self[index] for index in range(slice.start, slice.stop, slice,step)]
+            return [
+                self[index] for index in range(slice.start, slice.stop, slice, step)
+            ]
         else:
             n = len(self.data)
             if (index // n) % 2 == 0:
@@ -256,7 +275,7 @@ class Count(DataView):
         if isinstance(index, slice):
             return [
                 self.start + self.step * index
-                for index in range(slice.start, slice.stop, slice,step)
+                for index in range(slice.start, slice.stop, slice, step)
             ]
         else:
             return self.start + self.step * index
@@ -283,14 +302,13 @@ class Range(DataView):
         if isinstance(index, slice):
             return [
                 self.start + self.step * self.index
-                for index in range(slice.start, slice.stop, slice,step)
+                for index in range(slice.start, slice.stop, slice, step)
             ]
         else:
             return self.start + self.step * self.index
 
 
 class Slice(DataView):
-
     def __init__(self, data, start, stop=None, step=1):
         super().__init__(data)
         if stop is None:
@@ -319,7 +337,6 @@ class Slice(DataView):
 
 
 class Interpolated(DataView):
-
     def __init__(self, data, n):
         super().__init__(data)
         self.n = n

@@ -7,9 +7,7 @@ from .markers import Markers
 from .text import Text
 
 
-
-LAYERS = ('BACKGROUND', "UNDERLAY", 'IMAGE', "DRAWING", "OVERLAY")
-
+LAYERS = ("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")
 
 
 class Surface:
@@ -90,4 +88,3 @@ class Surface:
         text = Text(self, geometry, colors, texts, bold=bold, font=font, clip=clip)
         self.add_shape(layer, text)
         return text
-

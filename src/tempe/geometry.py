@@ -2,11 +2,10 @@ from .data_view import DataView
 
 from array import array
 
-POINT = 'point'
-CIRCLE = 'circle'
-RECTANGLE = 'rectangle'
-POLY = 'poly'
-
+POINT = "point"
+CIRCLE = "circle"
+RECTANGLE = "rectangle"
+POLY = "poly"
 
 
 class Geometry(DataView):
@@ -28,7 +27,7 @@ class RowGeometry(Geometry):
 
     @classmethod
     def from_lists(cls, rows):
-        return cls([array('h', coord) for coord in rows])
+        return cls([array("h", coord) for coord in rows])
 
     def __iter__(self):
         yield from self.geometry
@@ -42,7 +41,7 @@ class ColumnGeometry(Geometry):
 
     def __iter__(self):
         for coords in zip(*self.geometry):
-            yield array('h', coords)
+            yield array("h", coords)
 
     def __len__(self):
         return max(len(coord) for coord in self.geometry)
@@ -53,6 +52,7 @@ class GeometryStrip(Geometry):
 
     Iterator provides vertex point buffers of the form [x0, y0, x1, y1, ...].
     """
+
     n_coords = 2
     step = 1
 
@@ -62,10 +62,10 @@ class GeometryStrip(Geometry):
     def __iter__(self):
         size = self.n_vertices * self.n_coords
         start = 0
-        buf = array('h', bytearray(2*size))
+        buf = array("h", bytearray(2 * size))
         for i in range(len(self)):
             start += self.step * self.n_coords
-            buf[:] = self.geometry[start:start + size]
+            buf[:] = self.geometry[start : start + size]
             yield buf
 
     def __len__(self):
@@ -83,4 +83,3 @@ class TriangleStrip(GeometryStrip):
 class QuadStrip(GeometryStrip):
     n_vertices = 3
     step = 2
-

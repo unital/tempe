@@ -5,8 +5,9 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 
 class Text(ColoredGeometry):
-
-    def __init__(self, surface, geometry, colors, texts, *, bold=False, font=None, clip=None):
+    def __init__(
+        self, surface, geometry, colors, texts, *, bold=False, font=None, clip=None
+    ):
         super().__init__(surface, geometry, colors, clip=clip)
         self.texts = texts
         self.bold = bold
@@ -30,7 +31,7 @@ class Text(ColoredGeometry):
                 line_height = self.font.height()
             else:
                 line_height = self.font.height
-            palette_buf = array('H', [BLIT_KEY_RGB565, 0xffff])
+            palette_buf = array("H", [BLIT_KEY_RGB565, 0xFFFF])
             palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
             for geometry, color, text in self:
                 palette_buf[1] = color
@@ -40,14 +41,15 @@ class Text(ColoredGeometry):
                     for char in line:
                         buf, height, width = self.font.get_ch(char)
                         buf = bytearray(buf)
-                        fbuf = framebuf.FrameBuffer(buf, width, height, framebuf.MONO_HLSB)
+                        fbuf = framebuf.FrameBuffer(
+                            buf, width, height, framebuf.MONO_HLSB
+                        )
                         buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
                         if self.bold:
                             px += 1
                             buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
                         px += width
                     py += line_height
-
 
     def update(self, geometry=None, colors=None, texts=None):
         if geometry is not None:
