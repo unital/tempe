@@ -4,6 +4,17 @@ Beautiful Micropython Graphics
 
 <img src="./pico-tempe.png" width="480" alt="A Raspberry Pi Pico with a data visualization on a screen" />
 
+Tempe is a pure-Micropython graphics system designed to be make using the
+full capabilities of display devices more accessible, particularly on
+memory-constrained microcontrollers.  The aim is to allow data scientists,
+user interface designers and data visualization specialists to be able to
+create beautiful, responsive displays without needing to worry about the
+mechanics of rendering to bytes on the screen device, handling partial screen
+updates, and so on.
+
+Design Notes
+------------
+
 This is a graphics library designed to produce crisp, clear graphics,
 subject to the following constraints:
 

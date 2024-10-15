@@ -1,0 +1,38 @@
+<svg viewBox="0 0 600 350"  xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <style>
+            @import url("https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i");
+        </style>
+    </defs>
+	<path fill="none" stroke="black" stroke-width="35" stroke-linecap="round"
+	  d="M 550 250
+	  A 250,50 180 0,0 50,250
+	  a 250 50 0 0 0 450 32
+	  l -50 -5
+	  m 50 5
+	  l -45 25"
+	/>
+	<path fill="none" stroke="#ccc" stroke-width="15" stroke-linecap="round"
+	  d="M 550 250
+	  A 250,50 180 0,0 50,250"
+	/>
+	<circle cx="550" cy="250" r="35" fill="#aaa" stroke="black"
+	stroke-width="10" />
+	<path fill="none" stroke="#ddd" stroke-width="15" stroke-linecap="round"
+	  d="M 50 250
+	  a 250 50 0 0 0 450 32
+	  l -50 -5
+	  m 50 5
+	  l -45 25"
+	/>
+	<text x="300" y="197" text-anchor="middle"
+	font-size="220" font-family="Roboto, sans-serif" font-weight="bold"
+	letter-spacing="-5"
+	fill="white" stroke="black" stroke-width="20"
+	>Unital</text>
+	<text x="300" y="197" text-anchor="middle"
+	font-size="220" font-family="Roboto, sans-serif" font-weight="bold"
+	letter-spacing="-5"
+	fill="#ddd"
+	>Unital</text>
+</svg> 
