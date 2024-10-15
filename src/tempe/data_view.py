@@ -1,5 +1,6 @@
 """The DataView class and its subclasses."""
 
+
 class DataView:
     """The base dataview class"""
 
@@ -29,6 +30,7 @@ class DataView:
 
     def __add__(self, other):
         from .data_view_math import Add
+
         try:
             iter(other)
             return Add(self, other)
@@ -37,6 +39,7 @@ class DataView:
 
     def __radd__(self, other):
         from .data_view_math import Add
+
         try:
             iter(other)
             return Add(other, self)
@@ -45,6 +48,7 @@ class DataView:
 
     def __sub__(self, other):
         from .data_view_math import Subtract
+
         try:
             iter(other)
             return Subtract(self, other)
@@ -53,6 +57,7 @@ class DataView:
 
     def __rsub__(self, other):
         from .data_view_math import Subtract
+
         try:
             iter(other)
             return Subtract(other, self)
@@ -61,6 +66,7 @@ class DataView:
 
     def __mul__(self, other):
         from .data_view_math import Multiply
+
         try:
             iter(other)
             return Multiply(self, other)
@@ -69,6 +75,7 @@ class DataView:
 
     def __rmul__(self, other):
         from .data_view_math import Multiply
+
         try:
             iter(other)
             return Multiply(self, other)
@@ -77,6 +84,7 @@ class DataView:
 
     def __floordiv__(self, other):
         from .data_view_math import FloorDivide
+
         try:
             iter(other)
             return FloorDivide(self, other)
@@ -85,6 +93,7 @@ class DataView:
 
     def __rfloordiv__(self, other):
         from .data_view_math import FloorDivide
+
         try:
             iter(other)
             return FloorDivide(other, self)
@@ -93,6 +102,7 @@ class DataView:
 
     def __truediv__(self, other):
         from .data_view_math import Divide
+
         try:
             iter(other)
             return Divide(self, other)
@@ -101,6 +111,7 @@ class DataView:
 
     def __rtruediv__(self, other):
         from .data_view_math import Divide
+
         try:
             iter(other)
             return Divide(other, self)
@@ -109,18 +120,22 @@ class DataView:
 
     def __neg__(self):
         from .data_view_math import Neg
+
         return Neg(self)
 
     def __pos__(self):
         from .data_view_math import Pos
+
         return Pos(self)
 
     def __abs__(self):
         from .data_view_math import Abs
+
         return Abs(self)
 
     def __invert__(self):
         from .data_view_math import Invert
+
         return Invert(self)
 
 
@@ -131,11 +146,13 @@ class Cycle(DataView):
         while True:
             yield from self.data
 
+    def __len__(self):
+        return None
+
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [
-                self.data[index % len(self.data)]
-                for index in range(slice.start, slice.stop, slice,step)
+                self[index] for index in range(slice.start, slice.stop, slice, step)
             ]
         else:
             return self.data[index % len(self.data)]
@@ -150,8 +167,23 @@ class ReflectedCycle(DataView):
             for value in self.data[::-1]:
                 yield value
 
+    def __len__(self):
+        return None
 
-class Last(DataView):
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [
+                self[index] for index in range(slice.start, slice.stop, slice, step)
+            ]
+        else:
+            n = len(self.data)
+            if (index // n) % 2 == 0:
+                return self.data[index % n]
+            else:
+                return self.data[-index % n]
+
+
+class RepeatLast(DataView):
     """A Dataview which extends an iterable by repeating the last value."""
 
     def __iter__(self):
@@ -160,13 +192,19 @@ class Last(DataView):
         while True:
             yield value
 
+    def __len__(self):
+        return None
+
 
 class Repeat(DataView):
-    """A Dataview broadcasts a scalar as an infinitely repeating ."""
+    """A Dataview broadcasts a scalar as an infinitely repeating value."""
 
     def __iter__(self):
         while True:
             yield self.data
+
+    def __len__(self):
+        return None
 
     def __getitem__(self, index):
         if isinstance(index, slice):
@@ -218,6 +256,7 @@ class Repeat(DataView):
 
 
 class Count(DataView):
+    """DataView that counts indefinitely from a start by a step."""
 
     def __init__(self, start=0, step=1):
         self.start = 0
@@ -229,19 +268,26 @@ class Count(DataView):
             yield i
             i += 1
 
+    def __len__(self):
+        return None
+
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [
                 self.start + self.step * index
-                for index in range(slice.start, slice.stop, slice,step)
+                for index in range(slice.start, slice.stop, slice, step)
             ]
         else:
             return self.start + self.step * index
 
 
 class Range(DataView):
+    """DataView that efficiently represents a range."""
 
     def __init__(self, start, stop=None, step=1):
+        if stop is None:
+            stop = start
+            start = 0
         self.start = start
         self.stop = stop
         self.step = step
@@ -249,18 +295,20 @@ class Range(DataView):
     def __iter__(self):
         yield from range(self.start, self.stop, self.step)
 
+    def __len__(self):
+        return (self.stop - self.start) // self.step
+
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [
                 self.start + self.step * self.index
-                for index in range(slice.start, slice.stop, slice,step)
+                for index in range(slice.start, slice.stop, slice, step)
             ]
         else:
             return self.start + self.step * self.index
 
 
 class Slice(DataView):
-
     def __init__(self, data, start, stop=None, step=1):
         super().__init__(data)
         if stop is None:
@@ -289,7 +337,6 @@ class Slice(DataView):
 
 
 class Interpolated(DataView):
-
     def __init__(self, data, n):
         super().__init__(data)
         self.n = n

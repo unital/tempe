@@ -13,11 +13,13 @@ class Raster:
         self.h = h
         self.offset = offset
         self.stride = stride
-        self.fbuf = framebuf.FrameBuffer(memoryview(buf)[offset:], w, h, framebuf.RGB565, stride)
+        self.fbuf = framebuf.FrameBuffer(
+            memoryview(buf)[offset:], w, h, framebuf.RGB565, stride
+        )
 
     @classmethod
     def from_rect(cls, x, y, w, h):
-        buf = bytearray(2*w*h)
+        buf = bytearray(2 * w * h)
         return cls(buf, x, y, w, h)
 
     def clip(self, x, y, w, h):
