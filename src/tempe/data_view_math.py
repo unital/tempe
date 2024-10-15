@@ -79,24 +79,6 @@ class Add(BinOp):
         return self.data1[index] + self.data2[index]
 
 
-class BinOp(DataView):
-    def __init__(self, data1, data2):
-        self.data1 = data1
-        self.data2 = data2
-
-    def __iter__(self):
-        raise NotImplementedError()
-
-
-class Add(BinOp):
-    def __iter__(self):
-        for x, y in zip(self.data1, self.data2):
-            yield x + y
-
-    def __getitem__(self, index):
-        return self.data1[index] + self.data2[index]
-
-
 class Subtract(BinOp):
     def __iter__(self):
         for x, y in zip(self.data1, self.data2):

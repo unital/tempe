@@ -1,7 +1,10 @@
+from array import array
+import framebuf
+
 from .shapes import ColoredGeometry, Shape, BLIT_KEY_RGB565
 
 
-class BitmapGeometry(Shape):
+class Bitmaps(Shape):
     """Draw framebuffer bitmaps at points"""
 
     def __init__(
@@ -33,7 +36,7 @@ class BitmapGeometry(Shape):
             buffer.blit(buffer, px, py, self.key, self.palette)
 
 
-class ColoredBitmapGeometry(ColoredGeometry):
+class ColoredBitmaps(ColoredGeometry):
     """Draw 1-bit framebuffers bitmaps at points in given colors."""
 
     def __init__(self, surface, geometry, colors, buffers, *, clip=None):

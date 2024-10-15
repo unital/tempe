@@ -1,6 +1,7 @@
 from array import array
 import framebuf
 
+from .font import BitmapFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 
@@ -26,11 +27,8 @@ class Text(ColoredGeometry):
                     buffer.text(line, px, py + i * line_height, color)
                     if self.bold:
                         buffer.text(line, px + 1, py + i * line_height, color)
-        else:
-            if callable(self.font.height):
-                line_height = self.font.height()
-            else:
-                line_height = self.font.height
+        elif isinstance(self.font, BitmapFont):
+            line_height = self.font.height
             palette_buf = array("H", [BLIT_KEY_RGB565, 0xFFFF])
             palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
             for geometry, color, text in self:
@@ -39,7 +37,7 @@ class Text(ColoredGeometry):
                 for i, line in enumerate(text.splitlines()):
                     px = geometry[0] - x
                     for char in line:
-                        buf, height, width = self.font.get_ch(char)
+                        buf, height, width = self.font.bitmap(char)
                         buf = bytearray(buf)
                         fbuf = framebuf.FrameBuffer(
                             buf, width, height, framebuf.MONO_HLSB
@@ -59,3 +57,30 @@ class Text(ColoredGeometry):
         if texts is not None:
             self.texts = texts
         super().update()
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        if self.font is None:
+            for geometry, text in zip(self.geometry, self.texts):
+                width = 8 * max(len(line) for line in text.splitlines())
+                height = 8 * len(text.splitlines())
+                max_x = max(max_x, geometry[0] + width)
+                min_x = min(min_x, geometry[0])
+                max_y = max(max_y, geometry[1] + height)
+                min_y = min(min_y, geometry[1])
+        else:
+            for geometry, text in zip(self.geometry, self.texts):
+                width = max(
+                    self.font.measure(line)[2]
+                    for line in text.splitlines()
+                )
+                height = self.font.height * len(text.splitlines())
+                max_x = max(max_x, geometry[0] + width)
+                min_x = min(min_x, geometry[0])
+                max_y = max(max_y, geometry[1] + height)
+                min_y = min(min_y, geometry[1])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)

@@ -13,7 +13,7 @@ def rgb444_to_rgb565(r, g, b):
 
 
 def rgb565(r, g, b):
-    bytes = (int(r * 0x1F) << 11) | (int(g * 0x3F) << 5) | int(b * 0x1F)
+    bytes = (int(round(r * 0x1F)) << 11) | (int(round(g * 0x3F)) << 5) | int(round(b * 0x1F))
     return (bytes >> 8) | ((bytes & 0xFF) << 8)
 
 
@@ -49,3 +49,7 @@ grey_c = rgb444_to_rgb565(0xC, 0xC, 0xC)
 grey_d = rgb444_to_rgb565(0xD, 0xD, 0xD)
 grey_e = rgb444_to_rgb565(0xE, 0xE, 0xE)
 grey_f = rgb444_to_rgb565(0xF, 0xF, 0xF)
+
+lime = rgb565(0.0, 1.0, 0.0)
+red = rgb565(1.0, 0.0, 0.0)
+blue = rgb565(0.0, 0.0, 1.0)

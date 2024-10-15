@@ -53,6 +53,8 @@ class Markers(ColoredGeometry):
                 # assume 1-bit framebuffer - no way to test!
                 palette[1] = color
                 buffer.blit(marker, px, py, BLIT_KEY_RGB565, palette)
+            elif isinstance(marker, array):
+                buffer.polgon(px, py, marker, color, fill=True)
 
     def update(self, geometry=None, colors=None, markers=None):
         if geometry is not None:

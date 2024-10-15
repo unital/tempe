@@ -1,7 +1,7 @@
 from array import array
 
 from .colors import grey_1, grey_2, grey_e, grey_f
-from .geometry import RowGeometry, LineStrip, ColumnGeometry
+from .geometry import RowGeometry, StripGeometry, ColumnGeometry
 from .data_view import DataView, Range
 from .markers import Marker
 

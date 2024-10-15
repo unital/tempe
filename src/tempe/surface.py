@@ -5,6 +5,7 @@ from .raster import Raster
 from .shapes import Polygons, Rectangles, Lines, VLines, HLines
 from .markers import Markers
 from .text import Text
+from .util import contains
 
 
 LAYERS = ("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")
@@ -15,7 +16,6 @@ class Surface:
 
     def __init__(self):
         self.layers = {layer: [] for layer in LAYERS}
-        self.windows = {}
         self._damage = []
         self.refresh_needed = asyncio.Event()
 
@@ -28,13 +28,14 @@ class Surface:
                     clip = raster.clip(*object.clip)
                     if clip is None:
                         continue
+                print(object.clip, clip.x, clip.y, clip.w, clip.h, clip.offset, clip.stride)
                 object.draw(clip.fbuf, clip.x, clip.y)
 
     def refresh(self, display, working_buffer):
         for rect in self._damage:
             x, y, w, h = rect
             # handle buffer too small
-            buffer_rows = (len(working_buffer) // w) - 1
+            buffer_rows = (len(working_buffer) // (2*w)) - 1
             for start_row in range(0, h, buffer_rows):
                 raster_rows = min(buffer_rows, h - start_row)
                 raster = Raster(working_buffer, x, y + start_row, w, raster_rows)
@@ -44,15 +45,30 @@ class Surface:
         self.refresh_needed.clear()
 
     def damage(self, rect):
-        if rect not in self._damage:
+        if not any(contains(rect, rect2) for rect2 in self._damage):
+            self._damage = [rect2 for rect2 in self._damage if not contains(rect2, rect)]
             self._damage.append(rect)
             self.refresh_needed.set()
 
     def clear(self, layer):
+        """Clear all shapes from a layer."""
+        for shape in self.layers[layer]:
+            shape.surface = None
         self.layers[layer] = []
 
     def add_shape(self, layer, shape):
+        """Add a shape to a layer of the drawing."""
+        if shape.surface is None:
+            shape.surface = self
+        elif shape.surface is not self:
+            raise RuntimeError("Shape {shape} is already on a surface: {shape.surface}")
         self.layers[layer].append(shape)
+        shape.update()
+
+    def remove_shape(self, layer, shape):
+        self.layers[layer].remove(shape)
+        shape.update()
+        shape.surface = None
 
     def polys(self, layer, geometry, colors, clip=None):
         shape = Polygons(self, geometry, colors, clip=clip)

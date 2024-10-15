@@ -11,9 +11,8 @@ POLY = "poly"
 class Geometry(DataView):
     """Efficient storage of geometric information."""
 
-    def __init__(self, geometry, coords=POINT):
+    def __init__(self, geometry):
         self.geometry = geometry
-        self.coords = coords
 
     def __iter__(self):
         raise NotImplementedError()
@@ -47,17 +46,19 @@ class ColumnGeometry(Geometry):
         return max(len(coord) for coord in self.geometry)
 
 
-class GeometryStrip(Geometry):
+class StripGeometry(Geometry):
     """Geometry generating connected strip of n-gons from vertices.
 
     Iterator provides vertex point buffers of the form [x0, y0, x1, y1, ...].
     """
 
+    #: Grabbing pairs of coordinates for vertices.
     n_coords = 2
-    step = 1
 
-    def __init__(self, geometry, n_vertices=2):
+    def __init__(self, geometry, n_vertices=2, step=1):
         super().__init__(geometry)
+        self.n_vertices = n_vertices
+        self.step = step
 
     def __iter__(self):
         size = self.n_vertices * self.n_coords
@@ -70,16 +71,3 @@ class GeometryStrip(Geometry):
 
     def __len__(self):
         return ((len(self.geometry) // self.n_coords) - self.n_vertices) // self.step
-
-
-class LineStrip(GeometryStrip):
-    n_vertices = 2
-
-
-class TriangleStrip(GeometryStrip):
-    n_vertices = 3
-
-
-class QuadStrip(GeometryStrip):
-    n_vertices = 3
-    step = 2

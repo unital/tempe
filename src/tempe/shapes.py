@@ -19,8 +19,12 @@ class Shape:
         pass
 
     def update(self):
+        if self.clip is None:
+            self.clip = self._bounds()
         self.surface.damage(self.clip)
 
+    def _bounds(self):
+        raise NotImplementedError()
 
 class ColoredGeometry(Shape):
     """ABC for geometries with colors applied."""
@@ -69,6 +73,20 @@ class Lines(ColoredGeometry):
             y1 = geometry[3] - y
             buffer.line(x0, y0, x1, y1, color)
 
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0], geometry[2])
+            min_x = min(min_x, geometry[0], geometry[2])
+            max_y = max(max_y, geometry[1], geometry[3])
+            min_y = min(min_y, geometry[1], geometry[3])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
+
+
 
 class HLines(ColoredGeometry):
     """Render multiple colored horizontal line segments with line-width 1.
@@ -82,6 +100,19 @@ class HLines(ColoredGeometry):
             py = geometry[1] - y
             l = geometry[2]
             buffer.hline(px, py, l, color)
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
+            min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
+            max_y = max(max_y, geometry[1])
+            min_y = min(min_y, geometry[1])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
 class VLines(ColoredGeometry):
@@ -97,6 +128,19 @@ class VLines(ColoredGeometry):
             l = geometry[2]
             buffer.vline(px, py, l, color)
 
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0])
+            min_x = min(min_x, geometry[0])
+            max_y = max(max_y, geometry[1], geometry[1] + geometry[2])
+            min_y = min(min_y, geometry[1], geometry[1] + geometry[2])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
+
 
 class Polygons(FillableGeometry):
     """Render multiple polygons.
@@ -107,6 +151,19 @@ class Polygons(FillableGeometry):
     def draw(self, buffer, x=0, y=0):
         for polygon, color in self:
             buffer.poly(-x, -y, polygon, color, self.fill)
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, max(geometry[::2]))
+            min_x = min(min_x, min(geometry[::2]))
+            max_y = max(max_y, max(geometry[1::2]))
+            min_y = min(min_y, min(geometry[1::2]))
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
 class Rectangles(FillableGeometry):
@@ -129,8 +186,21 @@ class Rectangles(FillableGeometry):
                 h = -h
             buffer.rect(px, py, w, h, color, self.fill)
 
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
+            min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
+            max_y = max(max_y, geometry[1], geometry[1] + geometry[3])
+            min_y = min(min_y, geometry[1], geometry[1] + geometry[3])
 
-class FilledCircles(FillableGeometry):
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
+
+
+class Circles(FillableGeometry):
     """Render multiple circles.
 
     Geometry should produce cx, cy, r arrays.
@@ -144,7 +214,7 @@ class FilledCircles(FillableGeometry):
             buffer.ellipse(px, py, r, r, color, self.fill)
 
 
-class FilledEllipses(FillableGeometry):
+class Ellipses(FillableGeometry):
     """Render multiple ellipses.
 
     Geometry should produce cx, cy, rx, ry arrays.
