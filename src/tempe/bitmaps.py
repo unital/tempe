@@ -8,7 +8,7 @@ class Bitmaps(Shape):
     """Draw framebuffer bitmaps at points"""
 
     def __init__(
-        self, surface, geometry, buffers, *, key=None, palette=None, clip=None
+        self, geometry, buffers, *, key=None, palette=None, surface=None, clip=None
     ):
         super().__init__(surface, clip=clip)
         self.geometry = geometry
@@ -39,11 +39,9 @@ class Bitmaps(Shape):
 class ColoredBitmaps(ColoredGeometry):
     """Draw 1-bit framebuffers bitmaps at points in given colors."""
 
-    def __init__(self, surface, geometry, colors, buffers, *, clip=None):
-        super().__init__(surface, clip=clip)
-        self.geometry = geometry
+    def __init__(self, geometry, colors, buffers, *, surface=None, clip=None):
+        super().__init__(geometry, colors, surface=surface, clip=clip)
         self.buffers = buffers
-        self.colors = colors
 
     def update(self, geometry=None, colors=None, buffers=None):
         if geometry is not None:

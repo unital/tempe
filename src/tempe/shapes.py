@@ -9,7 +9,7 @@ BLIT_KEY_RGB565 = 0b0000000000100000
 class Shape:
     """ABC for drawable objects."""
 
-    def __init__(self, surface, clip=None):
+    def __init__(self, surface=None, clip=None):
         self.surface = surface
         self.needs_redraw = asyncio.Event()
         self.clip = clip
@@ -29,7 +29,7 @@ class Shape:
 class ColoredGeometry(Shape):
     """ABC for geometries with colors applied."""
 
-    def __init__(self, surface, geometry, colors, *, clip=None):
+    def __init__(self, geometry, colors, *, surface=None, clip=None):
         super().__init__(surface, clip=clip)
         self.geometry = geometry
         self.colors = colors
@@ -54,8 +54,8 @@ class FillableGeometry(ColoredGeometry):
     Stroked outlines always have line with 1.
     """
 
-    def __init__(self, surface, geometry, colors, *, fill=True, clip=None):
-        super().__init__(surface, geometry, colors, clip=clip)
+    def __init__(self, geometry, colors, *, fill=True, surface=None, clip=None):
+        super().__init__(geometry, colors, surface=surface, clip=clip)
         self.fill = fill
 
 

@@ -15,8 +15,8 @@ class Marker:
 
 
 class Markers(ColoredGeometry):
-    def __init__(self, surface, geometry, colors, markers, *, clip=None):
-        super().__init__(surface, geometry, colors, clip=clip)
+    def __init__(self, geometry, colors, markers, *, surface=None, clip=None):
+        super().__init__(geometry, colors, surface=surface, clip=clip)
         self.markers = markers
 
     def __iter__(self):

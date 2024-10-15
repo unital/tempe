@@ -7,9 +7,9 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 class Text(ColoredGeometry):
     def __init__(
-        self, surface, geometry, colors, texts, *, bold=False, font=None, clip=None
+        self, geometry, colors, texts, *, bold=False, font=None, surface=None, clip=None
     ):
-        super().__init__(surface, geometry, colors, clip=clip)
+        super().__init__(geometry, colors, surface=surface, clip=clip)
         self.texts = texts
         self.bold = bold
         self.font = font
