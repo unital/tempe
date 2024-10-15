@@ -71,36 +71,36 @@ class Surface:
         shape.surface = None
 
     def polys(self, layer, geometry, colors, clip=None):
-        shape = Polygons(self, geometry, colors, clip=clip)
+        shape = Polygons(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
     def rects(self, layer, geometry, colors, clip=None):
-        shape = Rectangles(self, geometry, colors, clip=clip)
+        shape = Rectangles(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
     def lines(self, layer, geometry, colors, clip=None):
-        shape = Lines(self, geometry, colors, clip=clip)
+        shape = Lines(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
     def vlines(self, layer, geometry, colors, clip=None):
-        shape = VLines(self, geometry, colors, clip=clip)
+        shape = VLines(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
     def hlines(self, layer, geometry, colors, clip=None):
-        shape = HLines(self, geometry, colors, clip=clip)
+        shape = HLines(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
     def points(self, layer, geometry, colors, markers, clip=None):
-        points = Markers(self, geometry, colors, markers, clip=clip)
+        points = Markers(geometry, colors, markers, clip=clip)
         self.add_shape(layer, points)
         return points
 
     def text(self, layer, geometry, colors, texts, bold=False, font=None, clip=None):
-        text = Text(self, geometry, colors, texts, bold=bold, font=font, clip=clip)
+        text = Text(geometry, colors, texts, bold=bold, font=font, clip=clip)
         self.add_shape(layer, text)
         return text
