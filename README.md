@@ -14,9 +14,9 @@ updates, and so on.
 
 ## Documentation
 
-[Tempe Documentation](unital.github.io/tempe)
-- [User Guide](unital.github.io/tempe/user_guide)
-- [API docs](unital.github.io/tempe/api)
+[Tempe Documentation](https://unital.github.io/tempe)
+- [User Guide](https://unital.github.io/tempe/user_guide)
+- [API docs](https://unital.github.io/tempe/api)
 
 
 ## Design Notes
