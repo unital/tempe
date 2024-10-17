@@ -6,6 +6,41 @@ polygons and ellipses.  The latter are wrappers around calls to the
 corresponding |FrameBuffer| routines, and have the same constraints,
 such as lines being limited to 1 pixel width.
 
+The shape types have expectations about the types of the data produced
+by the geometries.  These are not formally defined as types or classes
+for speed and memory efficiency, but are treated as type aliases by
+Python type annotations.
+
+.. py:type:: geom
+
+   A generic geometry as a sequence of ints of unspecified length.
+
+.. py:type:: point
+
+   A sequence of ints of the form (x, y).
+
+.. py:type:: points
+
+   A sequence of ints of the form (x0, y0, x1, y1).
+
+.. py:type:: point_length
+
+   A sequence of ints of the form (x, y, length).  The length can also be
+   used as a size parameter for markers or radius of a circle, as appropriate.
+
+.. py:type:: point_array
+
+   An array of signed 16-bit integers giving point coordinates of the
+   form ``array('h', [x0, y0, x1, y1, ...])``.
+
+.. py:type:: rectangle
+
+   A sequence of ints of the form (x, y, w, h).
+
+.. py:type:: ellipse
+
+   A sequence of ints of the form (center_x, center_y, radius_x, radius_y).
+
 .. |FrameBuffer| replace:: :py:class:`~framebuf.FrameBuffer`
 
 Attributes
@@ -27,11 +62,12 @@ from .geometry import Geometry
 from .data_view import DataView
 
 geom = TypeVar("geom", bound=Sequence[int])
-rectangle: TypeAlias = tuple[int, int, int, int]
-ellipse: TypeAlias = tuple[int, int, int, int]
 point: TypeAlias = tuple[int, int]
 points: TypeAlias = tuple[int, int, int, int]
+point_array: TypeAlias = array[int]
 point_length: TypeAlias = tuple[int, int, int]
+rectangle: TypeAlias = tuple[int, int, int, int]
+ellipse: TypeAlias = tuple[int, int, int, int]
 
 
 #: Transparent color when blitting bitmaps.
@@ -221,13 +257,13 @@ class VLines(ColoredGeometry[point_length]):
     def __iter__(self) -> tuple[point_length, int]: ...
 
 
-class Polygons(FillableGeometry[array[int]]):
+class Polygons(FillableGeometry[point_array]):
     """Render multiple polygons.
 
     Geometry should produce vertex arrays of the form [x0, y0, x1, y1, ...].
     """
 
-    def __iter__(self) -> tuple[array[int], int]: ...
+    def __iter__(self) -> tuple[point_array, int]: ...
 
 
 class Rectangles(FillableGeometry[rectangle]):
@@ -285,6 +321,7 @@ class Ellipses(FillableGeometry[ellipse]):
     ): ...
 
     def __iter__(self) -> tuple[ellipse, int]: ...
+
 
 __all__ = [
     "Shape",

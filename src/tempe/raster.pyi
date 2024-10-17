@@ -18,7 +18,7 @@ class Raster:
 
     Attributes
     ----------
-    fbuf : frambuf.FrameBuffer
+    fbuf : framebuf.FrameBuffer
         The framebuffer built on the buffer.
     x : int
         The x-offset of the framebuffer relative to the Surface.
