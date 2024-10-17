@@ -163,7 +163,7 @@ class ColoredGeometry(Shape, Generic[geom]):
 
         Parameters
         ----------
-        geometry : Geometry[geometry] | None
+        geometry : Geometry[geom] | None
             The sequence of geometries to render.
         colors : Iterable[int] | None
             The sequence of colors for each geometry.
