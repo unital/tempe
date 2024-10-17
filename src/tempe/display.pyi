@@ -1,3 +1,16 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Base Display class and FileDisplay class.
+
+This module defines the Display abstract base class as well as a concrete
+implementation that renders to a binary file.
+
+Users of specific hardware may need to define their own subclasses that
+can send updates to the underlying device.
+"""
+
 from array import array
 from typing import Self
 
@@ -10,6 +23,10 @@ class Display:
 
         The array buffer must match the width and height, and the edges
         of the bounding rectangle should lie within the Display.
+
+        Concrete subclasses must implement this method, either to
+        directly render partial updates to the underlying device, or to
+        render to a complete framebuffer which is then rendered.
         """
         raise NotImplementedError
 
