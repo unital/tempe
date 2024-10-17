@@ -1,7 +1,7 @@
 from array import array
 import framebuf
 
-from .font import BitmapFont, AlrightFont
+from .font import BitmapFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 

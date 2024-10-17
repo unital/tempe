@@ -26,7 +26,7 @@ class Surface:
                     clip = raster.clip(*object.clip)
                     if clip is None:
                         continue
-                object.draw(clip.fbuf, clip.x, clip.y)
+                object.draw_raster(clip)
 
     def refresh(self, display, working_buffer):
         for rect in self._damage:
