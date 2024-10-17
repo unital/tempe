@@ -8,7 +8,7 @@ from .text import Text
 from .util import contains
 
 
-LAYERS = ("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")
+LAYERS = const(("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY"))
 
 
 class Surface:
@@ -28,7 +28,6 @@ class Surface:
                     clip = raster.clip(*object.clip)
                     if clip is None:
                         continue
-                print(object.clip, clip.x, clip.y, clip.w, clip.h, clip.offset, clip.stride)
                 object.draw(clip.fbuf, clip.x, clip.y)
 
     def refresh(self, display, working_buffer):

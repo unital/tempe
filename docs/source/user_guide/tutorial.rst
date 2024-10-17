@@ -325,8 +325,6 @@ like the following:
 ..  image:: hello_font.png
     :width: 160
 
-TODO: support alright fonts
-
 Markers and Scatterplots
 ------------------------
 
@@ -351,6 +349,20 @@ key-color for transparency.  The |ColoredBitmaps| shapes render 1-bit
 framebuffers in the specified colors.
 
 
+Convenience Methods
+===================
+
+So far we have been using a pattern of two-step creation of shapes, where
+we first create a shape and then add it to a layer of a surface.  Since you
+almost always want to add shapes to a layer immediatel after creating them,
+the |Surface| class has a collection of methods for creating and adding
+standard shapes in one step.
+
+TODO: example
+
+
+
+.. |FrameBuffer| replace:: :py:class:`~framebuf.FrameBuffer`
 .. |Surface| replace:: :py:class:`~tempe.surface.Surface`
 .. |refresh| replace:: :py:meth:`~tempe.surface.Surface.refresh`
 .. |Shape| replace:: :py:class:`~tempe.shapes.Shape`

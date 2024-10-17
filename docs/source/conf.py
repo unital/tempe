@@ -17,6 +17,7 @@ release = '0.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
     'autoapi.extension'
 ]
 
@@ -76,3 +77,16 @@ autosummary_generate = True
 # -- Options for autoapi -----------------------------------------------------
 autoapi_dirs = ['../../src']
 autoapi_root = 'api'
+autoapi_file_patterns = ['*.pyi', '*.py']
+autoapi_options = [
+    'members',
+    'undoc-members',
+    'private-members',
+    'show-inheritance',
+    'show-module-summary',
+    'imported-members',
+]
+autoapi_ignore = ["*_data_view_math*"]
+
+add_module_names = False
+python_maximum_signature_line_length = 60
