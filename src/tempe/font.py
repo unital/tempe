@@ -41,7 +41,7 @@ class TempeFont(BitmapFont):
         self.height = mod.height
         self.baseline = mod.baseline
         self.monospaced = mod.monospaced
-        self.memory = len(mod._font) + len(mod._sparse)
+        #self.memory = len(mod._font) + len(mod._sparse)
 
     def measure(self, text):
         width = 0
