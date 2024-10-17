@@ -3,12 +3,10 @@ from array import array
 
 from .raster import Raster
 from .shapes import Polygons, Rectangles, Lines, VLines, HLines
-from .markers import Markers
-from .text import Text
 from .util import contains
 
 
-LAYERS = ("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")
+LAYERS = const(("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY"))
 
 
 class Surface:
@@ -28,7 +26,6 @@ class Surface:
                     clip = raster.clip(*object.clip)
                     if clip is None:
                         continue
-                print(object.clip, clip.x, clip.y, clip.w, clip.h, clip.offset, clip.stride)
                 object.draw(clip.fbuf, clip.x, clip.y)
 
     def refresh(self, display, working_buffer):
@@ -96,11 +93,13 @@ class Surface:
         return shape
 
     def points(self, layer, geometry, colors, markers, clip=None):
+        from .markers import Markers
         points = Markers(geometry, colors, markers, clip=clip)
         self.add_shape(layer, points)
         return points
 
     def text(self, layer, geometry, colors, texts, bold=False, font=None, clip=None):
+        from .text import Text
         text = Text(geometry, colors, texts, bold=bold, font=font, clip=clip)
         self.add_shape(layer, text)
         return text

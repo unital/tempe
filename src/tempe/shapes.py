@@ -3,7 +3,7 @@
 import asyncio
 
 #: Transparent color when blitting bitmaps.
-BLIT_KEY_RGB565 = 0b0000000000100000
+BLIT_KEY_RGB565 = const(0b0000000000100000)
 
 
 class Shape:
@@ -11,7 +11,6 @@ class Shape:
 
     def __init__(self, surface=None, clip=None):
         self.surface = surface
-        self.needs_redraw = asyncio.Event()
         self.clip = clip
 
     def draw(self, buffer, x=0, y=0):
@@ -25,6 +24,7 @@ class Shape:
 
     def _bounds(self):
         raise NotImplementedError()
+
 
 class ColoredGeometry(Shape):
     """ABC for geometries with colors applied."""

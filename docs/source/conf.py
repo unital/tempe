@@ -17,6 +17,7 @@ release = '0.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
     'autoapi.extension'
 ]
 
@@ -26,7 +27,8 @@ exclude_patterns = []
 # -- Options for intersphinx -------------------------------------------------
 
 intersphinx_mapping = {
-    'micropython': ('https://docs.micropython.org/en/latest', None)
+    'micropython': ('https://docs.micropython.org/en/latest', None),
+    'python': ('https://docs.python.org/3', None)
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -76,3 +78,16 @@ autosummary_generate = True
 # -- Options for autoapi -----------------------------------------------------
 autoapi_dirs = ['../../src']
 autoapi_root = 'api'
+autoapi_file_patterns = ['*.pyi', '*.py']
+autoapi_options = [
+    'members',
+    'undoc-members',
+    'private-members',
+    'show-inheritance',
+    'show-module-summary',
+    'imported-members',
+]
+autoapi_ignore = ["*_data_view_math*"]
+
+add_module_names = False
+python_maximum_signature_line_length = 60

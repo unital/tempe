@@ -1,7 +1,7 @@
 from array import array
 import framebuf
 
-from .font import BitmapFont
+from .font import BitmapFont, AlrightFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 
@@ -43,11 +43,21 @@ class Text(ColoredGeometry):
                             buf, width, height, framebuf.MONO_HLSB
                         )
                         buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
-                        if self.bold:
-                            px += 1
-                            buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
                         px += width
                     py += line_height
+        # elif isinstance(self.font, AlrightFont):
+        #     line_height = self.font.height
+        #     for geometry, color, text in self:
+        #         py = geometry[1] - y
+        #         for i, line in enumerate(text.splitlines()):
+        #             px = geometry[0] - x
+        #             for char in line:
+        #                 contours = self.font.contours(char)
+        #                 for contour in contours:
+        #                     print(contour)
+        #                     buffer.poly(px, py, contour, color, True)
+        #                 px += self.font.measure(char)[2]
+        #             py += line_height
 
     def update(self, geometry=None, colors=None, texts=None):
         if geometry is not None:

@@ -29,7 +29,7 @@ class DataView:
         return self.data[index]
 
     def __add__(self, other):
-        from .data_view_math import Add
+        from ._data_view_math import Add
 
         try:
             iter(other)
@@ -38,7 +38,7 @@ class DataView:
             return Add(self, Repeat(other))
 
     def __radd__(self, other):
-        from .data_view_math import Add
+        from ._data_view_math import Add
 
         try:
             iter(other)
@@ -47,7 +47,7 @@ class DataView:
             return Add(Repeat(other), self)
 
     def __sub__(self, other):
-        from .data_view_math import Subtract
+        from ._data_view_math import Subtract
 
         try:
             iter(other)
@@ -56,7 +56,7 @@ class DataView:
             return Subtract(self, Repeat(other))
 
     def __rsub__(self, other):
-        from .data_view_math import Subtract
+        from ._data_view_math import Subtract
 
         try:
             iter(other)
@@ -65,7 +65,7 @@ class DataView:
             return Subtract(Repeat(other), self)
 
     def __mul__(self, other):
-        from .data_view_math import Multiply
+        from ._data_view_math import Multiply
 
         try:
             iter(other)
@@ -74,7 +74,7 @@ class DataView:
             return Multiply(self, Repeat(other))
 
     def __rmul__(self, other):
-        from .data_view_math import Multiply
+        from ._data_view_math import Multiply
 
         try:
             iter(other)
@@ -83,7 +83,7 @@ class DataView:
             return Multiply(Repeat(other), self)
 
     def __floordiv__(self, other):
-        from .data_view_math import FloorDivide
+        from ._data_view_math import FloorDivide
 
         try:
             iter(other)
@@ -92,7 +92,7 @@ class DataView:
             return FloorDivide(self, Repeat(other))
 
     def __rfloordiv__(self, other):
-        from .data_view_math import FloorDivide
+        from ._data_view_math import FloorDivide
 
         try:
             iter(other)
@@ -101,7 +101,7 @@ class DataView:
             return FloorDivide(Repeat(other), self)
 
     def __truediv__(self, other):
-        from .data_view_math import Divide
+        from ._data_view_math import Divide
 
         try:
             iter(other)
@@ -110,7 +110,7 @@ class DataView:
             return Divide(self, Repeat(other))
 
     def __rtruediv__(self, other):
-        from .data_view_math import Divide
+        from ._data_view_math import Divide
 
         try:
             iter(other)
@@ -119,22 +119,22 @@ class DataView:
             return Divide(Repeat(other), self)
 
     def __neg__(self):
-        from .data_view_math import Neg
+        from ._data_view_math import Neg
 
         return Neg(self)
 
     def __pos__(self):
-        from .data_view_math import Pos
+        from ._data_view_math import Pos
 
         return Pos(self)
 
     def __abs__(self):
-        from .data_view_math import Abs
+        from ._data_view_math import Abs
 
         return Abs(self)
 
     def __invert__(self):
-        from .data_view_math import Invert
+        from ._data_view_math import Invert
 
         return Invert(self)
 
@@ -259,8 +259,8 @@ class Count(DataView):
     """DataView that counts indefinitely from a start by a step."""
 
     def __init__(self, start=0, step=1):
-        self.start = 0
-        self.step = 1
+        self.start = start
+        self.step = step
 
     def __iter__(self):
         i = self.start
@@ -342,5 +342,5 @@ class Interpolated(DataView):
         self.n = n
 
     def __iter__(self):
-        for index in range(n):
-            yield self.data[index * (len(self.data) - 1) // (n - 1)]
+        for index in range(self.n):
+            yield self.data[index * (len(self.data) - 1) // (self.n - 1)]
