@@ -27,7 +27,8 @@ exclude_patterns = []
 # -- Options for intersphinx -------------------------------------------------
 
 intersphinx_mapping = {
-    'micropython': ('https://docs.micropython.org/en/latest', None)
+    'micropython': ('https://docs.micropython.org/en/latest', None),
+    'python': ('https://docs.python.org/3', None)
 }
 
 # -- Options for HTML output -------------------------------------------------
