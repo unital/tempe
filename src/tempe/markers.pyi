@@ -4,7 +4,7 @@ import framebuf
 from typing import Any
 
 from .geometry import Geometry
-from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle
+from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point_length
 from .surface import Surface
 
 
@@ -19,12 +19,27 @@ class Marker:
     CROSS = 6
 
 
-class Markers(ColoredGeometry):
-    """Display sized, colored markers at points."""
+class Markers(ColoredGeometry[point_length]):
+    """Display sized, colored markers at points.
+
+    Parameters
+    ----------
+    geometry : Iterable[geom] | None
+        The sequence of geometries to render.
+    colors : Iterable[int] | None
+        The sequence of colors for each geometry.
+    markers : Iterable[Any] | None
+        The sequence of colors for each geometry.
+    surface : Surface | None
+        The surface which this shape is associated with.
+    clip : rectangle | None
+        An (x, y, w, h) tuple to clip drawing to - anything drawn outside
+        this region will not show on the display.
+    """
 
     def __init__(
         self,
-        geometry: Geometry[tuple[int, int, int]],
+        geometry: Geometry[point_length],
         colors: Iterable[int],
         markers: Iterable[Any],
         *,
@@ -34,8 +49,19 @@ class Markers(ColoredGeometry):
 
     def update(
         self,
-        geometry: Geometry[tuple[int, int, int]] | None = None,
+        geometry: Iterable[point_length] | None = None,
         colors: Iterable[int] | None = None,
         markers: Iterable[Any] | None = None,
         **kwargs: Any,
-    ): ...
+    ):
+        """Update the state of the Shape, marking a redraw as needed.
+
+        Parameters
+        ----------
+        geometry : Iterable[geom] | None
+            The sequence of geometries to render.
+        colors : Iterable[int] | None
+            The sequence of colors for each geometry.
+        markers : Iterable[Any] | None
+            The sequence of colors for each geometry.
+        """

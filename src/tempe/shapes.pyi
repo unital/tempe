@@ -86,7 +86,11 @@ class Shape:
         this region will not show on the display.
     """
 
-    def __init__(self, surface: "tempe.surface.Surface | None" = None, clip: rectangle | None = None): ...
+    def __init__(
+        self,
+        surface: "tempe.surface.Surface | None" = None,
+        clip: rectangle | None = None,
+    ): ...
 
     def draw(self, buffer: FrameBuffer, x: int = 0, y: int = 0) -> None:
         """Render the shape into the given buffer offset by x and y.

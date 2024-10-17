@@ -15,4 +15,3 @@ This is the user-guide for Tempe.
     introduction.rst
     installation.rst
     tutorial.rst
-    geometries.rst

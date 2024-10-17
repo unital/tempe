@@ -64,7 +64,7 @@ class Surface:
         ----------
         display : Display
             The actual physical display that the surface will be drawn on.
-        working_buffer : array[int]
+        working_buffer : array.array[int]
             An empty array of unsigned 16-bit ints (ie. ``array('H', ...)``)
             that the Surface will use as memory for temporary drawing buffers.
         """
