@@ -1,4 +1,12 @@
-"""The DataView class and its subclasses."""
+"""The DataView class and its subclasses.
+
+The following informal types are used in this module:
+
+.. py:type:: DataType
+
+   This is the underlying data-type of the data being viewed; it is the
+   type that will be produced when the DataView is iterated.
+"""
 
 from collections.abc import Sequence, Iterator, Iterable
 from typing import Any, Generic, TypeVar

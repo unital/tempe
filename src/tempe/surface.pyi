@@ -86,7 +86,7 @@ class Surface:
 
         Parameters
         ----------
-        rect : rectangle
+        rect : tempe.shapes.rectangle
             A rectangle in the form of a tuple (x, y, w, h) which contains
             a region where the shapes being displayed have changed.
         """

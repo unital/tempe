@@ -133,7 +133,7 @@ class ColoredGeometry(Shape, Generic[geom]):
 
     Parameters
     ----------
-    geometry : Iterable[geometry]
+    geometry : Iterable[geom]
         The sequence of geometries to render.
     colors : Iterable[int]
         The sequence of colors for each geometry.
@@ -179,7 +179,7 @@ class FillableGeometry(ColoredGeometry[geom]):
 
     Parameters
     ----------
-    geometry : Iterable[geometry]
+    geometry : Iterable[geom]
         The sequence of geometries to render.
     colors : Iterable[int]
         The sequence of colors for each geometry.
