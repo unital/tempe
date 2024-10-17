@@ -3,8 +3,6 @@ from array import array
 
 from .raster import Raster
 from .shapes import Polygons, Rectangles, Lines, VLines, HLines
-from .markers import Markers
-from .text import Text
 from .util import contains
 
 
@@ -95,11 +93,13 @@ class Surface:
         return shape
 
     def points(self, layer, geometry, colors, markers, clip=None):
+        from .markers import Markers
         points = Markers(geometry, colors, markers, clip=clip)
         self.add_shape(layer, points)
         return points
 
     def text(self, layer, geometry, colors, texts, bold=False, font=None, clip=None):
+        from .text import Text
         text = Text(geometry, colors, texts, bold=bold, font=font, clip=clip)
         self.add_shape(layer, text)
         return text

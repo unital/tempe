@@ -21,8 +21,6 @@ from .font import AbstractFont
 from .geometry import Geometry
 from .raster import Raster
 from .shapes import Shape, Polygons, Rectangles, Lines, VLines, HLines, rectangle
-from .markers import Markers
-from .text import Text
 from .util import contains
 
 #: The default set of layers used by Surfaces, in order from back to front.
@@ -151,7 +149,7 @@ class Surface:
         colors: Iterable[int],
         markers: Iterable[Any],
         clip: tuple[int, int, int, int] | None = None,
-    ) -> Markers: ...
+    ) -> "tempe.markers.Markers": ...
 
     def text(
         self,
@@ -162,6 +160,6 @@ class Surface:
         bold: bool = False,
         font: AbstractFont | None = None,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> Text: ...
+    ) -> "tempe.text.Text": ...
 
 __all__ = ["Surface"]

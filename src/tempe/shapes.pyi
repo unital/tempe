@@ -23,7 +23,6 @@ from collections.abc import Sequence, Iterable
 from framebuf import FrameBuffer
 from typing import Any, Generic, TypeVar, TypeAlias
 
-from .surface import Surface
 from .geometry import Geometry
 from .data_view import DataView
 
@@ -51,7 +50,7 @@ class Shape:
         this region will not show on the display.
     """
 
-    def __init__(self, surface: Surface | None = None, clip: rectangle | None = None): ...
+    def __init__(self, surface: "tempe.surface.Surface | None" = None, clip: rectangle | None = None): ...
 
     def draw(self, buffer: FrameBuffer, x: int = 0, y: int = 0) -> None:
         """Render the shape into the given buffer offset by x and y.
@@ -114,7 +113,7 @@ class ColoredGeometry(Shape, Generic[geom]):
         geometry: Iterable[geom],
         colors: Iterable[int],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -163,7 +162,7 @@ class FillableGeometry(ColoredGeometry[geom]):
         colors: Iterable[int],
         *,
         fill: bool = True,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -179,7 +178,7 @@ class Lines(ColoredGeometry[points]):
         geometry: Iterable[points],
         colors: Iterable[int],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -197,7 +196,7 @@ class HLines(ColoredGeometry[point_length]):
         geometry: Iterable[point_length],
         colors: Iterable[int],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -215,7 +214,7 @@ class VLines(ColoredGeometry[point_length]):
         geometry: Iterable[point_length],
         colors: Iterable[int],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -243,7 +242,7 @@ class Rectangles(FillableGeometry[rectangle]):
         colors: Iterable[int],
         *,
         fill: bool = True,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -262,7 +261,7 @@ class Circles(FillableGeometry[point_length]):
         colors: Iterable[int],
         *,
         fill: bool = True,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
@@ -281,7 +280,7 @@ class Ellipses(FillableGeometry[ellipse]):
         colors: Iterable[int],
         *,
         fill: bool = True,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 
