@@ -55,6 +55,6 @@ class TestExamples(unittest.TestCase):
 
 if __name__ == "__main__":
     result = unittest.main()
-    if result.errors or result.failures:
+    if not result.wasSuccessful():
         import sys
         sys.exit(1)
