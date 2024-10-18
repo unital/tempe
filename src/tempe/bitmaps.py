@@ -8,13 +8,13 @@ class Bitmaps(Shape):
     """Draw framebuffer bitmaps at points"""
 
     def __init__(
-        self, geometry, buffers, *, key=None, palette=None, surface=None, clip=None
+        self, geometry, buffers, *, key=-1, palette=None, surface=None, clip=None
     ):
         super().__init__(surface, clip=clip)
         self.geometry = geometry
         self.buffers = buffers
-        self.key = None
-        self.palette = None
+        self.key = key
+        self.palette = palette
 
     def update(self, geometry=None, buffers=None):
         if geometry is not None:
@@ -30,10 +30,28 @@ class Bitmaps(Shape):
         yield from zip(self.geometry, self.buffers)
 
     def draw(self, buffer, x=0, y=0):
-        for geometry, buf in self:
+        if self.palette is not None:
+            palette = framebuf.FrameBuffer(self.palette, len(self.palette), 1, framebuf.RGB565)
+        for geometry, fbuf in self:
             px = geometry[0] - x
             py = geometry[1] - y
-            buffer.blit(buffer, px, py, self.key, self.palette)
+            if self.palette is not None:
+                buffer.blit(fbuf, px, py, self.key, palette)
+            else:
+                buffer.blit(fbuf, px, py, self.key)
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
+            min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
+            max_y = max(max_y, geometry[1], geometry[1] + geometry[3])
+            min_y = min(min_y, geometry[1], geometry[1] + geometry[3])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
 class ColoredBitmaps(ColoredGeometry):
@@ -65,4 +83,17 @@ class ColoredBitmaps(ColoredGeometry):
             palette_buf[1] = color
             px = geometry[0] - x
             py = geometry[1] - y
-            buffer.blit(buffer, px, py, BLIT_KEY_RGB565, palette)
+            buffer.blit(buf, px, py, BLIT_KEY_RGB565, palette)
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
+            min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
+            max_y = max(max_y, geometry[1], geometry[1] + geometry[3])
+            min_y = min(min_y, geometry[1], geometry[1] + geometry[3])
+
+        return (min_x, min_y, max_x - min_x, max_y - min_y)

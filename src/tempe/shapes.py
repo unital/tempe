@@ -166,7 +166,7 @@ class Polygons(FillableGeometry):
             max_y = max(max_y, max(geometry[1::2]))
             min_y = min(min_y, min(geometry[1::2]))
 
-        return (min_x, min_y, max_x - min_x, max_y - min_y)
+        return (min_x - 1, min_y - 1, max_x - min_x + 2, max_y - min_y + 2)
 
 
 class Rectangles(FillableGeometry):
@@ -256,4 +256,4 @@ class Ellipses(FillableGeometry):
             max_y = max(max_y, geometry[1] + abs(geometry[3]))
             min_y = min(min_y, geometry[1] - abs(geometry[3]))
 
-        return (min_x, min_y, max_x - min_x, max_y - min_y)
+        return (min_x - 1, min_y - 1, max_x - min_x + 2, max_y - min_y + 2)
