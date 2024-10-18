@@ -39,7 +39,10 @@ class FileDisplay(Display):
 
     def __enter__(self):
         if self._io is None:
-            self._io = open(self.name, 'r+b')
+            try:
+                self._io = open(self.name, 'r+b')
+            except OSError:
+                self._io = open(self.name, 'wb')
 
     def __exit__(self, *args):
         self._io.close()
