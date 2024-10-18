@@ -4,9 +4,7 @@ Beautiful Micropython Graphics
 
 <img src="./pico-tempe.png" width="480" alt="A Raspberry Pi Pico with a data visualization on a screen" />
 
-<img src="./pico-tempe-shapes.png" width="480" alt="A Raspberry Pi Pico with a variety of shapes drawn on a screen" />
-
-<img src=".//docs/source/user_guide/shapes.png" width="480" alt="A variety of shapes drawn in an image" />
+<img src="./pico-tempe-shapes.png" width="480" alt="A Raspberry Pi Pico with a variety of shapes drawn on a screen" /> <img src=".//docs/source/user_guide/shapes.png" width="160" alt="A variety of shapes drawn in an image" />
 
 Tempe is a pure-Micropython graphics system designed to be make using the
 full capabilities of display devices more accessible, particularly on
