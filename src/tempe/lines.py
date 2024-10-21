@@ -59,7 +59,8 @@ class WidePolyLines(ColoredGeometry):
     def draw(self, buffer, x=0, y=0):
         vertices = array('h', bytearray(16))
         for geometry, color in self:
-            lines, w = geometry
+            w = geometry[-1]
+            lines = geometry[:-1]
             for i in range(0, len(lines) - 2, 2):
                 x0 = lines[i]
                 y0 = lines[i+1]
@@ -84,7 +85,8 @@ class WidePolyLines(ColoredGeometry):
         max_y = -0x7fff
         min_y = 0x7fff
         for geometry in self.geometry:
-            lines, w = geometry
+            w = geometry[-1]
+            lines = geometry[:-1]
             for i in range(0, len(lines), 2):
                 max_x = max(max_x, lines[i] + w)
                 min_x = min(min_x, lines[i] - w)

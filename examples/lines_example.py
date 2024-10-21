@@ -53,16 +53,13 @@ surface.add_shape('DRAWING', lines)
 # draw some polylines
 polylines = WidePolyLines(
     RowGeometry([
-        (
-            array('h', [
-                10 + 30 * i, 125,
-                10 + 30 * i, 225,
-                15 + 30 * i, 225,
-                25 + 30 * i, 165,
-                10 + 30 * i, 125,
-            ]),
-            i+1,
-        )
+        array('h', [
+            10 + 30 * i, 125,
+            10 + 30 * i, 225,
+            15 + 30 * i, 225,
+            25 + 30 * i, 165,
+            10 + 30 * i, 125,
+        ] + [i+1])
         for i in range(10)
     ]),
     Interpolated(viridis, 10),

@@ -9,6 +9,7 @@
         ["tempe/geometry.py", "github:unital/tempe/src/tempe/geometry.py"],
         ["tempe/lines.py", "github:unital/tempe/src/tempe/lines.py"],
         ["tempe/markers.py", "github:unital/tempe/src/tempe/markers.py"],
+        ["tempe/polar.py", "github:unital/tempe/src/tempe/polar.py"],
         ["tempe/raster.py", "github:unital/tempe/src/tempe/raster.py"],
         ["tempe/shapes.py", "github:unital/tempe/src/tempe/shapes.py"],
         ["tempe/surface.py", "github:unital/tempe/src/tempe/surface.py"],
