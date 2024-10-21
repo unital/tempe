@@ -1,6 +1,18 @@
 {
     "urls": [
         ["tempe/__init__.py", "github:unital/tempe/src/tempe/__init__.py"],
+        ["tempe/_data_view_math.py", "github:unital/tempe/src/tempe/_data_view_math.py"],
+        ["tempe/bitmaps.py", "github:unital/tempe/src/tempe/bitmaps.py"],
+        ["tempe/data_view.py", "github:unital/tempe/src/tempe/data_view.py"],
+        ["tempe/display.py", "github:unital/tempe/src/tempe/display.py"],
+        ["tempe/geometry.py", "github:unital/tempe/src/tempe/geometry.py"],
+        ["tempe/lines.py", "github:unital/tempe/src/tempe/lines.py"],
+        ["tempe/markers.py", "github:unital/tempe/src/tempe/markers.py"],
+        ["tempe/raster.py", "github:unital/tempe/src/tempe/raster.py"],
+        ["tempe/shapes.py", "github:unital/tempe/src/tempe/shapes.py"],
+        ["tempe/surface.py", "github:unital/tempe/src/tempe/surface.py"],
+        ["tempe/text.py", "github:unital/tempe/src/tempe/text.py"],
+        ["tempe/util.py", "github:unital/tempe/src/tempe/util.py"]
     ],
     "version": "0.1"
 }
