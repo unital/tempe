@@ -94,10 +94,9 @@ class WidePolyLines(ColoredGeometry):
         return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
-@micropython.viper
-def line_points(x0: int, y0: int, x1: int, y1: int, w: int, d: int, vertices: ptr16):
-    dx: int = x1 - x0
-    dy: int = y1 - y0
+def line_points(x0, y0, x1, y1, w, d, vertices):
+    dx = x1 - x0
+    dy = y1 - y0
 
     # stuff to handle inter division always round down, when we really
     # want away from 0
@@ -125,3 +124,7 @@ def line_points(x0: int, y0: int, x1: int, y1: int, w: int, d: int, vertices: pt
     vertices[6] = x0 - mx
     vertices[7] = y0 - my
 
+try:
+    from ._speedups import line_points
+except SyntaxError:
+    pass

@@ -99,8 +99,7 @@ if __name__ == '__main__':
 else:
 
     # set up the display object
-    display = FileDisplay('shapes.rgb565', (320, 240))
-
+    display = FileDisplay('lines.rgb565', (320, 240))
     # refresh the display
     with display:
         display.clear()
