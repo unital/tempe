@@ -35,6 +35,7 @@ circle_grid = Circles(
     ]),
     Repeat(grey_e),
     fill=False,
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('UNDERLAY', circle_grid)
 ray_grid = Lines(
@@ -44,6 +45,7 @@ ray_grid = Lines(
         Repeat(60),
     ])),
     Repeat(grey_e),
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('UNDERLAY', ray_grid)
 coxcomb = Polygons(
@@ -54,6 +56,7 @@ coxcomb = Polygons(
         Repeat(60)
     ])),
     Interpolated(viridis, 6),
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('DRAWING', coxcomb)
 
@@ -66,6 +69,7 @@ circle_grid = Circles(
     ]),
     Repeat(grey_e),
     fill=False,
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('UNDERLAY', circle_grid)
 ray_grid = Lines(
@@ -75,6 +79,7 @@ ray_grid = Lines(
         Repeat(60),
     ])),
     Repeat(grey_e),
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('UNDERLAY', ray_grid)
 radar = Polygons(
@@ -86,6 +91,7 @@ radar = Polygons(
     ),
     Interpolated(viridis, 6),
     fill=False,
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('DRAWING', radar)
 markers = Markers(
@@ -100,6 +106,7 @@ markers = Markers(
     ]),
     Repeat(grey_3),
     [f" {x}" for x in [6, 3, 9, 1, 9, 12]],
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('OVERLAY', markers)
 
@@ -111,6 +118,7 @@ circle_bar = Polygons(
         [240, 320, 100],
     ]), decimation=6),
     Interpolated(viridis, 3),
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('DRAWING', circle_bar)
 circle_bar_ends = Circles(
@@ -123,6 +131,7 @@ circle_bar_ends = Circles(
     ]),
     Interpolated(viridis, 3),
     fill=True,
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('DRAWING', circle_bar_ends)
 
@@ -140,6 +149,7 @@ donut = Polygons(
     ]), decimation=10),
     Interpolated(viridis, 6),
     fill=True,
+    clip=(0, 0, 320, 240),
 )
 surface.add_shape('DRAWING', donut)
 
@@ -172,7 +182,7 @@ if __name__ == '__main__':
 elif __name__ != '__test__':
 
     # set up the display object
-    display = FileDisplay('lines.rgb565', (320, 240))
+    display = FileDisplay('polar.rgb565', (320, 240))
     # refresh the display
     with display:
         display.clear()
