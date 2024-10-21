@@ -143,36 +143,8 @@ donut = Polygons(
 )
 surface.add_shape('DRAWING', donut)
 
-# # draw a radar plot
-# circle_grid = Circles(
-#     ColumnGeometry([
-#         Repeat(196),
-#         Repeat(64),
-#         Range(10, 70, 10),
-#     ]),
-#     Repeat(grey_e),
-#     fill=False,
-# )
-# surface.add_shape('UNDERLAY', circle_grid)
-# radar = PolyLines(
-#     SpiralGeometry.from_center_radii_angles(
-#         Extend([
-#             ColumnGeometry([
-#                 Repeat(196),
-#                 Repeat(64),
-#             ]),
-#             StripGeometry(
-#                 array('h', [30, 0, 15, 60, 45, 120, 5, 180, 45, 240, 60, 300, 30, 360]),
-#             ),
-#         ]),
-#     ),
-#     Interpolated(viridis, 6),
-# )
-# surface.add_shape('DRAWING', radar)
-
 
 def main(surface, working_buffer):
-
 
     async def init_display():
         from devices.st7789 import ST7789
