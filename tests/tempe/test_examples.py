@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import array
+import gc
 import unittest
 
 from tempe.display import FileDisplay
@@ -15,6 +16,7 @@ class TestExamples(unittest.TestCase):
         """Bytewise comparison that output of examples is what is expected."""
 
         examples = [
+            ("examples/polar_example.py", "tests/tempe/polar.rgb565"),
             ("examples/lines_example.py", "tests/tempe/lines.rgb565"),
             ("examples/shapes_examples.py", "tests/tempe/shapes.rgb565"),
         ]
@@ -22,6 +24,7 @@ class TestExamples(unittest.TestCase):
             print(file, result)
             self.subTest(example=file)
 
+            gc.collect()
             code = open(file, 'r').read()
             locals = {"__name__": "__test__"}
             exec(code, locals)

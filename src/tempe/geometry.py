@@ -1,6 +1,8 @@
-from .data_view import DataView
 
 from array import array
+from math import pi, sin, cos
+
+from .data_view import DataView
 
 POINT = "point"
 CIRCLE = "circle"
@@ -43,7 +45,11 @@ class ColumnGeometry(Geometry):
             yield array("h", coords)
 
     def __len__(self):
-        return max(len(coord) for coord in self.geometry)
+        lengths = [len(coord) for coord in self.geometry if len(coord) is not None]
+        if lengths:
+            return max(lengths)
+        else:
+            return None
 
 
 class StripGeometry(Geometry):
@@ -65,9 +71,29 @@ class StripGeometry(Geometry):
         start = 0
         buf = array("h", bytearray(2 * size))
         for i in range(len(self)):
-            start += self.step * self.n_coords
             buf[:] = self.geometry[start : start + size]
+            start += self.step * self.n_coords
             yield buf
 
     def __len__(self):
-        return ((len(self.geometry) // self.n_coords) - self.n_vertices) // self.step
+        return ((len(self.geometry) // self.n_coords) - self.n_vertices) // self.step + 1
+
+
+class Extend(Geometry):
+
+    def __iter__(self):
+        for coords in zip(*self.geometry):
+            buf = array('h', bytearray(2*sum(len(coord) for coord in coords)))
+            i = 0
+            for coord in coords:
+                buf[i:i + len(coord)] = coord
+                i += len(coord)
+            yield buf
+
+    def __len__(self):
+        lengths = [len(coord) for coord in self.geometry if len(coord) is not None]
+        if lengths:
+            return max(lengths)
+        else:
+            return None
+

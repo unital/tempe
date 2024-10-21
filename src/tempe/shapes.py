@@ -144,6 +144,36 @@ class VLines(ColoredGeometry):
         return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
+class PolyLines(ColoredGeometry):
+    """Render multiple colored polylines with line-width 1.
+
+    Geometry should produce x0, y0, x1, y1 arrays.
+    """
+
+    def draw(self, buffer, x=0, y=0):
+        for geometry, color in self:
+            for i in range(0, len(geometry) - 2, 2):
+                x0 = geometry[i] - x
+                y0 = geometry[i + 1] - y
+                x1 = geometry[i + 2] - x
+                y1 = geometry[i + 3] - y
+                buffer.line(x0, y0, x1, y1, color)
+
+    def _bounds(self):
+        max_x = -0x7fff
+        min_x = 0x7fff
+        max_y = -0x7fff
+        min_y = 0x7fff
+        for geometry in self.geometry:
+            geometry = list(geometry)
+            max_x = max(max_x, max(geometry[::2]))
+            min_x = min(min_x, min(geometry[::2]))
+            max_y = max(max_y, max(geometry[1::2]))
+            min_y = min(min_y, min(geometry[1::2]))
+
+        return (min_x - 1, min_y - 1, max_x - min_x + 2, max_y - min_y + 2)
+
+
 class Polygons(FillableGeometry):
     """Render multiple polygons.
 
