@@ -1,6 +1,7 @@
 {
     "urls": [
         ["tempe/__init__.py", "github:unital/tempe/src/tempe/__init__.py"],
+        ["tempe/_speedups.py", "github:unital/tempe/src/tempe/_speedups.py"],
         ["tempe/_data_view_math.py", "github:unital/tempe/src/tempe/_data_view_math.py"],
         ["tempe/bitmaps.py", "github:unital/tempe/src/tempe/bitmaps.py"],
         ["tempe/data_view.py", "github:unital/tempe/src/tempe/data_view.py"],
