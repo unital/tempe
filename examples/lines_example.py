@@ -96,7 +96,7 @@ if __name__ == '__main__':
     # if we have an actual screen, use it
     main(surface, working_buffer)
 
-else:
+elif __name__ != '__test__':
 
     # set up the display object
     display = FileDisplay('lines.rgb565', (320, 240))

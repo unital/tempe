@@ -15,8 +15,8 @@ class TestExamples(unittest.TestCase):
         """Bytewise comparison that output of examples is what is expected."""
 
         examples = [
-            ("examples/shapes_examples.py", "tests/tempe/shapes.rgb565"),
             ("examples/lines_example.py", "tests/tempe/lines.rgb565"),
+            ("examples/shapes_examples.py", "tests/tempe/shapes.rgb565"),
         ]
         for file, result in examples:
             print(file, result)
