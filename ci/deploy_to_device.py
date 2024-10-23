@@ -14,6 +14,7 @@ def deploy():
     try:
         deploy_py_files(Path("examples"), ":", clear=False)
         deploy_py_files(Path("examples/devices"), ":/devices")
+        deploy_py_files(Path("examples/data"), ":/data")
         deploy_py_files(Path("src/tempe"), ":/lib/tempe")
         #deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts")
         #deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps")
@@ -31,7 +32,7 @@ def deploy_py_files(path: Path, destination, clear=True):
             print('remove', destination, '...')
             for file in listdir(destination):
                 file = file.decode('utf-8')
-                if not (file.endswith('.py') or file.endswith('.mpy')):
+                if not (file.endswith('.py') or file.endswith('.mpy') or file.endswith('.af')):
                     continue
                 print('remove', f"{destination}/{file}")
                 try:
@@ -45,6 +46,9 @@ def deploy_py_files(path: Path, destination, clear=True):
         mpremote("cp", str(file), f"{destination}/{file.name}")
 
     for file in path.glob("*.mpy"):
+        mpremote("cp", str(file), f"{destination}/{file.name}")
+
+    for file in path.glob("*.af"):
         mpremote("cp", str(file), f"{destination}/{file.name}")
 
 
