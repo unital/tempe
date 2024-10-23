@@ -2,7 +2,7 @@ import asyncio
 from array import array
 
 from .raster import Raster
-from .shapes import Polygons, Rectangles, Lines, VLines, HLines
+from .shapes import Circles, Ellipses, Polygons, Rectangles, Lines, VLines, HLines
 from .util import contains
 
 
@@ -67,13 +67,23 @@ class Surface:
         shape.update()
         shape.surface = None
 
-    def polys(self, layer, geometry, colors, clip=None):
-        shape = Polygons(geometry, colors, clip=clip)
+    def polys(self, layer, geometry, colors, fill=True, clip=None):
+        shape = Polygons(geometry, colors, fill=fill, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
-    def rects(self, layer, geometry, colors, clip=None):
-        shape = Rectangles(geometry, colors, clip=clip)
+    def rects(self, layer, geometry, colors, fill=True, clip=None):
+        shape = Rectangles(geometry, colors, fill=fill, clip=clip)
+        self.add_shape(layer, shape)
+        return shape
+
+    def circles(self, layer, geometry, colors, fill=True, clip=None):
+        shape = Circles(geometry, colors, fill=fill, clip=clip)
+        self.add_shape(layer, shape)
+        return shape
+
+    def ellipses(self, layer, geometry, colors, fill=True, clip=None):
+        shape = Ellipses(geometry, colors, fill=fill, clip=clip)
         self.add_shape(layer, shape)
         return shape
 
@@ -93,6 +103,12 @@ class Surface:
         return shape
 
     def points(self, layer, geometry, colors, markers, clip=None):
+        from .markers import Points
+        points = Points(geometry, colors, markers, clip=clip)
+        self.add_shape(layer, points)
+        return points
+
+    def markers(self, layer, geometry, colors, markers, clip=None):
         from .markers import Markers
         points = Markers(geometry, colors, markers, clip=clip)
         self.add_shape(layer, points)

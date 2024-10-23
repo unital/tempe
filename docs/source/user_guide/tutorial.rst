@@ -293,7 +293,11 @@ Complex Shapes
 ==============
 
 Beyond simple geometric shape classes, Tempe provides a number of more complex
-shapes
+shapes:
+
+..  image:: shapes.png
+    :width: 160
+
 
 Text and Fonts
 --------------
@@ -325,28 +329,48 @@ like the following:
 ..  image:: hello_font.png
     :width: 160
 
-Markers and Scatterplots
-------------------------
+Markers and Points
+------------------
+
+The |Points| shape expects a geometry consisting of an x, y point, the colors
+for each point and what to display at each point.  This can be:
+
+- the special constant :py:attr:`Marker.PIXEL` to draw a single pixel
+- a string, which will get rendered at the location in the default framebuf font
+- a :py:class:`framebuf.FrameBuffer` containing a 1-bit image
+- a :py:class:`array` of 16-bit integers giving a polygon to fill
 
 The |Markers| shape expects a geometry consisting of an x, y point and a
 marker size, the colors for each marker and the shape of each marker.
-The marker shapes can be specified as:
-
-- constants :py:attr:`Marker.CIRCLE`, :py:attr:`Marker.SQUARE`, etc. for
-  standard marker shapes
-- a string, which will get rendered at the location in the default framebuf font
-- a :py:class:`framebuf.FrameBuffer` containing a 1-bit image
-
-The string and :py:class:`framebuf.FrameBuffer` markers currently ignore the
-size parameter.
+The marker shapes can be specified in the same way as |Points| (which are
+not scaled by size), but additionally as constants :py:attr:`Marker.CIRCLE`,
+:py:attr:`Marker.SQUARE`, etc. which will be scaled according to the sizes.
 
 Bitmaps
 -------
 
 The |Bitmaps| shape blits FrameBuffer instances at the given locations.
 These must either be in RGB565 format, or supply a palette and optional
-key-color for transparency.  The |ColoredBitmaps| shapes render 1-bit
+key-color for transparency.  The |ColoredBitmaps| shape render 1-bit
 framebuffers in the specified colors.
+
+Polar Geometries
+----------------
+
+When working with polar plots it is common to have geometry specified by
+polar ``(r, theta)`` coordinates.  For example, a donut plot consists of
+multiple annular sectors whose geometry can be easily expressed as sets
+of ``(r, theta, delta_r, delta_theta)`` coordinates.  To draw these, they
+need to be converted to Cartesian screen coordinates and an appropriate
+geometry for the shape.  A number of functions are provided in
+:py:mod:`tempe.polar_geometry` to perform those conversions.  For example
+:py:func:`tempe.polar_geometry.polar_rects` converts annular sectors to
+polygon geometries, which can then be assigned colors and used to create
+|Polygons|.
+
+Since Tempe expects coordinates to be given as unsigned 16-bit integers,
+angles are expressed as degrees.  There is no scaling performed in these
+transformations, so the radial unit length is a pixel.
 
 
 Convenience Methods
@@ -354,12 +378,297 @@ Convenience Methods
 
 So far we have been using a pattern of two-step creation of shapes, where
 we first create a shape and then add it to a layer of a surface.  Since you
-almost always want to add shapes to a layer immediatel after creating them,
+almost always want to add shapes to a layer immediately after creating them,
 the |Surface| class has a collection of methods for creating and adding
 standard shapes in one step.
 
 TODO: example
 
+Data Visualization
+==================
+
+Bringing all of this toegther, we can easily build standard data
+visualizations out of the building blocks that Tempe provides.
+
+Time Plots
+----------
+
+Microcontrollers are frequently going to read data from sensors of
+various sorts, so a common need is to plot these values as they vary
+over time.  Since sensors are likely to be measuring a nominally
+continuous value, a time-series plot is a common visualization
+that will be understood by most end-users.
+
+Let's say that we have a collection of temperatures collected over
+the last couple of days at 10 minute intervals, and their corresponding
+timestamps::
+
+    temperature = array.array('f', [14.87, 14.88, 14.79, 14.94, ... ])
+    timestamps = array.array('I', [1729500000, 1729500600, 1729501200, ...])
+
+We need to convert these to screen coordinates, so we need a basic idea
+of the size of the plot and the ranges of values we want to display.  In
+this data set the temperature range is from 12.09°C to 20.36°C, so a range
+from 11°C to 21°C would be reasonable to encompass the data (if you were
+dynamically gathering the data you would need some heuristics to choose
+the range for the actual data, of course).  Our screen has a height of
+240 pixels, and we want some space for titles, axes, etc. so we will use
+the region from pixel row 20 to pixel row 220 for the plot.  Note that
+because plots usually have the y-axis oriented upwards but raster graphics
+has row 0 at the top, we have that row 20 corresponds to 21°C and row
+220 corresponds to 11°C.
+
+We can define a simple generic scaling class like::
+
+    class LinearScale:
+        """Object that maps data to screen values linearly."""
+
+        def __init__(self, low_data, low_screen, high_data, high_screen):
+            self.low_data = low_data
+            self.low_screen = low_screen
+            self.high_data = high_data
+            self.high_screen = high_screen
+            data_range = high_data - low_data
+            screen_range = high_screen - low_screen
+            self.scale = screen_range / data_range
+
+        def scale_values(self, data):
+            """Scale data values to screen values."""
+            screen = array('h', bytearray(2*len(data)))
+            low_data = self.low_data
+            low_screen = self.low_screen
+            scale = self.scale
+            for i, value in enumerate(data):
+                screen[i] = int(low_screen + scale * (value - low_data))
+            return screen
+
+and then use it to scale the temperatures::
+
+    y = 20
+    h = 200
+    y1 = y + h
+
+    temperature_scale = LinearScale(11, y1, 21, y)
+    ys = scale_values(temperature)
+
+Similarly if we want to display the last day's worth of temperatures, with
+x-values ranging from 24 to 312, we get::
+
+    x = 24
+    w = 288
+    x1 = x + w
+
+    time_scale = LinearScale(1729586400, x, 1729672200, x1)
+    xs = time_scale.scale_values(timestamps)
+
+..  note::
+
+    It's worth defining a class for this, as we will likely re-use the
+    object when creating axis tick marks, labels and grid lines.
+
+
+Plotting Points
+~~~~~~~~~~~~~~~
+
+Since we have aligned x and y values, we can create a geometry for the
+sample points using a |ColumnGeometry|::
+
+    points = ColumnGeometry([xs, ys])
+
+We want constant values for color and the marker type, so we can use
+``Repeat(colors.grey_3)`` to get an dark grey color for all points and
+``Repeat(Marker.PIXEL)`` to mark each data point with a pixel, and then
+we can display with the convenience function
+:py:meth:`~tempe.surface.Surface.point`.  Because the data covers two
+days but we only are showing the last, we want to make sure that the
+plot is clipped to the screen region we want to use, otherwise points
+will be drawn in the margins::
+
+    surface.points(
+        "DRAWING",
+        points,
+        Repeat(colors.grey_3),
+        Repeat(Marker.PIXEL),
+        clip=(x, y, w, h),
+    )
+
+This produces a visualization like this:
+
+..  image:: line_plot_1.png
+    :width: 160
+
+Plotting Lines
+~~~~~~~~~~~~~~
+
+This is showing the data in an acceptable way (and if the data were noisier,
+this might be a very good way to display it), but the data is nominally
+continuous, so it would make sense to instead use a line plot to show the
+data.  To draw lines, we need a geometry that produces coordinates of the
+form ``(x0, y0, x1, y1)``.
+
+We could manually do this by slicing::
+
+    y0s = temperature_scale.scale_values(temperature[:-1])
+    y1s = temperature_scale.scale_values(temperature[1:])
+    x0s = time_scale.scale_values(timestamps[:-1])
+    x1s = time_scale.scale_values(timestamps[1:])
+
+    lines = ColumnGeometry([x0s, y0s, x1s, y1s])
+
+    surface.lines(
+        "DRAWING",
+        lines,
+        Repeat(colors.grey_3),
+        clip=(x, y, w, h),
+    )
+
+This works, but it is memory-intensive, we are effectively storing the point
+data twice: the cost for this dataset is small (a bit over 1K bytes), but for
+larger data sets it can be substantial.  We were also sloppy in slicing the
+original data, which will have created 4 temporary arrays each also about 1K
+in size, but this could be avoided with clever use of :py:class:`memoryview`
+objects.
+
+But there is a better way of doing this.  The |PointsToLines| class can be
+used to iterate through a point, re-using previous values.  So if we instead
+do::
+
+    points = ColumnGeometry([xs, ys])
+    lines = PointsToLines(points)
+
+    surface.lines(
+        "DRAWING",
+        lines,
+        Repeat(colors.grey_3),
+        clip=(x, y, w, h),
+    )
+
+This produces a visualization like this:
+
+..  image:: line_plot_2.png
+    :width: 160
+
+Plot Decorations
+~~~~~~~~~~~~~~~~
+
+Now we have the data displayed, we need to put it into context so the
+user can make sense of the values.  Due to the small screen sizes, care
+needs to be taken to ensure that the display is legible.
+
+We likely want to indicate to the user which parts of the screen are part
+of the plot and which are not.  You can do this in a couple of ways, such as
+by drawing distinct axis lines or by distinguishing the rectangle of the
+plot region (eg. with a border or color change).  All are acceptable, but
+whatever combination you decide you prefer you should be consistent across
+all the plots in your application.
+
+.. grid::
+
+    .. grid-item-card:: Plot Axes
+
+        ..  image:: line_plot_axes.png
+            :width: 160
+
+        ..  code-block::
+
+            surface.hlines(
+                'UNDERLAY',
+                [(x, y1, w)],
+                [colors.grey_c],
+            )
+            surface.vlines(
+                'UNDERLAY',
+                [(x, y, h)],
+                [colors.grey_c],
+            )
+
+    .. grid-item-card:: Plot Border
+
+        ..  image:: line_plot_border.png
+            :width: 160
+
+        ..  code-block::
+
+            surface.rects(
+                'BACKGROUND',
+                [(x, y, w, h)],
+                [colors.grey_d],
+                fill=False,
+            )
+
+    .. grid-item-card:: Plot Background
+
+        ..  image:: line_plot_bg.png
+            :width: 160
+
+        ..  code-block::
+
+            surface.rects(
+                'BACKGROUND',
+                [(x, y, w, h)],
+                [colors.white],
+            )
+
+    .. grid-item-card:: All Three
+
+        ..  image:: line_plot_3.png
+            :width: 160
+
+Next you typically need some way to give the user a sense of scale for
+the axes.  Because of limited screen size it is unlikely that users will
+be using your plot to get precise values, but you generally do want them
+to get an idea of data ranges and trends.
+
+Common ways to give reference points for scaling are with grids and axes
+ticks.  In both cases you want to take data values that you want to highlight,
+map them to screen coordinates and then draw ``hlines`` or ``vlines`` as
+needed.
+
+So to draw temperature axis tick marks, you can do something like::
+
+    tick_length = 4
+    tick_temps = [12.5, 15, 17.5, 20]
+    temp_marks = temperature_scale.scale_values([12.5, 15, 17.5, 20])
+    surface.hlines(
+        'UNDERLAY',
+        ColumnGeometry([Repeat(x - tick_length), temp_marks, Repeat(tick_length)]),
+        Repeat(colors.grey_c),
+    )
+
+and to draw tick labels and grid lines, you just change the geometries appropriately
+to draw across the plot::
+
+    label_temps = [15, 20]
+    temp_labels = temperature_scale.scale_values([15, 20])
+
+    surface.hlines(
+        'UNDERLAY',
+        ColumnGeometry([Repeat(x), temp_marks, Repeat(w)]),
+        Repeat(colors.grey_f),
+    )
+
+    surface.text(
+        'OVERLAY',
+        ColumnGeometry([Repeat(4), temp_labels]),
+        Repeat(colors.grey_a),
+        [f"{t}" for t in label_temps],
+    )
+
+Finally, we can draw titles and other labels about the graph.  One note is that
+there is at present no way to draw rotated text with Tempe, which can limit
+options for axis titles.
+
+Because drawing text is comparatively expensive, we want to give enough context
+that the user can understand what the plot is showing.  Because the x-axis is
+labelled with times, we probably don't need to label it further, and we can use
+the plot title and some additional text to make it clear that this is a plot of
+temperature and the wider context of time (ie. the days that the measurements
+were taken).
+
+The total result is something like this:
+
+..  image:: line_plot_4.png
+    :width: 160
 
 
 .. |FrameBuffer| replace:: :py:class:`~framebuf.FrameBuffer`
@@ -372,6 +681,7 @@ TODO: example
 .. |Circles| replace:: :py:class:`~tempe.shapes.Circles`
 .. |Text| replace:: :py:class:`~tempe.text.Text`
 .. |Markers| replace:: :py:class:`~tempe.markers.Markers`
+.. |Points| replace:: :py:class:`~tempe.markers.Points`
 .. |Bitmaps| replace:: :py:class:`~tempe.bitmaps.Bitmaps`
 .. |ColoredBitmaps| replace:: :py:class:`~tempe.bitmaps.ColoredBitmaps`
 .. |Display| replace:: :py:class:`~tempe.display.Display`
@@ -379,6 +689,7 @@ TODO: example
 .. |RowGeometry| replace:: :py:class:`~tempe.geometry.RowGeometry`
 .. |ColumnGeometry| replace:: :py:class:`~tempe.geometry.ColumnGeometry`
 .. |StripGeometry| replace:: :py:class:`~tempe.geometry.StripGeometry`
+.. |PointsToLines| replace:: :py:class:`~tempe.geometry.PointsToLines`
 .. |DataView| replace:: :py:class:`~tempe.data_view.DataView`
 .. |Repeat| replace:: :py:class:`~tempe.data_view.Repeat`
 .. |Cycle| replace:: :py:class:`~tempe.data_view.Cycle`
