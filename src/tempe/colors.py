@@ -51,5 +51,6 @@ grey_e = rgb444_to_rgb565(0xE, 0xE, 0xE)
 grey_f = rgb444_to_rgb565(0xF, 0xF, 0xF)
 
 lime = rgb565(0.0, 1.0, 0.0)
+green = rgb565(0.0, 0.5, 0.0)
 red = rgb565(1.0, 0.0, 0.0)
 blue = rgb565(0.0, 0.0, 1.0)
