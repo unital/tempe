@@ -18,7 +18,7 @@ updates, and so on.
 
 <img src="./pico-tempe-polar.png" width="480" alt="A Raspberry Pi Pico with a variety of polar plots on the screen" /> <img src="./docs/source/user_guide/polar.png" width="160" alt="A variety of polar plots drawn in an image" />
 
-<img src="./docs/source/user_guide/line_plot_4.png" width="160" alt="A line plot of temperature over time drawn in an image" /> <img src="./docs/source/user_guide/scatter_plot.png" width="160" alt="A scatter plot of environmental data with scales drawn in an image" />
+<img src="./docs/source/user_guide/line_plot_4.png" width="160" alt="A line plot of temperature over time drawn in an image" /> <img src="./docs/source/user_guide/scatter_plot.png" width="160" alt="A scatter plot of environmental data with scales drawn in an image" /> <img src="./docs/source/user_guide/polar_plot.png" width="160" alt="A polar plot of air quality data over time in an image" />
 
 ## Documentation
 

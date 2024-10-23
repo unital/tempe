@@ -159,7 +159,7 @@ xs = air_quality_scale.scale_values(air_quality)
 marker_sizes = humidity_scale.scale_values(humidity)
 marker_colors = time_scale.scale_values(timestamps)
 
-# Create line geometry for the data points
+# Create point-size geometry for the data points
 markers = ColumnGeometry([xs, ys, marker_sizes])
 
 # draw the plot
@@ -366,14 +366,14 @@ def main(surface, working_buffer):
 
 if __name__ == '__main__':
 
-    # if we have an actual screen, use it
-    main(surface, working_buffer)
+#     # if we have an actual screen, use it
+#     main(surface, working_buffer)
 
-elif __name__ != '__test__':
+# elif __name__ != '__test__':
     from tempe.display import FileDisplay
 
     # set up the display object
-    display = FileDisplay('line_plot.rgb565', (320, 240))
+    display = FileDisplay('scatter_plot.rgb565', (320, 240))
     # refresh the display
     with display:
         display.clear()
