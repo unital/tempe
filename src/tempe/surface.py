@@ -119,3 +119,15 @@ class Surface:
         text = Text(geometry, colors, texts, bold=bold, font=font, clip=clip)
         self.add_shape(layer, text)
         return text
+
+    def bitmaps(self, layer, geometry, bitmaps, colors=None, key=-1, palette=None, clip=None):
+        if colors is None:
+            from .bitmaps import Bitmaps
+            bitmaps = Bitmaps(geometry, bitmaps, key=key, palette=palette, clip=clip)
+            self.add_shape(layer, bitmaps)
+            return bitmaps
+        else:
+            from .bitmaps import ColoredBitmaps
+            bitmaps = ColoredBitmaps(geometry, colors, bitmaps, clip=clip)
+            self.add_shape(layer, bitmaps)
+            return bitmaps
