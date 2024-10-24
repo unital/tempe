@@ -17,7 +17,7 @@ surface = Surface()
 working_buffer = array('H', bytearray(2*320*81))
 
 
-# fill the background with off-white pixels
+# fill the background with off-black pixels
 surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_1])
 
 class LinearScale:
@@ -105,10 +105,17 @@ surface.lines(
 quality_label_values = [50, 100, 150]
 quality_label_rs = air_quality_scale.scale_values(quality_label_values)
 time_label_values = [1729551600 + i*3600 for i in range(6, 24, 6)]
-time_label_strings = ["9:00", "12:00", "18:00"]
-time_label_thetas = time_scale.scale_values(time_label_values)
-time_label_rs = [max_r + 8, max_r + 8, max_r + 40]
+time_label_strings = ["0:00", "9:00", "12:00", "18:00"]
+time_label_xs = [cx - 8, cx + max_r + 4, cx - 20, cx - max_r - 44]
+time_label_ys = [cy - max_r - 12, cy - 4, cy + max_r + 4, cy - 4]
 
+
+surface.circles(
+    "BACKGROUND",
+    RowGeometry([[cx, cy, max_r]]),
+    Repeat(colors.black),
+    clip=(cx - max_r, cy - max_r, 2*max_r+1, 2*max_r+1),
+)
 surface.circles(
     "UNDERLAY",
     ColumnGeometry([
@@ -132,22 +139,18 @@ surface.lines(
 )
 
 quality_label_geometry = polar_points(cx, cy, ColumnGeometry([quality_label_rs, Repeat(270)]))
-surface.points(
+surface.text(
     "OVERLAY",
     quality_label_geometry,
-    Repeat(colors.grey_6),
-    [f" {value:d} ppb" for value in quality_label_values],
-    clip=(cx, cy - max_r - 8, 64, 100),
+    Repeat(colors.grey_7),
+    [f"{value:d}" for value in quality_label_values],
+    clip=(cx, cy - max_r - 4, 64, 100),
 )
-time_label_geometry = polar_points(
-    cx,
-    cy,
-    ColumnGeometry([time_label_rs, time_label_thetas]),
-)
-surface.points(
+time_label_geometry = ColumnGeometry([time_label_xs, time_label_ys])
+surface.text(
     "OVERLAY",
     time_label_geometry,
-    Repeat(colors.grey_6),
+    Repeat(colors.grey_7),
     time_label_strings,
     clip=(0, 0, 320, 240),
 )
@@ -158,14 +161,14 @@ from tempe.font import TempeFont
 surface.text(
     'DRAWING',
     [[4, 0]],
-    [colors.grey_7],
+    [colors.grey_a],
     ["Air Quality (ppb)"],
     font=TempeFont(roboto16bold),
 )
 surface.text(
     'DRAWING',
     [[4, 20]],
-    [colors.grey_6],
+    [colors.grey_8],
     ["20/8/24--\n22/8/24"],
     font=TempeFont(roboto16),
 )

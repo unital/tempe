@@ -671,10 +671,204 @@ The total result is something like this:
     :width: 160
 
 
+Scatter Plots
+-------------
+
+..  image:: scatter_plot.png
+    :width: 160
+
+TODO: see examples/scatter_plot.py
+
+Polar Plots
+-----------
+
+..  image:: polar_plot.png
+    :width: 160
+
+TODO: see examples/polar_plots.py
+
+
+Dynamic Updates
+===============
+
+One of Tempe's design goals is to efficiently support dynamic updates
+of the graphics being displayed.  |Surface| objects keep track of regions
+that have changed since the last time that the surface was rendered to a
+display, and when |refresh| is next called, the |Surface| will only re-draw
+those regions.  All |Shape| objects know the region of the surface that they
+occupy have an |update| method that applies appropriate changes to the shape
+and then will tell their |Surface| that their region needs redrawing.
+
+So the simplest possible way of updating dynamically is to always call
+|refresh| immediately after calling |update|.
+
+For example if we want to display the current time continuously, we could
+do something like::
+
+    surface = Surface()
+    time_field = surface.text(
+                "DRAWING",
+        [[10, 10]],
+        [colors.grey_a],
+        [""],
+        font=TempeFont(roboto32boldnumbers),
+        clip=(10, 10, 240, 40),
+    )
+    rtc = RTC()
+
+    while True:
+        h, m, s = rtc.datetime()[4:7]
+        text = f"{h:>2d}:{m:02d}:{s:02d}"
+        # only update if the text has changed
+        if time_field.texts[0] != text:
+            time_field.update(texts=[text])
+            surface.refresh(display, working_buffer)
+        time.sleep(0.1)
+
+While this works, it quickly becomes awkward once there is more than one
+thing going on.  In these situations, the standard approach is to use
+asyncio (Micropython's version of the Python :py:mod:`asyncio`
+module).
+
+Asyncio
+-------
+
+If you are unfamiliar with asyncio, it is worth your time to read up on
+the topic.  The `documentation for Micropython asyncio <https://docs.micropython.org/en/latest/library/asyncio.html>`_
+can give you a basic idea of the capabilities, but Peter Hinch's excellent
+`Micropython asyncio tutorial <https://github.com/peterhinch/micropython-async/blob/master/v3/docs/TUTORIAL.md>`_
+gives better practical advice (and discusses differences with Python's version of
+:py:mod:`asyncio`, if you are familiar with that).
+
+From here on we are going to assume a basic familiarity with asyncio.
+
+Converting our previous example to work asynchronously is not too difficult.
+We need to take the loop and turn it into an ``async`` function, and use
+:py:func:`asyncio.sleep` instead of :py:func:`time.sleep`::
+
+    async def update_time():
+        while True:
+            h, m, s = rtc.datetime()[4:7]
+            text = f"{h:>2d}:{m:02d}:{s:02d}"
+            # only update if the text has changed
+            if time_field.texts[0] != text:
+                time_field.update(texts=[text])
+                surface.refresh(display, working_buffer)
+            await asyncio.sleep(0.1)
+
+This change permits python to do other things during the time that this
+function is sleeping.  You can then schedule this and any other tasks that
+you have using :py:mod:`asyncio.run` and :py:mod:`asyncio.gather`::
+
+    async def main():
+        await asyncio.gather(
+            update_time(),
+            # and other async things that you are running...
+            ...
+        ))
+
+    asyncio.run(main())
+
+This allows you to integrate Tempe drawing with typical asyncio-based code.
+
+Event-Driven Refreshing
+-----------------------
+
+Tempe has one more trick up it's sleeve when it comes to dynamic updates:
+if two regions need updating, but one is contained in the other, Tempe knows
+that it only needs to worry about updating the larger region.  This saves
+calls to update the display, which is moderately time-consuming.
+
+One consequence of this is that while calling |refresh| immediately after
+each |update|, it's generally better to batch |update| calls and then call
+|refresh| once.
+
+For synchronous code, this looks something like::
+
+    while True:
+        ...
+        # update shapes
+        time_field.update(texts=[time_text])
+        temp_field.update(text=[temp_text])
+        temp_plot.update(
+            geometry=ColumnGeometry(
+                [scale_times(times), scale_temps(temps)]
+            )
+        )
+        ...
+
+        # refresh display
+        surface.refresh(display, working_buffer)
+        time.sleep(0.1)
+
+But for asyncio code, how do you handle multiple different tasks updating
+the |Surface| independently?
+
+Although |Surface| isn't tightly integrated with asyncio, it does have one
+hook that asyncio-based code can make use of:
+
+- when a |Shape| tells a |Surface| that a region needs updating, the
+  |Surface| has an :py:class:`asyncio.Event` instance |refresh_needed|
+  which it fires.
+- when |refresh| is called, it resets the |refresh_needed| event.
+
+This means that you can have an asyncio task that awaits |refresh_needed|
+and then calls |refresh|::
+
+    async def refresh_display(surface, display, working_buffer):
+        while True:
+            await surface.refresh_needed.wait()
+            surface.refresh(display, working_buffer)
+
+This allows you to nicely decouple the update function so all it needs
+to know about is the shape(s) it works with::
+
+    async def update_time(text_field):
+        while True:
+            h, m, s = rtc.datetime()[4:7]
+            text = f"{h:>2d}:{m:02d}:{s:02d}"
+            # only update if the text has changed
+            if text_field.texts[0] != text:
+                text_field.update(texts=[text])
+            await asyncio.sleep(0.1)
+
+You could similarly have a function which updates a temperature field every
+second::
+
+    async def update_temperature(text_field):
+        while True:
+            value = adc.read_u16()
+            temp = 27 - (3.3 * value / 0xFFFF - 0.706) / 0.001721
+            text = f"{temp:.1f}°C"
+            # only update when needed
+            if text_field.texts[0] != text:
+                text_field.update(texts=[text])
+            await asyncio.sleep(1)
+
+Putting all of this together, you get a main function which looks like::
+
+    async def main():
+        ...
+        await asyncio.gather(
+            refresh_display(surface, display, working_buffer)
+            update_time(time_field),
+            update_temperature(temperature_field),
+            # and other async things that you are running...
+            ...
+        ))
+
+    asyncio.run(main())
+
+
+..  image:: pico-tempe-updating.gif
+
+
 .. |FrameBuffer| replace:: :py:class:`~framebuf.FrameBuffer`
 .. |Surface| replace:: :py:class:`~tempe.surface.Surface`
 .. |refresh| replace:: :py:meth:`~tempe.surface.Surface.refresh`
+.. |refresh_needed| replace:: :py:attr:`~tempe.surface.Surface.refresh_needed`
 .. |Shape| replace:: :py:class:`~tempe.shapes.Shape`
+.. |update| replace:: :py:meth:`~tempe.shapes.Shape.update`
 .. |Rectangles| replace:: :py:class:`~tempe.shapes.Rectangles`
 .. |Lines| replace:: :py:class:`~tempe.shapes.Lines`
 .. |Polygons| replace:: :py:class:`~tempe.shapes.Polygons`
