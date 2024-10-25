@@ -16,7 +16,7 @@ class WideLines(ColoredGeometry):
         self.round = round
 
     def draw(self, buffer, x=0, y=0):
-        vertices = array('h', bytearray(16))
+        vertices = array("h", bytearray(16))
         should_round = self.round
         for geometry, color in self:
             x0 = geometry[0]
@@ -27,7 +27,7 @@ class WideLines(ColoredGeometry):
             if w < 2:
                 buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
             else:
-                d = 2 * int(sqrt((x1 - x0)**2 + (y1 - y0)**2))
+                d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
                 line_points(x0, y0, x1, y1, w, d, vertices)
                 buffer.poly(-x, -y, vertices, color, True)
                 if should_round:
@@ -36,10 +36,10 @@ class WideLines(ColoredGeometry):
                     buffer.ellipse(x1 - x, y1 - y, r, r, color, True)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0] + geometry[4], geometry[2] + geometry[4])
             min_x = min(min_x, geometry[0] - geometry[4], geometry[2] - geometry[4])
@@ -49,7 +49,6 @@ class WideLines(ColoredGeometry):
         return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
-
 class WidePolyLines(ColoredGeometry):
     """Render multiple colored polylines with variable width.
 
@@ -57,41 +56,41 @@ class WidePolyLines(ColoredGeometry):
     """
 
     def draw(self, buffer, x=0, y=0):
-        vertices = array('h', bytearray(16))
+        vertices = array("h", bytearray(16))
         for geometry, color in self:
             w = geometry[-1]
             lines = geometry[:-1]
             for i in range(0, len(lines) - 2, 2):
                 x0 = lines[i]
-                y0 = lines[i+1]
-                x1 = lines[i+2]
-                y1 = lines[i+3]
+                y0 = lines[i + 1]
+                x1 = lines[i + 2]
+                y1 = lines[i + 3]
                 if w < 2:
                     buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
                 else:
-                    d = 2 * int(sqrt((x1 - x0)**2 + (y1 - y0)**2))
+                    d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
                     line_points(x0, y0, x1, y1, w, d, vertices)
                     buffer.poly(-x, -y, vertices, color, True)
             if w >= 2:
                 r = w // 2
                 for i in range(0, len(lines), 2):
                     x0 = lines[i]
-                    y0 = lines[i+1]
+                    y0 = lines[i + 1]
                     buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             w = geometry[-1]
             lines = geometry[:-1]
             for i in range(0, len(lines), 2):
                 max_x = max(max_x, lines[i] + w)
                 min_x = min(min_x, lines[i] - w)
-                max_y = max(max_y, lines[i+1] + w)
-                min_y = min(min_y, lines[i+1] - w)
+                max_y = max(max_y, lines[i + 1] + w)
+                min_y = min(min_y, lines[i + 1] - w)
 
         return (min_x, min_y, max_x - min_x, max_y - min_y)
 
@@ -125,6 +124,7 @@ def line_points(x0, y0, x1, y1, w, d, vertices):
     vertices[5] = y1 - my
     vertices[6] = x0 - mx
     vertices[7] = y0 - my
+
 
 try:
     from ._speedups import line_points

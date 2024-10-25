@@ -31,7 +31,9 @@ class Bitmaps(Shape):
 
     def draw(self, buffer, x=0, y=0):
         if self.palette is not None:
-            palette = framebuf.FrameBuffer(self.palette, len(self.palette), 1, framebuf.RGB565)
+            palette = framebuf.FrameBuffer(
+                self.palette, len(self.palette), 1, framebuf.RGB565
+            )
         for geometry, fbuf in self:
             px = geometry[0] - x
             py = geometry[1] - y
@@ -41,10 +43,10 @@ class Bitmaps(Shape):
                 buffer.blit(fbuf, px, py, self.key)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
             min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
@@ -86,10 +88,10 @@ class ColoredBitmaps(ColoredGeometry):
             buffer.blit(buf, px, py, BLIT_KEY_RGB565, palette)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
             min_x = min(min_x, geometry[0], geometry[0] + geometry[2])

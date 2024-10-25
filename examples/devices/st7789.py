@@ -1,4 +1,3 @@
-
 from machine import SPI, Pin
 import uasyncio
 import utime
@@ -181,12 +180,12 @@ class ST7789:
     def set_column_address(self, start, end):
         """Set the column range for writing."""
         self.command(CASET)
-        self.data(pack(">HH", start & 0xffff, end & 0xffff))
+        self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def set_row_address(self, start, end):
         """Set the row range for writing."""
         self.command(RASET)
-        self.data(pack(">HH", start & 0xffff, end & 0xffff))
+        self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def write_to_memory(self, buf):
         """Write data to memory."""
@@ -196,12 +195,12 @@ class ST7789:
     def partial_area(self, start, end):
         """Define partial mode's area."""
         self.command(PTLAR)
-        self.data(pack(">HH", start & 0xffff, end & 0xffff))
+        self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def vertical_scroll_area(self, top, height, bottom):
         """Define vertical scroll area."""
         self.command(VSCRDEF)
-        self.data(pack(">HHH", top & 0xffff, height & 0xffff, bottom & 0xffff))
+        self.data(pack(">HHH", top & 0xFFFF, height & 0xFFFF, bottom & 0xFFFF))
 
     def tearing_effect_off(self):
         """Turn tearing effect line off."""
@@ -220,7 +219,7 @@ class ST7789:
     def vertical_scroll_start_address(self, start):
         """Set the start address of the vertical scroll area."""
         self.command(VSCSAD)
-        self.data(pack(">H", start & 0xffff))
+        self.data(pack(">H", start & 0xFFFF))
 
     def idle_mode_off(self):
         """Turn idle mode off."""
@@ -243,7 +242,7 @@ class ST7789:
     def set_tear_scanline(self, start):
         """Set the tear scanline start."""
         self.command(STE)
-        self.data(pack(">H", start & 0xffff))
+        self.data(pack(">H", start & 0xFFFF))
 
     def write_display_brightness(self, parameter):
         self.command(WRDISBV)
@@ -269,9 +268,13 @@ class ST7789:
         self.command(RGBCTRL)
         self.data(bytes([parameter_1, parameter_2, parameter_3]))
 
-    def set_porch_control(self, parameter_1, parameter_2, parameter_3, parameter_4, parameter_5):
+    def set_porch_control(
+        self, parameter_1, parameter_2, parameter_3, parameter_4, parameter_5
+    ):
         self.command(PORCTRL)
-        self.data(bytes([parameter_1, parameter_2, parameter_3, parameter_4, parameter_5]))
+        self.data(
+            bytes([parameter_1, parameter_2, parameter_3, parameter_4, parameter_5])
+        )
 
     def set_lcm_control(self, parameter_1):
         self.command(LCMCTRL)
@@ -279,7 +282,7 @@ class ST7789:
 
     def set_vdv_vrh_enable(self, parameter_1):
         self.command(VDVVRHEN)
-        self.data(bytes([parameter_1, 0xff]))
+        self.data(bytes([parameter_1, 0xFF]))
 
     def set_vrh(self, parameter_1):
         self.command(VRHS)
@@ -341,18 +344,22 @@ class ST7789:
         await self.soft_reset()
         self.tearing_effect_on(0)
         self.set_color_mode(0x05)
-        self.set_porch_control(0x0c, 0x0c, 0x00, 0x33, 0x33)
-        self.set_lcm_control(0x2c)
+        self.set_porch_control(0x0C, 0x0C, 0x00, 0x33, 0x33)
+        self.set_lcm_control(0x2C)
         self.set_vdv_vrh_enable(0x01)
         self.set_vrh(0x12)
         self.set_vdv(0x20)
-        self.set_power_control_1(0xa4, 0xa1)
-        self.set_frame_rate_control(0x1f)  # turn it way down ~39 fps
+        self.set_power_control_1(0xA4, 0xA1)
+        self.set_frame_rate_control(0x1F)  # turn it way down ~39 fps
 
         self.set_gate_control(0x35)
-        self.set_vcom(0x1f)
-        self.set_positive_gamma(b"\xD0\x08\x11\x08\x0C\x15\x39\x33\x50\x36\x13\x14\x29\x2D")
-        self.set_negative_gamma(b"\xD0\x08\x10\x08\x06\x06\x39\x44\x51\x0B\x16\x14\x2F\x31")
+        self.set_vcom(0x1F)
+        self.set_positive_gamma(
+            b"\xD0\x08\x11\x08\x0C\x15\x39\x33\x50\x36\x13\x14\x29\x2D"
+        )
+        self.set_negative_gamma(
+            b"\xD0\x08\x10\x08\x06\x06\x39\x44\x51\x0B\x16\x14\x2F\x31"
+        )
 
         await self.inversion(True)
         await self.sleep(False)
@@ -363,13 +370,13 @@ class ST7789:
         await self.display_on()
 
     def clear(self):
-        self.fill(0, 0, self.size[0], self.size[1], b'\x00\x00')
+        self.fill(0, 0, self.size[0], self.size[1], b"\x00\x00")
 
-    def fill(self, x, y, w, h, color=b'\xff\xff'):
+    def fill(self, x, y, w, h, color=b"\xff\xff"):
         self.window(x, y, w, h)
         row_bytes = color * w
         write = self.spi.write
-        self.write_to_memory(b'')
+        self.write_to_memory(b"")
         start = utime.ticks_us()
         self.cs_pin(0)
         self.dc_pin(1)
@@ -377,10 +384,10 @@ class ST7789:
             write(row_bytes)
         self.cs_pin(1)
 
-    def hline(self, x, y, length, color=b'\xff\xff'):
+    def hline(self, x, y, length, color=b"\xff\xff"):
         self.fill(x, y, length, 1, color)
 
-    def vline(self, x, y, length, color=b'\xff\xff'):
+    def vline(self, x, y, length, color=b"\xff\xff"):
         self.fill(x, y, 1, length, color)
 
     def _blit565(self, buf, x, y, w, h, stride=None):
@@ -390,15 +397,15 @@ class ST7789:
         buf = memoryview(buf)
         write = self.spi.write
         self.window(x, y, w, h)
-        self.write_to_memory(b'')
+        self.write_to_memory(b"")
         start = utime.ticks_us()
         self.cs_pin(0)
         self.dc_pin(1)
         offset = 0
         for i in range(h):
-            write(buf[offset:offset+w])
+            write(buf[offset : offset + w])
             offset += stride
-#         write(buf)
+        #         write(buf)
         self.cs_pin(1)
 
     def blit(self, buf, x, y, w, h, stride=None):

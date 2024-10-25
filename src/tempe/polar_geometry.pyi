@@ -12,7 +12,6 @@ from math import cos, sin, pi
 
 from .geometry import Geometry, RowGeometry
 
-
 def polar_points(cx: int, cy: int, geometry: Geometry) -> RowGeometry:
     """Convert (r, theta) point geometry to (x, y) geometry.
 
@@ -99,13 +98,13 @@ def polar_r_lines(cx: int, cy: int, geometry: Geometry) -> RowGeometry:
     """
 
 def polar_theta_lines(
-        cx: int,
-        cy: int,
-        geometry: Geometry,
-        *,
-        include_center: bool = False,
-        decimation: int = 8,
-    ) -> RowGeometry:
+    cx: int,
+    cy: int,
+    geometry: Geometry,
+    *,
+    include_center: bool = False,
+    decimation: int = 8,
+) -> RowGeometry:
     """Convert polar arc geometry to cartesian polyline geometry.
 
     Parameters
@@ -135,13 +134,13 @@ def polar_theta_lines(
     """
 
 def polar_lines(
-        cx: int,
-        cy: int,
-        geometry: Geometry,
-        *,
-        include_center: bool = False,
-        decimation: int = 8,
-    ) -> RowGeometry:
+    cx: int,
+    cy: int,
+    geometry: Geometry,
+    *,
+    include_center: bool = False,
+    decimation: int = 8,
+) -> RowGeometry:
     """Convert polar geodesic lines to cartesian polyline geometry.
 
     Polar geodesic lines are linear spirals arcs.

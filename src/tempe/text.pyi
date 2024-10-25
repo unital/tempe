@@ -1,4 +1,3 @@
-
 from collections.abc import Iterable
 from typing import Any
 import framebuf
@@ -8,9 +7,7 @@ from .geometry import Geometry
 from .font import AbstractFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
 
-
 class Text(ColoredGeometry[tuple[int, int]]):
-
     def __init__(
         self,
         geometry: Iterable[point],
@@ -22,9 +19,7 @@ class Text(ColoredGeometry[tuple[int, int]]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[Geometry[tuple[int, int]], int, str]: ...
-
     def update(
         self,
         geometry: Iterable[tuple[int, int]] | None = None,

@@ -27,20 +27,18 @@ class Raster:
     """
 
     def __init__(
-            self,
-            buf: array,
-            x: int,
-            y: int,
-            w: int,
-            h: int,
-            stride: int | None = None,
-            offset: int = 0,
-        ): ...
-
+        self,
+        buf: array,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        stride: int | None = None,
+        offset: int = 0,
+    ): ...
     @classmethod
     def from_rect(cls, x: int, y: int, w: int, h: int) -> Self:
         """Create a Raster with a new buffer for the given rectangle."""
-
     def clip(self, x: int, y: int, w: int, h: int) -> Self | None:
         """Create a Raster sharing the same buffer, clipped to the rectangle.
 

@@ -1,4 +1,3 @@
-
 from array import array
 from math import pi, sin, cos
 
@@ -109,9 +108,7 @@ class PointsToLines(Geometry):
             return n - 1
 
 
-
 class Extend(Geometry):
-
     def __init__(self, geometry):
         if any(geom.coords is None for geom in geometry):
             coords = None
@@ -122,13 +119,13 @@ class Extend(Geometry):
     def __iter__(self):
         if self.coords is not None:
             # can use a single buffer
-            buf = array('h', bytearray(2 * self.coords))
+            buf = array("h", bytearray(2 * self.coords))
         for coords in zip(*self.geometry):
             if self.coords is None:
-                buf = array('h', bytearray(2*sum(len(coord) for coord in coords)))
+                buf = array("h", bytearray(2 * sum(len(coord) for coord in coords)))
             i = 0
             for coord in coords:
-                buf[i:i + len(coord)] = coord
+                buf[i : i + len(coord)] = coord
                 i += len(coord)
             yield buf
 
@@ -149,7 +146,7 @@ class ProductGeometry(Geometry):
             sx = len(x)
             for y in geom_2:
                 sy = len(y)
-                buf = array('h', bytearray(2*(sx + sy)))
+                buf = array("h", bytearray(2 * (sx + sy)))
                 buf[:sx] = x
                 buf[sx:] = y
                 yield buf
@@ -173,7 +170,7 @@ class Select(Geometry):
 
     def __iter__(self):
         selection = self.selection
-        buffer = array('h', len(2*len(selection)))
+        buffer = array("h", len(2 * len(selection)))
         for geometry in self.geometry:
             for i, j in enumerate(selection):
                 buffer[i] = geometry[j]

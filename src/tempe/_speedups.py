@@ -31,4 +31,3 @@ def line_points(x0: int, y0: int, x1: int, y1: int, w: int, d: int, vertices: pt
     vertices[5] = y1 - my
     vertices[6] = x0 - mx
     vertices[7] = y0 - my
-

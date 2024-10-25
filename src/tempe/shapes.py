@@ -77,10 +77,10 @@ class Lines(ColoredGeometry):
             buffer.line(x0, y0, x1, y1, color)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0], geometry[2])
             min_x = min(min_x, geometry[0], geometry[2])
@@ -104,10 +104,10 @@ class HLines(ColoredGeometry):
             buffer.hline(px, py, l, color)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
             min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
@@ -131,10 +131,10 @@ class VLines(ColoredGeometry):
             buffer.vline(px, py, l, color)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0])
             min_x = min(min_x, geometry[0])
@@ -160,10 +160,10 @@ class PolyLines(ColoredGeometry):
                 buffer.line(x0, y0, x1, y1, color)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             geometry = list(geometry)
             max_x = max(max_x, max(geometry[::2]))
@@ -185,10 +185,10 @@ class Polygons(FillableGeometry):
             buffer.poly(-x, -y, polygon, color, self.fill)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             geometry = list(geometry)
             max_x = max(max_x, max(geometry[::2]))
@@ -220,10 +220,10 @@ class Rectangles(FillableGeometry):
             buffer.rect(px, py, w, h, color, self.fill)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0], geometry[0] + geometry[2])
             min_x = min(min_x, geometry[0], geometry[0] + geometry[2])
@@ -250,10 +250,10 @@ class Circles(FillableGeometry):
             buffer.ellipse(px, py, r, r, color, self.fill)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0] + abs(geometry[2]))
             min_x = min(min_x, geometry[0] - abs(geometry[2]))
@@ -261,7 +261,6 @@ class Circles(FillableGeometry):
             min_y = min(min_y, geometry[1] - abs(geometry[2]))
 
         return (min_x - 1, min_y - 1, max_x - min_x + 2, max_y - min_y + 2)
-
 
 
 class Ellipses(FillableGeometry):
@@ -282,10 +281,10 @@ class Ellipses(FillableGeometry):
             buffer.ellipse(px, py, rx, ry, color, self.fill)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0] + abs(geometry[2]))
             min_x = min(min_x, geometry[0] - abs(geometry[2]))
