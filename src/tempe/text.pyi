@@ -3,11 +3,10 @@ from collections.abc import Iterable
 from typing import Any
 import framebuf
 
-
+import tempe
 from .geometry import Geometry
 from .font import AbstractFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
-from .surface import Surface
 
 
 class Text(ColoredGeometry[tuple[int, int]]):
@@ -20,7 +19,7 @@ class Text(ColoredGeometry[tuple[int, int]]):
         *,
         bold: bool = False,
         font: AbstractFont | None = None,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 

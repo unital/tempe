@@ -3,9 +3,9 @@ from array import array
 import framebuf
 from typing import Any
 
+import tempe
 from .geometry import Geometry
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point_length, point
-from .surface import Surface
 
 
 class Marker:
@@ -43,7 +43,7 @@ class Markers(ColoredGeometry[point_length]):
         colors: Iterable[int],
         markers: Iterable[Any],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
 

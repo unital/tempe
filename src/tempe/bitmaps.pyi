@@ -4,6 +4,7 @@ from collections.abc import Sequence, Iterable
 import framebuf
 from typing import Any
 
+import tempe
 from .shapes import ColoredGeometry, Shape, BLIT_KEY_RGB565, point, rectangle
 
 
