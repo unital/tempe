@@ -69,10 +69,10 @@ class Text(ColoredGeometry):
         super().update()
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         if self.font is None:
             for geometry, text in zip(self.geometry, self.texts):
                 width = 8 * max(len(line) for line in text.splitlines())
@@ -83,10 +83,7 @@ class Text(ColoredGeometry):
                 min_y = min(min_y, geometry[1])
         else:
             for geometry, text in zip(self.geometry, self.texts):
-                width = max(
-                    self.font.measure(line)[2]
-                    for line in text.splitlines()
-                )
+                width = max(self.font.measure(line)[2] for line in text.splitlines())
                 height = self.font.height * len(text.splitlines())
                 max_x = max(max_x, geometry[0] + width)
                 min_x = min(min_x, geometry[0])

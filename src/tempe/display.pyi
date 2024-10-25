@@ -14,7 +14,6 @@ can send updates to the underlying device.
 from array import array
 from typing import Self
 
-
 class Display:
     """Abstract base class for Displays"""
 
@@ -28,12 +27,9 @@ class Display:
         directly render partial updates to the underlying device, or to
         render to a complete framebuffer which is then rendered.
         """
-        raise NotImplementedError
 
     def clear(self) -> None:
         """Clear the display, setting all pixels to 0."""
-        raise NotImplementedError
-
 
 class FileDisplay(Display):
     """Display that renders raw RGB565 data to a file.
@@ -43,8 +39,5 @@ class FileDisplay(Display):
     """
 
     def __init__(self, name: str, size: tuple[int, int] = (320, 240)): ...
-
     def __enter__(self) -> Self: ...
-
     def __exit__(self, *args) -> bool: ...
-

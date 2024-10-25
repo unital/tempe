@@ -20,7 +20,7 @@ class FileDisplay(Display):
 
     def clear(self):
         self._io.seek(0)
-        row = b'\x00\x00' * (self.size[0])
+        row = b"\x00\x00" * (self.size[0])
         for i in range(self.size[1]):
             self._io.write(row)
 
@@ -35,16 +35,15 @@ class FileDisplay(Display):
         # write out a row at a time
         for i in range(h):
             self._io.seek(2 * (cols * (y + i) + x))
-            self._io.write(memoryview(buffer)[w * i:w * (i + 1)])
+            self._io.write(memoryview(buffer)[w * i : w * (i + 1)])
 
     def __enter__(self):
         if self._io is None:
             try:
-                self._io = open(self.name, 'r+b')
+                self._io = open(self.name, "r+b")
             except OSError:
-                self._io = open(self.name, 'wb')
+                self._io = open(self.name, "wb")
 
     def __exit__(self, *args):
         self._io.close()
         self._io = None
-

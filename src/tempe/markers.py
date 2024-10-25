@@ -66,10 +66,10 @@ class Markers(ColoredGeometry):
         super().update()
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0] + abs(geometry[2]))
             min_x = min(min_x, geometry[0] - abs(geometry[2]))
@@ -80,7 +80,6 @@ class Markers(ColoredGeometry):
 
 
 class Points(Markers):
-
     def draw(self, buffer, x=0, y=0):
         palette_buf = array("H", [BLIT_KEY_RGB565, 0x0000])
         palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
@@ -99,10 +98,10 @@ class Points(Markers):
                 buffer.poly(px, py, marker, color, True)
 
     def _bounds(self):
-        max_x = -0x7fff
-        min_x = 0x7fff
-        max_y = -0x7fff
-        min_y = 0x7fff
+        max_x = -0x7FFF
+        min_x = 0x7FFF
+        max_y = -0x7FFF
+        min_y = 0x7FFF
         for geometry in self.geometry:
             max_x = max(max_x, geometry[0])
             min_x = min(min_x, geometry[0])

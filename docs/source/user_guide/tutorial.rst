@@ -136,7 +136,7 @@ create the rectangles using::
     )
 
 then the data will be converted to arrays of 16-bit integers, which use
-less tha half as much memory.
+less than half as much memory.
 
 |ColumnGeometry|
 ----------------
@@ -286,8 +286,65 @@ build standard data visualizations::
             [bar_xs, ys, widths, Repeat(bar_height)],
             colors,
         )
-        suface.add_shape("OVERLAY", label_text)
-        suface.add_shape("DRAWING", bars)
+        surface.add_shape("OVERLAY", label_text)
+        surface.add_shape("DRAWING", bars)
+
+The High-Level API
+==================
+
+It makes sense to have a higher-level API that is more understanding of
+common use-cases.
+
+For example, so far we have been using a pattern of two-step creation of shapes, where
+we first create a shape and then add it to a layer of a surface.  Since you
+almost always want to add shapes to a layer immediately after creating them,
+it would be useful to have a method to do this in one step.
+
+Similarly it is common that you only want to draw one instance of a
+geometry in a particular operation, and in those cases it would be nice
+to avoid having to create a |Geometry| instance.  And it is often the case
+that a particular set of shapes will all have the same color or other parameters,
+and in those cases it is annoying to have to specify a |Repeat| data view
+for every parameter.
+
+Finally, the low-level API doesn't do any sort of sanity checking that
+geometries match what is expected by the shapes, so errors occur only
+when the surface attempts to draw the shape into a raster.
+
+The |Surface| object provides this higher-level convenience API via
+methods like |polygons|, |rectangles|, |circles|, and so on.  These
+methods do basic sanity-checking for geometries, and for other parameters
+will automatically turn single values into |Repeat| data views and do basic
+conversion where it makes sense (eg. turn hex color strings into color ints).
+They expect to be told which layer to use and will add the created |Shape| to
+that layer.  All of these methods return the created |Shape| instance in
+case other code needs to use it (eg. to apply updates later).
+
+For example, it's common to start by applying a uniform background color
+for a surface in the region that will be viewed by the display.  Up to
+this point we have done this by writing something like::
+
+    background = Rectangles(
+        RowGeometry.from_lists([[0, 0, 320, 240]]),
+        Repeat(colors.grey_f),
+    )
+    surface.add_shape("BACKGROUND", background)
+
+Using the convenience methods, you can instead write::
+
+    background = surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+
+If you never plan to modify the background, you may even be able to just
+write::
+
+    surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+
+..  note::
+
+    As a general rule library code built on top of Tempe should still use the
+    lower-level APIs, as they are more flexible and generic.  However application
+    and scripting code that wants to do drawing with Tempe should use the
+    higher-level convenience API in most cases.
 
 Complex Shapes
 ==============
@@ -309,9 +366,12 @@ but is not ideal for general interfaces: in particular it is available in
 just one size.
 
 For more better text rendering, Tempe currently can use bitmap fonts of the
-format produced by Peter Hinch's font_to_py script, as well as a slightly
-more efficient internal variant.  Tempe provides bitmap versions of Google's
-Roboto font at 16 pt, which looks reasonably good on small screens.
+format produced by Peter Hinch's
+`font_to_py script <https://github.com/peterhinch/micropython-font-to-py>`_,
+or AntiRez's `microfont library <https://github.com/antirez/microfont>`_,
+as well as a slightly more efficient internal variant.  Tempe provides bitmap
+versions of Google's Roboto font at 16 pt, which looks reasonably good on small
+screens.
 
 These fonts are typically shipped as modules::
 
@@ -328,6 +388,17 @@ like the following:
 
 ..  image:: hello_font.png
     :width: 160
+
+Since the fonts are stored as bitmaps, large fonts can be expensive to load
+and draw.  The font file format and tools allow you to generate font files
+with only the characters you are going to use.  For example, if you are building
+a digital clock display then you might create a 48-point font but with just the
+digits 0-9, space and separator characters like ``:`` and ``/``.
+
+..  warning::
+
+    The way fonts are handled may change in the future, particularly if
+    there is a vector font format that is more efficient to use.
 
 Markers and Points
 ------------------
@@ -357,6 +428,10 @@ framebuffers in the specified colors.
 Polar Geometries
 ----------------
 
+..  image:: polar.png
+    :width: 160
+    :align: right
+
 When working with polar plots it is common to have geometry specified by
 polar ``(r, theta)`` coordinates.  For example, a donut plot consists of
 multiple annular sectors whose geometry can be easily expressed as sets
@@ -372,17 +447,37 @@ Since Tempe expects coordinates to be given as unsigned 16-bit integers,
 angles are expressed as degrees.  There is no scaling performed in these
 transformations, so the radial unit length is a pixel.
 
+Concretely, to create a donut plot for a list of values, you need to work
+out the start angles and angle deltas for each segment::
 
-Convenience Methods
-===================
+    values = [...]
+    total = sum(values)
 
-So far we have been using a pattern of two-step creation of shapes, where
-we first create a shape and then add it to a layer of a surface.  Since you
-almost always want to add shapes to a layer immediately after creating them,
-the |Surface| class has a collection of methods for creating and adding
-standard shapes in one step.
+    proportions = [value / total for value in values]
+    angles = [int(360 * sum(values[:i]) / total) for values in proportions]
+    deltas = [angles[i+1] - angles[i] for i in range(len(values))]
 
-TODO: example
+You can then use this to create a rectangular geometry in (r, theta)
+coordinates::
+
+    segments = ColumnGeometry([
+        Repeat(30),
+        angles[:-1],
+        Repeat(24),
+        deltas,
+    ])
+
+This can then be converted to cartesian coordinates using the
+:py:func:`~tempe.polar_geometry.polar_rects` function, which returns arrays
+pf x, y values suitable for use as polygons or polylines::
+
+    donut = Polygons(
+        polar_rects(segments, decimation=10),
+        colormap,
+    )
+
+The `decimation` parameter lets you control how coarse is the approximation
+of the circular arcs by polygon lines.
 
 Data Visualization
 ==================
@@ -463,7 +558,7 @@ x-values ranging from 24 to 312, we get::
 
 ..  note::
 
-    It's worth defining a class for this, as we will likely re-use the
+    It's worth defining a class for this, as we will likely reuse the
     object when creating axis tick marks, labels and grid lines.
 
 
@@ -677,7 +772,7 @@ Scatter Plots
 ..  image:: scatter_plot.png
     :width: 160
 
-TODO: see examples/scatter_plot.py
+TODO: `see examples/scatter_plot_example.py <https://github.com/unital/tempe/blob/main/examples/scatter_plot_example.py>`_
 
 Polar Plots
 -----------
@@ -685,7 +780,7 @@ Polar Plots
 ..  image:: polar_plot.png
     :width: 160
 
-TODO: see examples/polar_plots.py
+TODO:  `see examples/polar_plot_example.py <https://github.com/unital/tempe/blob/main/examples/polar_plot_example.py>`_
 
 
 Dynamic Updates
@@ -867,6 +962,9 @@ Putting all of this together, you get a main function which looks like::
 .. |Surface| replace:: :py:class:`~tempe.surface.Surface`
 .. |refresh| replace:: :py:meth:`~tempe.surface.Surface.refresh`
 .. |refresh_needed| replace:: :py:attr:`~tempe.surface.Surface.refresh_needed`
+.. |polygons| replace:: :py:meth:`~tempe.surface.Surface.polygons`
+.. |rectangles| replace:: :py:meth:`~tempe.surface.Surface.rectangles`
+.. |circles| replace:: :py:meth:`~tempe.surface.Surface.circles`
 .. |Shape| replace:: :py:class:`~tempe.shapes.Shape`
 .. |update| replace:: :py:meth:`~tempe.shapes.Shape.update`
 .. |Rectangles| replace:: :py:class:`~tempe.shapes.Rectangles`

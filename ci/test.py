@@ -10,31 +10,32 @@ import sys
 import click
 
 
-
 @click.command()
 def test():
     """Run unit tests in micropython"""
     print("Running Tests")
     failures = []
     test_dir = Path("tests/tempe")
-    os.environ["MICROPYPATH"] = "src:" + os.environ.get('MICROPYPATH', ":.frozen:~/.micropython/lib:/usr/lib/micropython")
+    os.environ["MICROPYPATH"] = "src:" + os.environ.get(
+        "MICROPYPATH", ":examples:.frozen:~/.micropython/lib:/usr/lib/micropython"
+    )
     for path in sorted(test_dir.glob("*.py")):
         print(path.name, "... ", end="", flush=True)
         result = run_test(path)
         if result:
             failures.append(result)
-            print('FAILED')
+            print("FAILED")
         else:
-            print('OK')
+            print("OK")
     print()
 
     for path, stdout, stderr in failures:
         print("FAILURE: ", path.name)
-        print("STDOUT ", "="*70)
-        print(stdout.decode('utf-8'))
+        print("STDOUT ", "=" * 70)
+        print(stdout.decode("utf-8"))
         print()
-        print("STDERR ", "="*70)
-        print(stderr.decode('utf-8'))
+        print("STDERR ", "=" * 70)
+        print(stderr.decode("utf-8"))
         print()
 
     if failures:
@@ -48,6 +49,7 @@ def run_test(path):
         result = subprocess.run(["micropython", path], capture_output=True, check=True)
     except subprocess.CalledProcessError as exc:
         return (path, exc.stdout, exc.stderr)
+
 
 if __name__ == "__main__":
     test()

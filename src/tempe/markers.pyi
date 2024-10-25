@@ -3,13 +3,13 @@ from array import array
 import framebuf
 from typing import Any
 
+import tempe
 from .geometry import Geometry
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point_length, point
-from .surface import Surface
-
 
 class Marker:
     """Enum for marker types"""
+
     PIXEL = 0
     CIRCLE = 1
     SQUARE = 2
@@ -17,7 +17,6 @@ class Marker:
     VLINE = 4
     PLUS = 5
     CROSS = 6
-
 
 class Markers(ColoredGeometry[point_length]):
     """Display sized, colored markers at points.
@@ -43,10 +42,9 @@ class Markers(ColoredGeometry[point_length]):
         colors: Iterable[int],
         markers: Iterable[Any],
         *,
-        surface: Surface | None = None,
+        surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def update(
         self,
         geometry: Iterable[point_length] | None = None,
@@ -93,7 +91,6 @@ class Points(ColoredGeometry[point]):
         surface: Surface | None = None,
         clip: rectangle | None = None,
     ): ...
-
     def update(
         self,
         geometry: Iterable[point] | None = None,

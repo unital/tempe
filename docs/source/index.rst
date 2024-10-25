@@ -6,13 +6,25 @@
 Tempe
 =====
 
-Beautiful Micropython Graphics
+Beautiful, Efficient Micropython Graphics
 
-Modern micropython-based microcontrollers are surprisingly capable devices:
-a Rasperry Pi Pico is comparable to an original Macintosh, Amiga, PC-AT or
-other mid-80s computers in terms of memory and storage, although one or two
-orders of magnitude faster.  Even allowing for Micropython's speed, a Pico
-or similar microcontroller should be capable of the same sorts of things
+Tempe is a graphics library designed to support everyday display and data
+visualization tasks on small, 16-bit+ color screens.
+
+.. image:: user_guide/scatter_plot.png
+   :align: right
+   :scale: 75%
+
+- Pure Micropython codebase—no C libraries, cross-compiling or custom firmware
+  needed—``mip``-install and go.
+- Full 16-bit color support even on memory-constrained microcontrollers.
+- API designed to support common data visualization patterns, such as polar
+  coordinates, efficiently.
+- Transparent support for partial display updates and damage-region tracking,
+  allowing memory-efficency and fast updates for small changes.
+- Core API avoids floating-point operations.
+- Asyncio integration to allow simple support for dynamically changing
+  graphics.
 
 .. toctree::
    :maxdepth: 2

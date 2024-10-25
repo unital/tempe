@@ -69,10 +69,8 @@ point_length: TypeAlias = tuple[int, int, int]
 rectangle: TypeAlias = tuple[int, int, int, int]
 ellipse: TypeAlias = tuple[int, int, int, int]
 
-
 #: Transparent color when blitting bitmaps.
 BLIT_KEY_RGB565 = 0b0000000000100000
-
 
 class Shape:
     """ABC for drawable objects.
@@ -91,7 +89,6 @@ class Shape:
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def draw(self, buffer: FrameBuffer, x: int = 0, y: int = 0) -> None:
         """Render the shape into the given buffer offset by x and y.
 
@@ -126,7 +123,6 @@ class Shape:
         Subclasses need to override this.
         """
 
-
 class ColoredGeometry(Shape, Generic[geom]):
     """ABC for geometries with colors applied.
 
@@ -156,7 +152,6 @@ class ColoredGeometry(Shape, Generic[geom]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def update(
         self,
         geometry: Iterable[geom] | None = None,
@@ -174,7 +169,6 @@ class ColoredGeometry(Shape, Generic[geom]):
         """
 
     def __iter__(self) -> tuple: ...
-
 
 class FillableGeometry(ColoredGeometry[geom]):
     """ABC for geometries which can either be filled or stroked.
@@ -206,7 +200,6 @@ class FillableGeometry(ColoredGeometry[geom]):
         clip: rectangle | None = None,
     ): ...
 
-
 class Lines(ColoredGeometry[points]):
     """Render multiple colored line segments with line-width 1.
 
@@ -221,9 +214,7 @@ class Lines(ColoredGeometry[points]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[points, int]: ...
-
 
 class HLines(ColoredGeometry[point_length]):
     """Render multiple colored horizontal line segments with line-width 1.
@@ -239,9 +230,7 @@ class HLines(ColoredGeometry[point_length]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[point_length, int]: ...
-
 
 class VLines(ColoredGeometry[point_length]):
     """Render multiple colored vertical line segments with line-width 1.
@@ -257,9 +246,7 @@ class VLines(ColoredGeometry[point_length]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[point_length, int]: ...
-
 
 class Polygons(FillableGeometry[point_array]):
     """Render multiple polygons.
@@ -268,7 +255,6 @@ class Polygons(FillableGeometry[point_array]):
     """
 
     def __iter__(self) -> tuple[point_array, int]: ...
-
 
 class Rectangles(FillableGeometry[rectangle]):
     """Render multiple rectangles.
@@ -285,9 +271,7 @@ class Rectangles(FillableGeometry[rectangle]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[rectangle, int]: ...
-
 
 class Circles(FillableGeometry[point_length]):
     """Render multiple circles.
@@ -304,9 +288,7 @@ class Circles(FillableGeometry[point_length]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[point_length, int]: ...
-
 
 class Ellipses(FillableGeometry[ellipse]):
     """Render multiple ellipses.
@@ -323,9 +305,7 @@ class Ellipses(FillableGeometry[ellipse]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-
     def __iter__(self) -> tuple[ellipse, int]: ...
-
 
 __all__ = [
     "Shape",

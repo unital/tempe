@@ -26,12 +26,20 @@ w = 320
 h = 240
 
 gc.collect()
-DRAWING_BUFFER = array('H', bytearray(2*w*31))
+DRAWING_BUFFER = array("H", bytearray(2 * w * 31))
 
 
 async def init_display():
-    spi = SPI(0, baudrate=62_500_000, phase=1, polarity=1, sck=Pin(18, Pin.OUT), mosi=Pin(19, Pin.OUT), miso=Pin(16, Pin.OUT))
-    backlight = Pin(20,Pin.OUT)
+    spi = SPI(
+        0,
+        baudrate=62_500_000,
+        phase=1,
+        polarity=1,
+        sck=Pin(18, Pin.OUT),
+        mosi=Pin(19, Pin.OUT),
+        miso=Pin(16, Pin.OUT),
+    )
+    backlight = Pin(20, Pin.OUT)
     display = ST7789(spi, cs_pin=Pin(17, Pin.OUT, value=1), dc_pin=Pin(16, Pin.OUT))
     backlight(1)
     await display.init()
@@ -44,7 +52,7 @@ def temp_to_color(temp):
 
 
 def free_to_color(free):
-    index = int((len(viridis) -1) * ((1 << 18) - free) / (1 << 18))
+    index = int((len(viridis) - 1) * ((1 << 18) - free) / (1 << 18))
     return viridis[index]
 
 
@@ -76,12 +84,14 @@ async def display_temperature(surface, value):
     format = pipe("{:.1f}°C".format)
     async for temp in value | format() | Dedup():
         temp_display.value = temp
-        temp_display.style['color'] = temp_to_color(await value())
+        temp_display.style["color"] = temp_to_color(await value())
         temp_display.update()
+
 
 @pipe
 def format_memory(memory):
     return f"{memory >> 10:d}"
+
 
 async def display_free(surface, value):
     free = await value()
@@ -101,10 +111,11 @@ async def display_free(surface, value):
     )
     async for free in value | format_memory() | Dedup():
         free_display.value = free
-        free_display.style['color'] = free_to_color(await value())
-        free_units.style['color'] = free_to_color(await value())
+        free_display.style["color"] = free_to_color(await value())
+        free_units.style["color"] = free_to_color(await value())
         free_display.update()
         free_units.update()
+
 
 async def display_alloc(surface, value):
     alloc = await value()
@@ -124,10 +135,11 @@ async def display_alloc(surface, value):
     )
     async for alloc in value | format_memory() | Dedup():
         alloc_display.value = alloc
-        alloc_display.style['color'] = alloc_to_color(await value())
-        alloc_units.style['color'] = alloc_to_color(await value())
+        alloc_display.style["color"] = alloc_to_color(await value())
+        alloc_units.style["color"] = alloc_to_color(await value())
         alloc_display.update()
         alloc_units.update()
+
 
 async def display_stack(surface, value):
     stack = await value()
@@ -141,7 +153,7 @@ async def display_stack(surface, value):
     format = pipe("{} B".format)
     async for stack in value | format() | Dedup():
         stack_display.value = stack
-        stack_display.style['color'] = stack_to_color(await value())
+        stack_display.style["color"] = stack_to_color(await value())
         stack_display.update()
 
 
@@ -153,12 +165,12 @@ async def plot_average_temperature(surface, value):
     temp = await value()
     temp_plot = LinePlot(
         surface,
-        (4, 24, 156, 60-24),
+        (4, 24, 156, 60 - 24),
         values=temps,
         index=times,
         colors=colors,
         value_range=(27, 32),
-        index_range=(time.time()-180, time.time()),
+        index_range=(time.time() - 180, time.time()),
     )
     temp_plot.style["background_color"] = None
     async for temp in value:
@@ -167,7 +179,7 @@ async def plot_average_temperature(surface, value):
         times[-1] = t
         temps[:-1] = temps[1:]
         temps[-1] = temp
-        temp_plot.index_range = (t-180, t)
+        temp_plot.index_range = (t - 180, t)
         colors[:-1] = colors[1:]
         colors[-1] = temp_to_color(temp)
         temp_plot.update()
@@ -179,13 +191,13 @@ async def plot_spot_temperature(surface):
     temps = [0] * 180
     temp_plot = ScatterPlot(
         surface,
-        (4, 24, 156, 60-24),
+        (4, 24, 156, 60 - 24),
         values=temps,
         index=times,
         colors=grey_d,
         sizes=4,
         value_range=(27, 32),
-        index_range=(time.time()-180, time.time()),
+        index_range=(time.time() - 180, time.time()),
     )
     temp_plot.style["background_color"] = None
     extreme_times = []
@@ -194,14 +206,14 @@ async def plot_spot_temperature(surface):
     extreme_markers = []
     extreme_plot = ScatterPlot(
         surface,
-        (4, 24, 160, 60-24),
+        (4, 24, 160, 60 - 24),
         values=extreme_temps,
         index=extreme_times,
         colors=extreme_colors,
         markers=extreme_markers,
         sizes=5,
         value_range=(27, 32),
-        index_range=(time.time()-180, time.time()),
+        index_range=(time.time() - 180, time.time()),
     )
     extreme_plot.style["background_color"] = None
     async for temp in temp_source | u16_to_celcius():
@@ -210,17 +222,16 @@ async def plot_spot_temperature(surface):
         times[-1] = t
         temps[:-1] = temps[1:]
         temps[-1] = temp
-        temp_plot.index_range = (t-180, t)
+        temp_plot.index_range = (t - 180, t)
         temp_plot.update()
         extreme_temps[:] = [min(temp for temp in temps if temp != 0), max(temps)] * 2
-        indices = [
-            temps.index(temp)
-            for temp in extreme_temps
-        ]
+        indices = [temps.index(temp) for temp in extreme_temps]
         extreme_times[:] = [times[index] for index in indices]
         extreme_colors[:] = [temp_to_color(temp) for temp in extreme_temps]
-        extreme_markers[:] = [f" {temp:4.1f}" for temp in extreme_temps[:2]] + [Marker.PLUS] * 2
-        extreme_plot.index_range = (t-180, t)
+        extreme_markers[:] = [f" {temp:4.1f}" for temp in extreme_temps[:2]] + [
+            Marker.PLUS
+        ] * 2
+        extreme_plot.index_range = (t - 180, t)
         extreme_plot.update()
 
 
@@ -231,7 +242,7 @@ async def plot_allocated(surface, value):
     alloc = await value()
     alloc_plot = BarPlot(
         surface,
-        (4, 88, 156, 60-24),
+        (4, 88, 156, 60 - 24),
         values=allocs,
         index=index,
         colors=colors,
@@ -254,7 +265,7 @@ async def plot_free(surface, value):
     free = await value()
     free_plot = BarPlot(
         surface,
-        (4, 148, 156, 60-24),
+        (4, 148, 156, 60 - 24),
         values=frees,
         index=index,
         colors=colors,
@@ -303,27 +314,31 @@ async def refresh(surface, display):
         await surface.refresh_needed.wait()
         surface.refresh(display, DRAWING_BUFFER)
 
+
 @poll
 def check_free():
     return gc.mem_free()
+
 
 @poll
 def check_allocated():
     return gc.mem_alloc()
 
+
 @poll
 def check_stack():
     return micropython.stack_use()
+
 
 async def main():
     display = await init_display()
     surface = Surface()
     background = Component(surface, (0, 0, w, h))
-    label_1 = Label(surface, (4, 4, 100, 20), 'Temperature', font=roboto16bold)
-    label_2 = Label(surface, (4, 64, 152, 20), 'Memory Pressure', font=roboto16bold)
-    label_3 = Label(surface, (4, 124, 152, 20), 'Free Memory', font=roboto16bold)
-    label_4 = Label(surface, (4, 184, 152, 20), 'Stack Use', font=roboto16bold)
-    label_5 = Label(surface, (164, 184, 152, 20), 'Frequency', font=roboto16bold)
+    label_1 = Label(surface, (4, 4, 100, 20), "Temperature", font=roboto16bold)
+    label_2 = Label(surface, (4, 64, 152, 20), "Memory Pressure", font=roboto16bold)
+    label_3 = Label(surface, (4, 124, 152, 20), "Free Memory", font=roboto16bold)
+    label_4 = Label(surface, (4, 184, 152, 20), "Stack Use", font=roboto16bold)
+    label_5 = Label(surface, (164, 184, 152, 20), "Frequency", font=roboto16bold)
     freq_display = Label(
         surface,
         (164, 204, 76, 35),
@@ -354,10 +369,10 @@ async def main():
     allocated_memory = Value(0)
     stack_use = Value(0)
 
-    update_temperature = (temp_source | u16_to_celcius() | EWMA(0.05) | temperature)
-    update_free_memory = (check_free(5) | free_memory)
-    update_allocated_memory = (check_allocated(5) | allocated_memory)
-    update_stack_use = (check_stack(5) | stack_use)
+    update_temperature = temp_source | u16_to_celcius() | EWMA(0.05) | temperature
+    update_free_memory = check_free(5) | free_memory
+    update_allocated_memory = check_allocated(5) | allocated_memory
+    update_stack_use = check_stack(5) | stack_use
 
     task1 = asyncio.create_task(display_temperature(surface, temperature))
     task2 = asyncio.create_task(plot_spot_temperature(surface))
@@ -386,5 +401,5 @@ async def main():
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

@@ -8,28 +8,29 @@ from tempe.surface import Surface
 
 
 # a buffer one third the size of the screen
-WORKING_BUFFER = array('H', bytearray(2*320*81))
+WORKING_BUFFER = array("H", bytearray(2 * 320 * 81))
 
 
 async def init_surface(surface):
     # fill the background with off-white pixels
-    surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_f])
+    surface.rects("BACKGROUND", (0, 0, 320, 240), "#fff")
 
     # prepare the text fields
     from example_fonts import roboto32boldnumbers
+
     time_field = surface.text(
         "DRAWING",
-        [[10, 10]],
-        [colors.grey_a],
-        [""],
+        (10, 10),
+        "#aaa",
+        "",
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 10, 240, 40),
     )
     temp_field = surface.text(
         "DRAWING",
-        [[10, 50]],
-        [colors.grey_a],
-        [""],
+        (10, 50),
+        colors.grey_a,
+        "",
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 50, 240, 40),
     )
@@ -39,7 +40,15 @@ async def init_surface(surface):
 async def init_display():
     from devices.st7789 import ST7789
 
-    spi = SPI(0, baudrate=62_500_000, phase=1, polarity=1, sck=Pin(18, Pin.OUT), mosi=Pin(19, Pin.OUT), miso=Pin(16, Pin.OUT))
+    spi = SPI(
+        0,
+        baudrate=62_500_000,
+        phase=1,
+        polarity=1,
+        sck=Pin(18, Pin.OUT),
+        mosi=Pin(19, Pin.OUT),
+        miso=Pin(16, Pin.OUT),
+    )
     backlight = Pin(20, Pin.OUT)
     display = ST7789(spi, cs_pin=Pin(17, Pin.OUT, value=1), dc_pin=Pin(16, Pin.OUT))
     backlight(1)
@@ -94,5 +103,5 @@ async def main(working_buffer):
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main(WORKING_BUFFER))
