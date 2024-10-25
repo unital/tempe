@@ -1,0 +1,19 @@
+name: "Check Spelling"
+
+on:
+- workflow_dispatch
+- pull_request
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install dependencies and local packages
+      run: python -m pip install codespell
+    - name: Check spelling in code
+      run: codespell src docs/source examples tests ci --skip="*.rgb565"
