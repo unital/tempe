@@ -772,7 +772,7 @@ Scatter Plots
 ..  image:: scatter_plot.png
     :width: 160
 
-TODO: `see examples/scatter_plot.py <https://github.com/unital/tempe/blob/main/examples/scatter_plot.py>`_
+TODO: `see examples/scatter_plot_example.py <https://github.com/unital/tempe/blob/main/examples/scatter_plot_example.py>`_
 
 Polar Plots
 -----------
@@ -780,7 +780,7 @@ Polar Plots
 ..  image:: polar_plot.png
     :width: 160
 
-TODO:  `see examples/polar_plots.py <https://github.com/unital/tempe/blob/main/examples/polar_plots.py>`_
+TODO:  `see examples/polar_plot_example.py <https://github.com/unital/tempe/blob/main/examples/polar_plot_example.py>`_
 
 
 Dynamic Updates
