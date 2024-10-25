@@ -11,6 +11,7 @@ Layers : tuple[str, ...]
     The default value is ``("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")``
 
 """
+
 import asyncio
 from array import array
 import framebuf
@@ -82,11 +83,14 @@ class Surface:
             An empty array of unsigned 16-bit ints (ie. ``array('H', ...)``)
             that the Surface will use as memory for temporary drawing buffers.
         """
+
     def add_shape(self, layer: Any, shape: Shape) -> None:
         """Add a shape to a layer of the drawing."""
+
     def remove_shape(self, layer: Any, shape: Shape) -> None: ...
     def clear(self, layer: Any) -> None:
         """Clear all shapes from a layer."""
+
     def damage(self, rect: rectangle) -> None:
         """Add a rectangle to the regions which need updating.
 
@@ -100,6 +104,7 @@ class Surface:
             A rectangle in the form of a tuple (x, y, w, h) which contains
             a region where the shapes being displayed have changed.
         """
+
     def draw(self, raster: Raster) -> None:
         """Draw the contents of the surface onto the Raster.
 
@@ -110,6 +115,7 @@ class Surface:
         raster : Raster
             The Raster object that the shapes will be drawn on.
         """
+
     def polygons(
         self,
         layer: Any,
@@ -133,6 +139,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the polygons.
         """
+
     def rectangles(
         self,
         layer: Any,
@@ -156,6 +163,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the rectangles.
         """
+
     def circles(
         self,
         layer: Any,
@@ -179,6 +187,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the circles.
         """
+
     def ellipses(
         self,
         layer: Any,
@@ -202,6 +211,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the ellipses.
         """
+
     def lines(
         self,
         layer: Any,
@@ -222,6 +232,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
         """
+
     def vlines(
         self,
         layer: Any,
@@ -242,6 +253,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
         """
+
     def hlines(
         self,
         layer: Any,
@@ -262,6 +274,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
         """
+
     def points(
         self,
         layer: Any,
@@ -285,6 +298,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the points.
         """
+
     def markers(
         self,
         layer: Any,
@@ -308,6 +322,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the markers.
         """
+
     def text(
         self,
         layer: Any,
@@ -335,6 +350,7 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the text.
         """
+
     def bitmaps(
         self,
         layer: Any,

@@ -18,7 +18,8 @@ class DataView(Generic[DataType]):
 
     @classmethod
     def create(cls, data: Any) -> DataView:
-        """Create an appropriate dataclass instance from an object."""
+        """Create an appropriate DataView instance from an object."""
+
     def __init__(self, data: Iterable[DataType]): ...
     def __len__(self) -> int | None: ...
     def __iter__(self) -> Iterator[DataType]: ...
@@ -47,22 +48,22 @@ class DataView(Generic[DataType]):
     def __invert__(self) -> DataView[DataType]: ...
 
 class Cycle(DataView[DataType]):
-    """A Dataview which extends an iterable by repeating cyclically."""
+    """A DataView which extends an iterable by repeating cyclically."""
 
     def __len__(self) -> None: ...
 
 class ReflectedCycle(DataView[DataType]):
-    """A Dataview which extends an iterable by repeating in reverse."""
+    """A DataView which extends an iterable by repeating in reverse."""
 
     def __len__(self) -> None: ...
 
 class RepeatLast(DataView[DataType]):
-    """A Dataview which extends an iterable by repeating the last value."""
+    """A DataView which extends an iterable by repeating the last value."""
 
     def __len__(self) -> None: ...
 
 class Repeat(DataView[DataType]):
-    """A Dataview broadcasts a scalar as an infinitely repeating value."""
+    """A DataView broadcasts a scalar as an infinitely repeating value."""
 
     def __init__(self, data: DataType): ...
     def __len__(self) -> None: ...

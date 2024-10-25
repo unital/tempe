@@ -39,6 +39,7 @@ class Raster:
     @classmethod
     def from_rect(cls, x: int, y: int, w: int, h: int) -> Self:
         """Create a Raster with a new buffer for the given rectangle."""
+
     def clip(self, x: int, y: int, w: int, h: int) -> Self | None:
         """Create a Raster sharing the same buffer, clipped to the rectangle.
 

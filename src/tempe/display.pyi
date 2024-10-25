@@ -27,10 +27,9 @@ class Display:
         directly render partial updates to the underlying device, or to
         render to a complete framebuffer which is then rendered.
         """
-        raise NotImplementedError
+
     def clear(self) -> None:
         """Clear the display, setting all pixels to 0."""
-        raise NotImplementedError
 
 class FileDisplay(Display):
     """Display that renders raw RGB565 data to a file.

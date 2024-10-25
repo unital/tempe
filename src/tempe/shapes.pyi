@@ -106,6 +106,7 @@ class Shape:
             The y-offset of the top side of the buffer on the
             surface.
         """
+
     def update(self, **kwargs: Any) -> None:
         """Update the state of the Shape, marking a redraw as needed.
 
@@ -115,6 +116,7 @@ class Shape:
         either call ``super()`` or otherwise ensure that the Surface
         has its damage region updated.
         """
+
     def _bounds(self) -> rectangle:
         """Compute the bounds of the Shape.
 
@@ -165,6 +167,7 @@ class ColoredGeometry(Shape, Generic[geom]):
         colors : Iterable[int] | None
             The sequence of colors for each geometry.
         """
+
     def __iter__(self) -> tuple: ...
 
 class FillableGeometry(ColoredGeometry[geom]):
