@@ -46,8 +46,8 @@ as the display updates, and rendering to subregions of the screen as needed
 using smaller in-memory buffers.  However this significantly complicates the
 drawing code if using the standard :py:mod:`framebuf` module: what is being
 drawn needs to be translated into the relative coordinates of the smaller
-buffer, and drawing code that is outside of the region being updated
-shouldn't draw itself if at all possible.
+buffer and, ideally, objects that are outside of the region being updated
+shouldn't attempt to draw themselves at all.
 
 At its core, Tempe solves this problem: it provides a high-level drawing API
 that lets users concentrate on what they want to draw and not how those drawing

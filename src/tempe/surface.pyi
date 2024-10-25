@@ -13,14 +13,19 @@ Layers : tuple[str, ...]
 """
 import asyncio
 from array import array
-from collections.abc import Iterable
+import framebuf
+from collections.abc import Iterable, Sequence
 from typing import Any
 
+import tempe
 from .display import Display
 from .font import AbstractFont
 from .geometry import Geometry
 from .raster import Raster
-from .shapes import Shape, Polygons, Rectangles, Lines, VLines, HLines, rectangle
+from .shapes import Shape, Polygons, Rectangles, Circles, Ellipses, Lines, VLines, HLines, rectangle
+from .markers import Marker, Markers, Points
+from .bitmaps import Bitmaps, ColoredBitmaps
+from .text import Text
 from .util import contains
 
 #: The default set of layers used by Surfaces, in order from back to front.
@@ -102,64 +107,276 @@ class Surface:
             The Raster object that the shapes will be drawn on.
         """
 
-    def polys(
+    def polygons(
         self,
         layer: Any,
-        geometry: Geometry[array],
-        colors: Iterable[int],
+        geometry: Geometry[array] | Sequence[int],
+        colors: Iterable[int] | int | str,
+        fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> Polygons: ...
+    ) -> Polygons:
+        """Create a new Polygons object and add it to the layer.
 
-    def rects(
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Polygons object is added to.
+        geometry : Geometry[array] | Sequence[int]
+            The geometry to use, or if a sequence of ints, a single polygon.
+        colors : Iterable[int] | int | str
+            The colors of each polygon, or a color to use for all polygons.
+        fill : bool
+            Whether to fill the polygon or draw a one-pixel-wide outline.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the polygons.
+        """
+
+    def rectangles(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
+        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        colors: Iterable[int] | int | str,
+        fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> Rectangles: ...
+    ) -> Rectangles:
+        """Create a new Rectangles object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Rectangles object is added to.
+        geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+            The geometry to use, or if a tuple of 4 ints, a single rectangle.
+        colors : Iterable[int] | int | str
+            The colors of each rectangle, or a color to use for all rectangles.
+        fill : bool
+            Whether to fill the polygon or draw a one-pixel-wide outline.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the rectangles.
+        """
+
+    def circles(
+        self,
+        layer: Any,
+        geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
+        colors: Iterable[int] | int | str,
+        fill: bool = True,
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> Circles:
+        """Create a new Circles object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Circles object is added to.
+        geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
+            The geometry to use, or if a tuple of 3 ints, a single circle.
+        colors : Iterable[int] | int | str
+            The colors of each circle, or a color to use for all circles.
+        fill : bool
+            Whether to fill the polygon or draw a one-pixel-wide outline.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the circles.
+        """
+
+    def ellipses(
+        self,
+        layer: Any,
+        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        colors: Iterable[int] | int | str,
+        fill: bool = True,
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> Ellipses:
+        """Create a new Ellipses object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Ellipses object is added to.
+        geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int]
+            The geometry to use, or if a tuple of 4 ints, a single ellipse.
+        colors : Iterable[int] | int | str
+            The colors of each ellipse, or a color to use for all ellipses.
+        fill : bool
+            Whether to fill the polygon or draw a one-pixel-wide outline.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the ellipses.
+        """
 
     def lines(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
+        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        colors: Iterable[int] | int | str,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> Lines: ...
+    ) -> Lines:
+        """Create a new Lines object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Lines object is added to.
+        geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int]
+            The geometry to use, or if a tuple of 4 ints, a single line.
+        colors : Iterable[int] | int | str
+            The colors of each line, or a color to use for all lines.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the lines.
+        """
 
     def vlines(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
+        geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
+        colors: Iterable[int] | int,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> VLines: ...
+    ) -> VLines:
+        """Create a new VLines object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the VLines object is added to.
+        geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int, int]
+            The geometry to use, or if a tuple of 3 ints, a single vertical line.
+        colors : Iterable[int] | int
+            The colors of each line, or a color to use for all lines.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the lines.
+        """
 
     def hlines(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
+        geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
+        colors: Iterable[int] | int,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> HLines: ...
+    ) -> HLines:
+        """Create a new HLines object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the HLines object is added to.
+        geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
+            The geometry to use, or if a tuple of 3 ints, a single vertical line.
+        colors : Iterable[int] | int
+            The colors of each line, or a color to use for all lines.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the lines.
+        """
 
     def points(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
-        markers: Iterable[Any],
+        geometry: Geometry[tuple[int, int]] | tuple[int, int],
+        colors: Iterable[int] | int,
+        markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> "tempe.markers.Markers": ...
+    ) -> Points:
+        """Create a new Points object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Points object is added to.
+        geometry : Geometry[tuple[int, int]] | tuple[int, int]
+            The geometry to use, or if a tuple of 2 ints, a single point.
+        colors : Iterable[int] | int
+            The colors of each marker, or a color to use for all markers.
+        markers : Iterable[Any] | int | str | framebuf.FrameBuffer
+            The type of each marker, or a single marker to use for all points.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the points.
+        """
+
+    def markers(
+        self,
+        layer: Any,
+        geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
+        colors: Iterable[int] | int,
+        markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> Markers:
+        """Create a new Markers object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Markers object is added to.
+        geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
+            The geometry to use, or if a tuple of 3 ints, a single point and size.
+        colors : Iterable[int] | int
+            The colors of each marker, or a color to use for all markers.
+        markers : Iterable[Any] | int | str | framebuf.FrameBuffer
+            The type of each marker, or a single marker to use for all points.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the markers.
+        """
 
     def text(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]],
-        colors: Iterable[int],
-        text: Iterable[str],
-        bold: bool = False,
+        geometry: Geometry[tuple[int, int]] | tuple[int, int],
+        colors: Iterable[int] | int,
+        text: Iterable[str] | str,
         font: AbstractFont | None = None,
         clip: tuple[int, int, int, int] | None = None,
-    ) -> "tempe.text.Text": ...
+    ) -> Text:
+        """Create a new Text object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the Text object is added to.
+        geometry : Geometry[tuple[int, int]] | tuple[int, int]
+            The geometry to use, or if a tuple of 2 ints, a single point.
+        colors : Iterable[int] | int
+            The colors of each string, or a color to use for all strings.
+        text : Iterable[str] | str
+            The strings to display at each point, or a single string to use at all points.
+        font : AbstractFont | None
+            The font to use for the text.  If None, the default FrameBuffer
+            8x8 monospaced font will be used.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the text.
+        """
+
+    def bitmaps(
+        self,
+        layer: Any,
+        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        bitmaps: Iterable[framebuf.FrameBuffer] | framebuf.Framebuffer,
+        colors: Iterable[int] | int | None,
+        key: int = -1,
+        palette: array | None = None,
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> Bitmaps | ColoredBitmaps:
+        """Create a new Bitmaps or ColoredBitmaps object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the bitmaps object is added to.
+        geometry : Geometry[tuple[int, int]] | tuple[int, int]
+            The geometry to use, or if a tuple of 4 ints, a single rectangle.
+        bitmaps : Iterable[framebuf.FrameBuffer] | framebuf.Framebuffer
+            The colors of each string, or a color to use for all strings.
+        colors : Iterable[int] | int | None
+            If None, the bitmaps are assumed to be either RGB565 bitmaps, or
+            a palette must be provided, otherwise the bitmap is assumed to be
+            a 1-bit bitmap and this parameter provides the colors of each bitmap,
+            or a color to use for all bitmaps.
+        key : int
+            For bitmaps that are not using ``colors``, an RGB565 color that
+            will be considered transparent when rendering the bitmap.  If the
+            value is -1, there is no transparent color.
+        palette : array | None
+            If ``colors`` is None and the bitmaps aren't RGB565 format, this is
+            an array containing RGB565 color values for each color value in the
+            given format.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the bitmaps.
+        """
 
 __all__ = ["Surface"]

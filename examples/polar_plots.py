@@ -18,7 +18,7 @@ working_buffer = array('H', bytearray(2*320*81))
 
 
 # fill the background with off-black pixels
-surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_1])
+surface.rectangles('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_1])
 
 class LinearScale:
     """Object that maps data to screen values linearly."""

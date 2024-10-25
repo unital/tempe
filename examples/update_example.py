@@ -13,23 +13,23 @@ WORKING_BUFFER = array('H', bytearray(2*320*81))
 
 async def init_surface(surface):
     # fill the background with off-white pixels
-    surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_f])
+    surface.rects('BACKGROUND', (0, 0, 320, 240), "#fff")
 
     # prepare the text fields
     from example_fonts import roboto32boldnumbers
     time_field = surface.text(
         "DRAWING",
-        [[10, 10]],
-        [colors.grey_a],
-        [""],
+        (10, 10),
+        "#aaa",
+        "",
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 10, 240, 40),
     )
     temp_field = surface.text(
         "DRAWING",
-        [[10, 50]],
-        [colors.grey_a],
-        [""],
+        (10, 50),
+        colors.grey_a,
+        "",
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 50, 240, 40),
     )

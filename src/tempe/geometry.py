@@ -13,8 +13,9 @@ POLY = "poly"
 class Geometry(DataView):
     """Efficient storage of geometric information."""
 
-    def __init__(self, geometry):
+    def __init__(self, geometry, coords=None):
         self.geometry = geometry
+        self.coords = coords
 
     def __iter__(self):
         raise NotImplementedError()
@@ -27,8 +28,12 @@ class RowGeometry(Geometry):
     """Geometry where coordinates are provided as ragged rows."""
 
     @classmethod
-    def from_lists(cls, rows):
-        return cls([array("h", coord) for coord in rows])
+    def from_lists(cls, rows, coords=None):
+        if coords is None:
+            coords = max(len(row) for row in rows)
+            if any(len(row) != coords for row in rows):
+                coords = None
+        return cls([array("h", coord) for coord in rows], coords)
 
     def __iter__(self):
         yield from self.geometry
@@ -39,6 +44,9 @@ class RowGeometry(Geometry):
 
 class ColumnGeometry(Geometry):
     """Geometry where coordinates are provided as ragged columns"""
+
+    def __init__(self, geometry):
+        super().__init__(geometry, len(geometry))
 
     def __iter__(self):
         for coords in zip(*self.geometry):
@@ -59,7 +67,7 @@ class StripGeometry(Geometry):
     """
 
     def __init__(self, geometry, n_groups=2, step=1, n_coords=2):
-        super().__init__(geometry)
+        super().__init__(geometry, n_coords * n_groups)
         self.n_groups = n_groups
         self.step = step
         self.n_coords = n_coords
@@ -80,11 +88,16 @@ class StripGeometry(Geometry):
 class PointsToLines(Geometry):
     """Turn a generator of x, y values into a generator of (x0, y0, x1, y1)."""
 
+    def __init__(self, geometry):
+        if geometry.coords < 2:
+            raise ValueError("Expected Geometry with at least 2 coordinates")
+        super().__init__(geometry, 4)
+
     def __iter__(self):
         buf = array("h", bytearray(8))
         for i, point in enumerate(self.geometry):
             buf[:2] = buf[2:]
-            buf[2:] = point
+            buf[2:] = point[:2]
             if i != 0:
                 yield buf
 
@@ -99,9 +112,20 @@ class PointsToLines(Geometry):
 
 class Extend(Geometry):
 
+    def __init__(self, geometry):
+        if any(geom.coords is None for geom in geometry):
+            coords = None
+        else:
+            coords = sum(geom.coords is None for geom in geometry)
+        super().__init__(geometry, coords)
+
     def __iter__(self):
+        if self.coords is not None:
+            # can use a single buffer
+            buf = array('h', bytearray(2 * self.coords))
         for coords in zip(*self.geometry):
-            buf = array('h', bytearray(2*sum(len(coord) for coord in coords)))
+            if self.coords is None:
+                buf = array('h', bytearray(2*sum(len(coord) for coord in coords)))
             i = 0
             for coord in coords:
                 buf[i:i + len(coord)] = coord
@@ -144,7 +168,7 @@ class Select(Geometry):
     """Select coordinates from another geometry."""
 
     def __init__(self, geometry, selection):
-        super().__init__(geometry)
+        super().__init__(geometry, len(selection))
         self.selection = selection
 
     def __iter__(self):

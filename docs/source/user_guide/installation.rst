@@ -4,8 +4,7 @@ Getting Started
 
 .. currentmodule:: tempe
 
-At the moment installation is from the GitHub repo source.  In the future
-we would like to add ``mip`` and better stub file support.
+At the moment installation is experimental, but should work.
 
 Installation
 ------------
@@ -52,7 +51,7 @@ example drivers in ``/devices``).
 Running the Examples
 --------------------
 
-The example code works with a Raspberry Pi Pico and it's internal hardware,
+The example code works with a Raspberry Pi Pico and its internal hardware,
 plus a ST7789-based display that communicates via SPI; in particular development
 has been done against various Pimoroni screens (Pico Packs, Breakout Garden,
 and Pico Explorer should work).
@@ -62,7 +61,7 @@ Most examples can be run from inside an IDE like Thonny.
 Writing Code Using Tempe
 -------------------------
 
-Althought Tempe is a Micropython library, it provides ``.pyi`` stub files for
+Although Tempe is a Micropython library, it provides ``.pyi`` stub files for
 typing support.  If you add the tempe sources to the paths where tools like
 ``mypy`` and ``pyright`` look for stubs (in particular, ``pip install -e ...``
 will likely work), then you should be able to get type-hints for the code you

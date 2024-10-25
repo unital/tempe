@@ -12,9 +12,29 @@ def rgb444_to_rgb565(r, g, b):
     return (bytes >> 8) | ((bytes & 0xFF) << 8)
 
 
+def rgb24_to_rgb565(r, g, b):
+    bytes = ((r >> 3) << 11) | ((g >> 2) << 6) | ((b >> 3) << 1)
+    return (bytes >> 8) | ((bytes & 0xFF) << 8)
+
+
 def rgb565(r, g, b):
     bytes = (int(round(r * 0x1F)) << 11) | (int(round(g * 0x3F)) << 5) | int(round(b * 0x1F))
     return (bytes >> 8) | ((bytes & 0xFF) << 8)
+
+
+def from_str(color_str):
+    if color_str.startswith('#'):
+        if len(color_str) == 4:
+            return rgb444_to_rgb565(
+                *(int(f'0x{c}') for c in color_str[1:])
+            )
+        elif len(color_str) == 7:
+            return rgb24_to_rgb565(*(
+                int(f'0x{color_str[i:i+2]}')
+                for i in range(1, len(color_str), 2)
+            ))
+    else:
+        raise ValueError(f"Unknown color string {color_str!r}")
 
 
 black = grey_0 = 0x0000

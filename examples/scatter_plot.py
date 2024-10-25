@@ -18,7 +18,7 @@ working_buffer = array('H', bytearray(2*320*121))
 
 
 # fill the background with off-white pixels
-surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_f])
+surface.rectangles('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_f])
 
 class LinearScale:
     """Object that maps data to screen values linearly."""
@@ -66,7 +66,7 @@ class LogScale:
 
 
 class AreaScale:
-    """Object that maps data area for a radius paramemter"""
+    """Object that maps data area for a radius parameter"""
 
     def __init__(self, low_data, low_screen, high_data, high_screen):
         self.low_data = low_data
@@ -192,7 +192,7 @@ temp_rects = ColumnGeometry([
     temp_count_scale.scale_values(temp_hist_counts),
     Repeat(int(temperature_scale.scale + 2))
 ])
-surface.rects(
+surface.rectangles(
     'DRAWING',
     temp_rects,
     Repeat(colors.red),
@@ -205,7 +205,7 @@ quality_rects = ColumnGeometry([
     Repeat(int(15 * air_quality_scale.scale - 2)),
     quality_count_scale.scale_values(quality_hist_counts),
 ])
-surface.rects(
+surface.rectangles(
     'DRAWING',
     quality_rects,
     Repeat(colors.green),
@@ -225,7 +225,7 @@ time_scale_geometry = polar_rects(
         Repeat(15),
     ]),
 )
-surface.polys(
+surface.polygons(
     'DRAWING',
     time_scale_geometry,
     time_scale.scale_values([i*3600 + 6*3600 for i in range(24)]),
@@ -263,7 +263,7 @@ surface.markers(
 # Plot Decoration:
 
 # fill the plot with white pixels
-surface.rects('BACKGROUND', [(x, y, w, h)], [colors.white])
+surface.rectangles('BACKGROUND', [(x, y, w, h)], [colors.white])
 # border the plot
 # surface.rects('BACKGROUND', [(x, y, w, h)], [colors.grey_d], fill=False)
 # draw axes

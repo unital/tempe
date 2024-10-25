@@ -1,16 +1,28 @@
 # Tempe
 
-Beautiful Micropython Graphics
+Beautiful, Efficient Micropython Graphics
 
 <img src="./pico-tempe.png" width="480" alt="A Raspberry Pi Pico with a data visualization on a screen" />
 
-Tempe is a pure-Micropython graphics system designed to be make using the
-full capabilities of display devices more accessible, particularly on
-memory-constrained microcontrollers.  The aim is to allow data scientists,
-user interface designers and data visualization specialists to be able to
-create beautiful, responsive displays without needing to worry about the
-mechanics of rendering to bytes on the screen device, handling partial screen
-updates, and so on.
+Tempe is a graphics library designed to support everyday display and data
+visualization tasks on small, 16-bit+ color screens.
+
+- Pure Micropython codebase—no C libraries, cross-compiling or custom firmware
+  needed—``mip``-install and go.
+- Full 16-bit color support even on memory-constrained microcontrollers.
+- API designed to support common data visualization patterns, such as polar
+  coordinates, efficiently.
+- Transparent support for partial display updates and damage-region tracking,
+  allowing memory-efficency and fast updates for small changes.
+- Core API avoids floating-point operations.
+- Asyncio integration to allow simple support for dynamically changing
+  graphics.
+
+## Documentation
+
+[Tempe Documentation](https://unital.github.io/tempe)
+- [User Guide](https://unital.github.io/tempe/user_guide)
+- [API docs](https://unital.github.io/tempe/api)
 
 ## Gallery
 
@@ -22,12 +34,39 @@ updates, and so on.
 
 <img src="./docs/source/user_guide/line_plot_4.png" width="160" alt="A line plot of temperature over time drawn in an image" /> <img src="./docs/source/user_guide/scatter_plot.png" width="160" alt="A scatter plot of environmental data with scales drawn in an image" /> <img src="./docs/source/user_guide/polar_plot.png" width="160" alt="A polar plot of air quality data over time in an image" />
 
-## Documentation
+## Goals
 
-[Tempe Documentation](https://unital.github.io/tempe)
-- [User Guide](https://unital.github.io/tempe/user_guide)
-- [API docs](https://unital.github.io/tempe/api)
+Modern micropython-based microcontrollers are surpisingly capable machines.
+In particular, you can get small, inexpensive LCD or OLED screens capable of
+16-bit or more color.  These can fill a role of providing users visual feedback
+and simple UIs for edge computing devices: dashboards that display a device's
+current state and history, or allow configuration and control of a device's
+settings.  At 16-bit color depth, these should be capable of creating data
+visualization and UIs which look as good as modern plotting and UI libraries.
 
+However using these displays to their full capacity is difficult: a full-screen
+framebuffer for a 320x240 display is 150K, which is a substantial fraction
+of available memory on a device like a Rasperry Pi Pico.  As a result, graphics
+on memory-constrained devices often ends up compromising: either by using
+a smaller color palette that can fit in a smaller buffer, or by using a smaller
+area of the screen for active display.
+
+Additionally these device typically use SPI or I2C as the interface bus, so
+even if there is memory to support a framebuffer, the time taken to simply
+transmit the full framebuffer data to the display can take 10s of
+milliseconds.
+
+There are long-known techniques for working around these issues such as working
+with smaller, partial framebuffers and doing multi-stage transfers to the
+display; or tracking changes to the graphics being displayed and only updating
+the damaged regions.  These can avoid compromises on graphical quality and
+speed, but they either mean that the drawing code becomes complex or the
+underlying graphics library needs to take care of these issues.
+
+Tempe aims to be such a library.  It sits on top of the standard Micropython
+:py:mod:`framebuf` drawing library, giving a memory-efficient API that is
+particularly suited for building data visualizations, and which quietly
+handles updating the screen in a way that is both memory efficient and fast.
 
 ## Design Notes
 
@@ -38,7 +77,7 @@ subject to the following constraints:
 - small screen sizes
 - reduced color ranges/alpha support
 - no C code and standard Micropython as much as possible
-- fast rendering (aiming for <100ms for reasonable images)
+- fast rendering (aiming for <100ms for reasonable images and <1s for unreasonable images)
 - integration with asyncio for events/updates
 
 General goals are to be able to support basic UIs (eg. terminal emulation, form display)

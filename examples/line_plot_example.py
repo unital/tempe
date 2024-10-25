@@ -15,7 +15,7 @@ working_buffer = array('H', bytearray(2*320*121))
 
 
 # fill the background with off-white pixels
-surface.rects('BACKGROUND', [(0, 0, 320, 240)], [colors.grey_f])
+surface.rectangles('BACKGROUND', (0, 0, 320, 240), colors.grey_f)
 
 class LinearScale:
     """Object that maps data to screen values linearly."""
@@ -65,19 +65,19 @@ lines = PointsToLines(points)
 surface.lines(
     "DRAWING",
     lines,
-    Repeat(colors.grey_3),
+    colors.grey_3,
     clip=(x, y, w, h),
 )
 
 # Plot Decoration:
 
 # fill the plot with white pixels
-surface.rects('BACKGROUND', [(x, y, w, h)], [colors.white])
+surface.rectangles('BACKGROUND', (x, y, w, h), colors.white)
 # border the plot
-# surface.rects('BACKGROUND', [(x, y, w, h)], [colors.grey_d], fill=False)
+# surface.rects('BACKGROUND', (x, y, w, h), colors.grey_d, fill=False)
 # draw axes
-surface.hlines('UNDERLAY', [(x, y1, w)], [colors.grey_c])
-surface.vlines('UNDERLAY', [(x, y, h)], [colors.grey_c])
+surface.hlines('UNDERLAY', (x, y1, w), colors.grey_c)
+surface.vlines('UNDERLAY', (x, y, h), colors.grey_c)
 
 
 # Temperature axis: tick marks, grid lines, labels
@@ -88,17 +88,17 @@ temp_labels = temperature_scale.scale_values([15, 20])
 surface.hlines(
     'UNDERLAY',
     ColumnGeometry([Repeat(x - tick_length), temp_labels, Repeat(tick_length)]),
-    Repeat(colors.grey_c),
+    colors.grey_c,
 )
 surface.hlines(
     'UNDERLAY',
     ColumnGeometry([Repeat(x), temp_labels, Repeat(w)]),
-    Repeat(colors.grey_f),
+    colors.grey_f,
 )
 surface.text(
     'OVERLAY',
     ColumnGeometry([Repeat(4), temp_labels]),
-    Repeat(colors.grey_a),
+    colors.grey_a,
     [f"{t}" for t in label_temps],
 )
 

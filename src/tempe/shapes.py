@@ -244,6 +244,9 @@ class Circles(FillableGeometry):
             px = geometry[0] - x
             py = geometry[1] - y
             r = geometry[2]
+            if r == 0:
+                # Avoid https://github.com/micropython/micropython/issues/16053
+                continue
             buffer.ellipse(px, py, r, r, color, self.fill)
 
     def _bounds(self):
@@ -273,6 +276,9 @@ class Ellipses(FillableGeometry):
             py = geometry[1] - y
             rx = geometry[2]
             ry = geometry[3]
+            if rx == 0 and ry == 0:
+                # Avoid https://github.com/micropython/micropython/issues/16053
+                continue
             buffer.ellipse(px, py, rx, ry, color, self.fill)
 
     def _bounds(self):
