@@ -17,7 +17,7 @@ def test():
     failures = []
     test_dir = Path("tests/tempe")
     os.environ["MICROPYPATH"] = "src:" + os.environ.get(
-        "MICROPYPATH", ":.frozen:~/.micropython/lib:/usr/lib/micropython"
+        "MICROPYPATH", ":examples:.frozen:~/.micropython/lib:/usr/lib/micropython"
     )
     for path in sorted(test_dir.glob("*.py")):
         print(path.name, "... ", end="", flush=True)

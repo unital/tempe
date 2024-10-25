@@ -88,7 +88,7 @@ class PointsToLines(Geometry):
     """Turn a generator of x, y values into a generator of (x0, y0, x1, y1)."""
 
     def __init__(self, geometry):
-        if geometry.coords < 2:
+        if geometry.coords is not None and geometry.coords < 2:
             raise ValueError("Expected Geometry with at least 2 coordinates")
         super().__init__(geometry, 4)
 

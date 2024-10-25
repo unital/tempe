@@ -3,7 +3,7 @@ from array import array
 import framebuf
 
 from .data_view import Repeat
-from .geometry import RowGeometry
+from .geometry import Geometry, RowGeometry
 from .raster import Raster
 from .shapes import Circles, Ellipses, Polygons, Rectangles, Lines, VLines, HLines
 from .util import contains
@@ -150,7 +150,7 @@ class Surface:
 
         geometry = self._check_geometry(geometry, 2)
         colors = self._check_colors(colors)
-        texts = self._check_texts(text)
+        texts = self._check_texts(texts)
         text = Text(geometry, colors, texts, font=font, clip=clip)
         self.add_shape(layer, text)
         return text
@@ -180,7 +180,11 @@ class Surface:
             and all(isinstance(x, int) for x in geometry)
         ):
             geometry = RowGeometry.from_lists([geometry])
-        if coords is not None and geometry.coords is not None:
+        if (
+            coords is not None
+            and isinstance(geometry, Geometry)
+            and geometry.coords is not None
+        ):
             if geometry.coords < coords:
                 raise ValueError(
                     f"Expected Geometry with at least {coords} coordinates, but got {geometry.coords}"
@@ -207,7 +211,7 @@ class Surface:
         if isinstance(texts, str):
             return Repeat(texts)
         else:
-            return bitmaps
+            return texts
 
     def _check_bitmaps(self, bitmaps):
         if isinstance(bitmaps, framebuf.FrameBuffer):

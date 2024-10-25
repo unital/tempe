@@ -19,6 +19,9 @@ class TestExamples(unittest.TestCase):
             ("examples/polar_example.py", "tests/tempe/polar.rgb565"),
             ("examples/lines_example.py", "tests/tempe/lines.rgb565"),
             ("examples/shapes_examples.py", "tests/tempe/shapes.rgb565"),
+            ("examples/line_plot_example.py", "tests/tempe/line_plot.rgb565"),
+            ("examples/scatter_plot_example.py", "tests/tempe/scatter_plot.rgb565"),
+            ("examples/polar_plot_example.py", "tests/tempe/polar_plot.rgb565"),
         ]
         for file, result in examples:
             print(file, result)
