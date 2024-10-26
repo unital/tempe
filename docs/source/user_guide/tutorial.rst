@@ -346,6 +346,55 @@ write::
     and scripting code that wants to do drawing with Tempe should use the
     higher-level convenience API in most cases.
 
+Colors and Colormaps
+--------------------
+
+Tempe assumes that all colors are 16-bit/2-byte, but most of the code doesn't
+care exactly what encoding is being used: the raw values are passed directly
+through to the device.  However, working directly with integer color values
+in a format like RGB565 is awkward, particularly if the endianness of the
+target device is different from the microcontroller.
+
+From a high-level API, we'd like to be able to specify the colors used in a
+more human-friendly way.  Tempe provides a number of facilites in
+~:py:mod:`tempe.colors` to help with this:
+
+- a number of basic colors are available as module variables.  This include
+  the basic web/VGA colors, as well as a series of greys as ``grey_1`` through
+  ``grey_f`` which correspond to 3-digit hex colors ``#111`` through ``#fff``.
+
+- the :py:func:`~tempe.colors.from_str` function accepts 3- and 6-digit hex
+  codes of the form ``"#abc"`` and ``"#abcdef"``, as well as all extended web
+  color names, and returns a matching RGB565 color.
+
+- the :py:func:`~tempe.colors.rgb565` method takes floating point r, g, b values
+  in the range 0.0-1.0 and converts them to RGB565 colors.  There are several other
+  conversion functions for other common formats.
+
+In addition, when creating data visualizations it is common to map numerical
+values to colors.  The :py:mod:`tempe.colormaps` package has sub-modules for
+a number of common color maps.  These include::
+
+- :py:mod:`tempe.colormaps.viridis.viridis`, :py:mod:`~tempe.colormaps.magma.magma`,
+  :py:mod:`~tempe.colormaps.plasma.plasma`, and :py:mod:`~tempe.colormaps.inferno.inferno`
+  are perceptually uniform color maps from Matplotlib.
+
+- :py:mod:`tempe.colormaps.twilight.twilight` is a circular perceptually uniform color
+   map from Matplotlib.
+
+These are provided as arrays of 256 colors, allowing them to be used either in
+custom mapping functions, or passed as palettes for 8-bit Bitmaps (see below).
+Each colormap is 512 bytes, which is why they are stored in separate modules:
+import only what you need to save memory.
+
+..  note::
+
+    Since development of Tempe has so-far been done on screens that expect
+    data to be transmitted in big-endian byte order, the byte order of colors
+    and colormaps is big-endian.  This can be confusing on a system like a
+    Raspberry Pi Pico, which is little-endian.
+
+
 Complex Shapes
 ==============
 
