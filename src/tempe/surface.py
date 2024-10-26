@@ -193,7 +193,7 @@ class Surface:
 
     def _check_colors(self, colors):
         if isinstance(colors, str):
-            from colors import from_str
+            from .colors import from_str
 
             return Repeat(from_str(colors))
         elif isinstance(colors, int):
