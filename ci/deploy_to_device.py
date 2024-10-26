@@ -17,6 +17,7 @@ def deploy():
         deploy_py_files(Path("examples/data"), ":/data")
         deploy_py_files(Path("examples/example_fonts"), ":/example_fonts")
         deploy_py_files(Path("src/tempe"), ":/lib/tempe")
+        deploy_py_files(Path("src/tempe/colors"), ":/lib/tempe/colors")
         # deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts")
         deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps")
     except subprocess.CalledProcessError as exc:
