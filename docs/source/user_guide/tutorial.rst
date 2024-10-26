@@ -356,7 +356,7 @@ in a format like RGB565 is awkward, particularly if the endianness of the
 target device is different from the microcontroller.
 
 From a high-level API, we'd like to be able to specify the colors used in a
-more human-friendly way.  Tempe provides a number of facilites in
+more human-friendly way.  Tempe provides a number of facilities in
 ~:py:mod:`tempe.colors` to help with this:
 
 - a number of basic colors are available as module variables.  This include
