@@ -373,7 +373,7 @@ more human-friendly way.  Tempe provides a number of facilities in
 
 In addition, when creating data visualizations it is common to map numerical
 values to colors.  The :py:mod:`tempe.colormaps` package has sub-modules for
-a number of common color maps.  These include::
+a number of common color maps.  These include:
 
 - :py:mod:`tempe.colormaps.viridis.viridis`, :py:mod:`~tempe.colormaps.magma.magma`,
   :py:mod:`~tempe.colormaps.plasma.plasma`, and :py:mod:`~tempe.colormaps.inferno.inferno`
