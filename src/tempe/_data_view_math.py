@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 """Classes that implement numerical operations on DataViews.
 
 These classes are largely an internal implementation detail.

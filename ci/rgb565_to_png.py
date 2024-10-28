@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Basic conversion utility to take raw RGB565 to .png format."""
+
 import array
 from pathlib import Path
 

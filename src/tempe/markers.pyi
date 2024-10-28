@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Markers and Points shape classes."""
+
 from collections.abc import Iterable
 from array import array
 import framebuf

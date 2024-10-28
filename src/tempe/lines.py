@@ -1,6 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 from array import array
 from math import sqrt
-import micropython
 
 from .shapes import ColoredGeometry
 

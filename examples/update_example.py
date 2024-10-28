@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing asyncio updating of a surface."""
+
 import asyncio
 from array import array
 from machine import ADC, Pin, SPI, RTC

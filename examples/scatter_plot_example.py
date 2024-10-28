@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing how to create a scatter plot from Tempe Shapes."""
+
 from array import array
 import gc
 from math import sqrt, log
@@ -398,7 +404,7 @@ if __name__ == "__main__":
     # if we have an actual screen, use it
     main(surface, working_buffer)
 
-elif __name__ != '__test__':
+elif __name__ != "__test__":
     from tempe.display import FileDisplay
 
     # set up the display object

@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Color conversion routines."""
+
 
 def rgb_to_rgb565(colors):
     rgb565_colors = []
@@ -26,9 +32,9 @@ def rgb24_to_rgb565(r, g, b, big_endian=True):
 
 def rgb565(r, g, b, big_endian=True):
     bytes = (
-        (int(round(r * 0x1f)) << 11)
-        | (int(round(g * 0x3f)) << 5)
-        | int(round(b * 0x1f))
+        (int(round(r * 0x1F)) << 11)
+        | (int(round(g * 0x3F)) << 5)
+        | int(round(b * 0x1F))
     )
     if big_endian:
         return (bytes >> 8) | ((bytes & 0xFF) << 8)
@@ -48,11 +54,13 @@ def from_str(color_str):
     else:
         # is it a named Tempe color?
         from tempe import colors
+
         if (c := getattr(colors, color_str, None)) and isinstance(c, int):
             return c
 
         # try a named web color
         from .web import color
+
         c = color(color_str)
         if c != 0:
             return c
