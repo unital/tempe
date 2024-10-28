@@ -4,7 +4,6 @@
 
 from array import array
 from math import sqrt
-import micropython
 
 from .shapes import ColoredGeometry
 
