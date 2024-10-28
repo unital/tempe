@@ -9,7 +9,6 @@ import framebuf
 from types import ModuleType
 from typing import Type, TypeAlias
 
-
 class AbstractFont:
     """ABC for fonts.
 
@@ -42,7 +41,6 @@ class AbstractFont:
             This returns a tuple of (leading, descent, width and height).
         """
 
-
 class BitmapFont(AbstractFont):
     """ABC for bitmapped fonts."""
 
@@ -63,7 +61,6 @@ class BitmapFont(AbstractFont):
         height : int
             The height of the character buffer.
         """
-
 
 class FontToPy(BitmapFont):
     """Bitmapped font that uses Font To Py fonts.
@@ -88,8 +85,8 @@ class FontToPy(BitmapFont):
     ----------
     - Font to Py repo: `github.com/peterhinch/micropython-font-to-py <https://github.com/peterhinch/micropython-font-to-py>`_
     """
-    def __init__(self, mod: ModuleType): ...
 
+    def __init__(self, mod: ModuleType): ...
 
 class MicroFont(BitmapFont):
     """Bitmapped font that uses MicroFont fonts.
@@ -115,8 +112,8 @@ class MicroFont(BitmapFont):
     ----------
     - MicroFont repo: `github.com/antirez/microfont <https://github.com/antirez/microfont>`_
     """
-    def __init__(self, filename, cache_index=True, cache_chars=False): ...
 
+    def __init__(self, filename, cache_index=True, cache_chars=False): ...
 
 class TempeFont(BitmapFont):
     """Internal bitmapped font format.
@@ -138,4 +135,5 @@ class TempeFont(BitmapFont):
 
         font = TempeFont(roboto16)
     """
+
     def __init__(self, mod: ModuleType): ...
