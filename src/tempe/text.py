@@ -45,32 +45,8 @@ class Text(ColoredGeometry):
                         buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
                         px += width
                     py += line_height
-        # elif isinstance(self.font, AlrightFont):
-        #     line_height = self.font.height
-        #     for geometry, color, text in self:
-        #         py = geometry[1] - y
-        #         for i, line in enumerate(text.splitlines()):
-        #             px = geometry[0] - x
-        #             for char in line:
-        #                 contours = self.font.contours(char)
-        #                 for contour in contours:
-        #                     print(contour)
-        #                     buffer.poly(px, py, contour, color, True)
-        #                 px += self.font.measure(char)[2]
-        #             py += line_height
 
     def update(self, geometry=None, colors=None, texts=None):
-        if geometry is not None:
-            if self.clip is None:
-                # invalidate old geometry bounds
-                if self._get_bounds is None:
-                    self._get_bounds = self._get_bounds()
-                self.surface.damage(self._get_bounds)
-            self.geometry = geometry
-            # bounds are no longer valid
-            self._get_bounds = None
-        if colors is not None:
-            self.colors = colors
         if texts is not None:
             if self.clip is None:
                 # invalidate old text bounds
@@ -80,7 +56,7 @@ class Text(ColoredGeometry):
             self.texts = texts
             # bounds are no longer valid
             self._get_bounds = None
-        super().update()
+        super().update(geometry=geometry, colors=colors)
 
     def _get_bounds(self):
         max_x = -0x7FFF
