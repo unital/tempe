@@ -32,7 +32,7 @@ class AbstractFont:
         Parameters
         ----------
         text : str
-            The text to measure.  This shouldn't includ newlines, tabs, or
+            The text to measure.  This shouldn't include newlines, tabs, or
             other control characters.
 
         Returns
