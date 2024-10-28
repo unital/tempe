@@ -4,11 +4,17 @@
 
 """Draw wide lines
 
+This takes the line geometry and draws rectanglular polygons that match
+the thickened line's shape.  Joins and endpoints are rounded by default
+by rendering circles at the vertices.
+
 .. note:::
 
    This is an experimental module: it is not clear that this approach is
    the best way to draw thicker lines.  Eg. it may be better to render
-   directly into the buffer using viper.
+   directly into the buffer using viper, or it may be better to provide
+   functions that transform the line geometry to a polygon geometry.
+
 """
 
 from array import array
