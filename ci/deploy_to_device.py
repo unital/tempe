@@ -9,24 +9,25 @@ import click
 
 
 @click.command()
-def deploy():
+@click.option("-march", "arch", type=str, help="Compile to the specified architecture.")
+def deploy(arch=""):
     """Deploy files to a device via mpremote"""
     try:
-        deploy_py_files(Path("examples"), ":", clear=False)
-        deploy_py_files(Path("examples/devices"), ":/devices")
-        deploy_py_files(Path("examples/data"), ":/data")
-        deploy_py_files(Path("examples/example_fonts"), ":/example_fonts")
-        deploy_py_files(Path("src/tempe"), ":/lib/tempe")
-        deploy_py_files(Path("src/tempe/colors"), ":/lib/tempe/colors")
-        # deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts")
-        deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps")
+        deploy_py_files(Path("examples"), ":", clear=False, arch="")
+        deploy_py_files(Path("examples/devices"), ":/devices", arch="")
+        deploy_py_files(Path("examples/data"), ":/data", arch=arch)
+        deploy_py_files(Path("examples/example_fonts"), ":/example_fonts", arch=arch)
+        deploy_py_files(Path("src/tempe"), ":/lib/tempe", arch=arch)
+        deploy_py_files(Path("src/tempe/colors"), ":/lib/tempe/colors", arch=arch)
+        deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts", arch=arch)
+        deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps", arch=arch)
     except subprocess.CalledProcessError as exc:
         print("Error:")
         print(exc.stderr)
         raise
 
 
-def deploy_py_files(path: Path, destination, clear=True):
+def deploy_py_files(path: Path, destination, clear=True, arch=""):
     try:
         mpremote("mkdir", destination)
     except subprocess.CalledProcessError as exc:
@@ -50,12 +51,15 @@ def deploy_py_files(path: Path, destination, clear=True):
                     pass
 
     for file in path.glob("*.py"):
-        mpremote("cp", str(file), f"{destination}/{file.name}")
+        if arch:
+            print(f"Compiling {file}")
+            result = mpycross(arch, file)
+        else:
+            print(f"Copying {file}")
+            mpremote("cp", str(file), f"{destination}/{file.name}")
 
     for file in path.glob("*.mpy"):
-        mpremote("cp", str(file), f"{destination}/{file.name}")
-
-    for file in path.glob("*.af"):
+        print(f"Copying {file}")
         mpremote("cp", str(file), f"{destination}/{file.name}")
 
 
@@ -71,6 +75,13 @@ def listdir(directory):
 def mpremote(command, *args):
     result = subprocess.run(
         ["mpremote", command, *args], capture_output=True, check=True
+    )
+    return result.stdout
+
+
+def mpycross(arch, *args):
+    result = subprocess.run(
+        ["mpy-cross", f"-march={arch}", *args], capture_output=True, check=True
     )
     return result.stdout
 
