@@ -12,6 +12,7 @@ class Shape:
     def __init__(self, surface=None, clip=None):
         self.surface = surface
         self.clip = clip
+        self._bounds = None
 
     def draw(self, buffer, x=0, y=0):
         # draw nothing
@@ -22,10 +23,13 @@ class Shape:
 
     def update(self):
         if self.clip is None:
-            self.clip = self._bounds()
-        self.surface.damage(self.clip)
+            if self._bounds is None:
+                self._bounds = self._get_bounds()
+            self.surface.damage(self._bounds)
+        else:
+            self.surface.damage(self.clip)
 
-    def _bounds(self):
+    def _get_bounds(self):
         raise NotImplementedError()
 
 
@@ -39,7 +43,14 @@ class ColoredGeometry(Shape):
 
     def update(self, geometry=None, colors=None):
         if geometry is not None:
+            if self.clip is None:
+                # invalidate old geometry bounds
+                if self._bounds is None:
+                    self._bounds = self._get_bounds()
+                self.surface.damage(self._bounds)
             self.geometry = geometry
+            # bounds are no longer valid
+            self._bounds = None
         if colors is not None:
             self.colors = colors
         super().update()
@@ -76,7 +87,7 @@ class Lines(ColoredGeometry):
             y1 = geometry[3] - y
             buffer.line(x0, y0, x1, y1, color)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -103,7 +114,7 @@ class HLines(ColoredGeometry):
             l = geometry[2]
             buffer.hline(px, py, l, color)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -130,7 +141,7 @@ class VLines(ColoredGeometry):
             l = geometry[2]
             buffer.vline(px, py, l, color)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -159,7 +170,7 @@ class PolyLines(ColoredGeometry):
                 y1 = geometry[i + 3] - y
                 buffer.line(x0, y0, x1, y1, color)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -184,7 +195,7 @@ class Polygons(FillableGeometry):
         for polygon, color in self:
             buffer.poly(-x, -y, polygon, color, self.fill)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -219,7 +230,7 @@ class Rectangles(FillableGeometry):
                 h = -h
             buffer.rect(px, py, w, h, color, self.fill)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -249,7 +260,7 @@ class Circles(FillableGeometry):
                 continue
             buffer.ellipse(px, py, r, r, color, self.fill)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -280,7 +291,7 @@ class Ellipses(FillableGeometry):
                 continue
             buffer.ellipse(px, py, rx, ry, color, self.fill)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF

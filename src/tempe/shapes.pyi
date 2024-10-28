@@ -117,7 +117,7 @@ class Shape:
         has its damage region updated.
         """
 
-    def _bounds(self) -> rectangle:
+    def _get_bounds(self) -> rectangle:
         """Compute the bounds of the Shape.
 
         Subclasses need to override this.

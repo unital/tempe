@@ -18,7 +18,14 @@ class Bitmaps(Shape):
 
     def update(self, geometry=None, buffers=None):
         if geometry is not None:
+            if self.clip is None:
+                # invalidate old geometry bounds
+                if self._bounds is None:
+                    self._bounds = self._get_bounds()
+                self.surface.damage(self._bounds)
             self.geometry = geometry
+            # bounds are no longer valid
+            self._bounds = None
         if buffers is not None:
             self.buffers = buffers
         super().update()
@@ -42,7 +49,7 @@ class Bitmaps(Shape):
             else:
                 buffer.blit(fbuf, px, py, self.key)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -64,13 +71,9 @@ class ColoredBitmaps(ColoredGeometry):
         self.buffers = buffers
 
     def update(self, geometry=None, colors=None, buffers=None):
-        if geometry is not None:
-            self.geometry = geometry
         if buffers is not None:
             self.buffers = buffers
-        if colors is not None:
-            self.colors = colors
-        super().update()
+        super().update(geometry=geometry, colors=colors)
 
     def __len__(self):
         return len(self.geometry)
@@ -87,7 +90,7 @@ class ColoredBitmaps(ColoredGeometry):
             py = geometry[1] - y
             buffer.blit(buf, px, py, BLIT_KEY_RGB565, palette)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
