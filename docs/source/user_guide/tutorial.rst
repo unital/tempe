@@ -844,7 +844,7 @@ appropriately scaled values::
         clip=(x, y, w, h),
     )
 
-Getting the x and y positions from the data is more-or-less thes same as
+Getting the x and y positions from the data is more-or-less the same as
 for a point plot, but size and color need a little more discussion.
 
 Color Scales
@@ -858,7 +858,7 @@ in the colormap array (probably in a linear manner), but unlike position
 scales we need to worry about what to do with values that would lie outside
 the range of the array.  If you are absolutely certain of the range of the
 data (for example, the values are percentages) you may be able to avoid this
-potentially at the cost of not useing the full range of values.  But otherwise
+potentially at the cost of not using the full range of values.  But otherwise
 you need to address the problem.
 
 The most common solution is simply to clip the range: any negative indices
@@ -932,7 +932,7 @@ to use a rectangular greyscale bitmap with the colormap as the palette, or to
 draw a sequence of lines or rectangles though the color range.
 
 In this example, the color map is circular, so a standard colorbar isn't the
-best way to reprsent this: instead we can show-off the ability of Tempe to
+best way to represent this: instead we can show-off the ability of Tempe to
 easily build non-standard visualization components by drawing the color bar
 as an annulus::
 
@@ -960,11 +960,11 @@ Marker Scales
 Scaling numbers to the size of markers has a similar problem to color scales
 in that you need to be careful about the low end of the scale and what to do
 about negative numbers.  But there is an additional problem around the way that
-some marker types are percieved: 2D markers, such as squares and circles have
+some marker types are perceived: 2D markers, such as squares and circles have
 a number of pixels proportional to the square of the size, which can cause larger
 values to be seen as disporoprtionately bigger.  Think of a circle of radius 1
 (a single pixel) vs. a circle of radius 10 (about 314 pixels): most people will
-percieve the radius 10 circle to be more than 10 times bigger.
+perceive the radius 10 circle to be more than 10 times bigger.
 
 For these types of markers, it's common to take square roots of the values so
 that the values scale in a roughly linear manner as seen by the viewer.  For
@@ -1115,14 +1115,14 @@ context for newer vs. older values as the line wraps around::
         r_theta_lines = PointsToLines(r_theta_points)
         quality_lines = polar_lines(r_theta_lines)
 
-    Doing this makes the connecing lines *polar geodesics*, ie.
+    Doing this makes the connecting lines *polar geodesics*, ie.
     linear spiral segments between the points.
 
     For this plot the difference is imperceptable, but if the theta
-    values are more widely spaced it will be noticable.  Polar
+    values are more widely spaced it will be noticeable.  Polar
     geodesics are generally slower to render, as each r-theta line
     gets turned into a xy polyline, but the difference can be
-    important in some curcumstances, such as drawing a regression
+    important in some circumstances, such as drawing a regression
     line in polar coordinates.
 
 Polar Plot Decorations
