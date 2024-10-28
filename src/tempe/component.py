@@ -2,10 +2,22 @@
 #
 # SPDX-License-Identifier: MIT
 
+"""Components
+
+This module provides objects that gather multiple Shapes together to
+produce a single unit in a UI, with support for styling.
+
+.. warning::
+
+   This is experimental, and my be moved into its own library in the
+   future.  Currently the functionality in this one module is far too
+   big.  This is not included in the mpy distribution.
+"""
+
 from array import array
 
 from .colors import grey_1, grey_2, grey_e, grey_f
-from .geometry import RowGeometry, StripGeometry, ColumnGeometry
+from .geometry import RowGeometry, ColumnGeometry
 from .data_view import DataView, Range
 from .markers import Marker
 
