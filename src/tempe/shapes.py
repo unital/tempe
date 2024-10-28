@@ -26,7 +26,8 @@ class Shape:
             if self._bounds is None:
                 self._bounds = self._get_bounds()
             self.surface.damage(self._bounds)
-        self.surface.damage(self.clip)
+        else:
+            self.surface.damage(self.clip)
 
     def _get_bounds(self):
         raise NotImplementedError()
