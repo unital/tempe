@@ -45,8 +45,17 @@ Ensure that the Pico is plugged in to your computer and no other program
     python -m ci.deploy_to_device
 
 and this will install the tempe code in the ``/lib`` directory (which is
-on :py:obj:`sys.path`) and the examples in the main directory (with
-example drivers in ``/devices``).
+on :py:obj:`sys.path`) and the examples in the main directory, with
+example drivers in ``/devices``, example data in ``/data`` and example fonts
+in ``/example_fonts``.
+
+You can optionally used the ``-march`` argument to have the files (other than
+the examples and example driveers) cross-compiled for the specified architecture.
+Eg. for a Raspberry Pi Pico, you would do:
+
+..  code-block:: console
+
+    python -m ci.deploy_to_device -march armv6m
 
 Running the Examples
 --------------------
@@ -63,6 +72,6 @@ Writing Code Using Tempe
 
 Although Tempe is a Micropython library, it provides ``.pyi`` stub files for
 typing support.  If you add the tempe sources to the paths where tools like
-``mypy`` and ``pyright`` look for stubs (in particular, ``pip install -e ...``
-will likely work), then you should be able to get type-hints for the code you
-are writing in your IDE or as a check step as part of your CI.
+``mypy`` and ``pyright`` look for stubs, then you should be able to get
+type-hints for the code you are writing in your IDE or as a check step as
+part of your CI.
