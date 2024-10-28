@@ -63,7 +63,7 @@ being updated, before copying the data across to screen device.
 This should display something like the following:
 
 ..  image:: hello_world.png
-    :width: 160
+    :width: 320
 
 
 Shapes and Geometry
@@ -380,7 +380,7 @@ a number of common color maps.  These include:
   are perceptually uniform color maps from Matplotlib.
 
 - :py:mod:`tempe.colormaps.twilight.twilight` is a circular perceptually uniform color
-   map from Matplotlib.
+  map from Matplotlib.
 
 These are provided as arrays of 256 colors, allowing them to be used either in
 custom mapping functions, or passed as palettes for 8-bit Bitmaps (see below).
@@ -402,7 +402,7 @@ Beyond simple geometric shape classes, Tempe provides a number of more complex
 shapes:
 
 ..  image:: shapes.png
-    :width: 160
+    :width: 320
 
 
 Text and Fonts
@@ -429,14 +429,13 @@ These fonts are typically shipped as modules::
 
     font = TempeFont(roboto16bold)
 
-    hello_tempe = Text([(64, 107)], [0x0000], ["Hello Tempe!"], font=font)
-    surface.add_shape('DRAWING', hello_tempe)
+    surface.text("DRAWING", [(64, 107)], [0x0000], ["Hello Tempe!"], font=font)
 
 Using this in the original example from the tutorial will generate something
 like the following:
 
 ..  image:: hello_font.png
-    :width: 160
+    :width: 320
 
 Since the fonts are stored as bitmaps, large fonts can be expensive to load
 and draw.  The font file format and tools allow you to generate font files
@@ -478,7 +477,7 @@ Polar Geometries
 ----------------
 
 ..  image:: polar.png
-    :width: 160
+    :width: 320
     :align: right
 
 When working with polar plots it is common to have geometry specified by
@@ -531,17 +530,20 @@ of the circular arcs by polygon lines.
 Data Visualization
 ==================
 
-Bringing all of this toegther, we can easily build standard data
-visualizations out of the building blocks that Tempe provides.
+Data visualization is, at its core, using data to make patterns with
+geometry, color and other aesthetic properties.  But data visualizations
+also need to provide enough context for a viewer to understand what the
+patterns are saying, through axes, scales, legends, titles and so forth.
+Keeping this in mind, we can easily build standard data visualizations out
+of the building blocks that Tempe provides.
 
 Time Plots
 ----------
 
 Microcontrollers are frequently going to read data from sensors of
 various sorts, so a common need is to plot these values as they vary
-over time.  Since sensors are likely to be measuring a nominally
-continuous value, a time-series plot is a common visualization
-that will be understood by most end-users.
+over time.  Line and point plots are a common visualizations that
+will be understood by most end-users.
 
 Let's say that we have a collection of temperatures collected over
 the last couple of days at 10 minute intervals, and their corresponding
@@ -612,7 +614,7 @@ x-values ranging from 24 to 312, we get::
 
 
 Plotting Points
-~~~~~~~~~~~~~~~
+---------------
 
 Since we have aligned x and y values, we can create a geometry for the
 sample points using a |ColumnGeometry|::
@@ -639,10 +641,10 @@ will be drawn in the margins::
 This produces a visualization like this:
 
 ..  image:: line_plot_1.png
-    :width: 160
+    :width: 320
 
 Plotting Lines
-~~~~~~~~~~~~~~
+--------------
 
 This is showing the data in an acceptable way (and if the data were noisier,
 this might be a very good way to display it), but the data is nominally
@@ -690,10 +692,10 @@ do::
 This produces a visualization like this:
 
 ..  image:: line_plot_2.png
-    :width: 160
+    :width: 320
 
 Plot Decorations
-~~~~~~~~~~~~~~~~
+----------------
 
 Now we have the data displayed, we need to put it into context so the
 user can make sense of the values.  Due to the small screen sizes, care
@@ -711,52 +713,48 @@ all the plots in your application.
     .. grid-item-card:: Plot Axes
 
         ..  image:: line_plot_axes.png
-            :width: 160
 
         ..  code-block::
 
             surface.hlines(
                 'UNDERLAY',
-                [(x, y1, w)],
-                [colors.grey_c],
+                (x, y1, w),
+                colors.grey_c,
             )
             surface.vlines(
                 'UNDERLAY',
-                [(x, y, h)],
-                [colors.grey_c],
+                (x, y, h),
+                colors.grey_c,
             )
 
     .. grid-item-card:: Plot Border
 
         ..  image:: line_plot_border.png
-            :width: 160
 
         ..  code-block::
 
             surface.rects(
                 'BACKGROUND',
-                [(x, y, w, h)],
-                [colors.grey_d],
+                (x, y, w, h),
+                colors.grey_d,
                 fill=False,
             )
 
     .. grid-item-card:: Plot Background
 
         ..  image:: line_plot_bg.png
-            :width: 160
 
         ..  code-block::
 
             surface.rects(
                 'BACKGROUND',
-                [(x, y, w, h)],
-                [colors.white],
+                (x, y, w, h),
+                colors.white,
             )
 
     .. grid-item-card:: All Three
 
         ..  image:: line_plot_3.png
-            :width: 160
 
 Next you typically need some way to give the user a sense of scale for
 the axes.  Because of limited screen size it is unlikely that users will
@@ -812,24 +810,369 @@ were taken).
 The total result is something like this:
 
 ..  image:: line_plot_4.png
-    :width: 160
-
+    :width: 320
 
 Scatter Plots
 -------------
 
+Another common visualization that is well-understood by the typical user are
+scatter plots and their relatives (such as balloon plots).  A well-designed
+scatter plot can display 4 dimensions of data via x position, y position,
+color and size.
+
+Continuing the previous example, we also have air quality and humidity values
+for the same time period.  We'd like to show temperature vs air quality as
+x and y, with humidity and time of day as additional dimensions.
+
+At the core, a scatter plot is just using the |Markers| shape with
+appropriately scaled values::
+
+    ys = temperature_scale.scale_values(temperature)
+    xs = air_quality_scale.scale_values(air_quality)
+    marker_sizes = humidity_scale.scale_values(humidity)
+    marker_colors = time_scale.scale_values(timestamps)
+
+    # Create point-size geometry for the data points
+    markers = ColumnGeometry([xs, ys, marker_sizes])
+
+    # draw the plot
+    surface.markers(
+        "DRAWING",
+        markers,
+        marker_colors,
+        Repeat(Marker.CIRCLE),
+        clip=(x, y, w, h),
+    )
+
+Getting the x and y positions from the data is more-or-less thes same as
+for a point plot, but size and color need a little more discussion.
+
+Color Scales
+------------
+
+For showing color, you need to map your data to colors in a way which fits
+the context.  Tempe provides a number of color maps in
+:py:mod:`tempe.colormaps` that can be used to assign numeric data to colors.
+Like linear position scales, we need to map the numeric values to a position
+in the colormap array (probably in a linear manner), but unlike position
+scales we need to worry about what to do with values that would lie outside
+the range of the array.  If you are absolutely certain of the range of the
+data (for example, the values are percentages) you may be able to avoid this
+potentially at the cost of not useing the full range of values.  But otherwise
+you need to address the problem.
+
+The most common solution is simply to clip the range: any negative indices
+are set to the 0 index and any high indices are set to the largest possible
+index, which leads to scaling code like this::
+
+    class ColorScale:
+        """Object that maps data to color values."""
+
+        def __init__(self, colormap, low_data, high_data):
+            self.colormap = colormap
+            self.low_data = low_data
+            self.high_data = high_data
+            data_range = high_data - low_data
+            self.scale = (len(colormap) - 1) / data_range
+
+        def scale_values(self, data):
+            """Scale data values to color values."""
+            colors = array("h", bytearray(2 * len(data)))
+            low_data = self.low_data
+            scale = self.scale
+            colormap = self.colormap
+            max_color = len(colormap) - 1
+            for i, value in enumerate(data):
+                colors[i] = colormap[
+                    max(
+                        min(
+                            int(scale * (value - low_data)),
+                            max_color,
+                        ),
+                        0,
+                    )
+                ]
+            return colors
+
+But for our particular plot rather than just showing time as a linear colormap
+where older times range to newer times, the display is more interesting if we
+instead color by time of day, so we can compare differences between morning,
+evening and night.
+
+In this case we want a color scale that wraps out-of-range values rather than
+clipping, which gives us a scale something like the following::
+
+    class CyclicColorScale:
+        """Object that maps data to color values."""
+
+        def __init__(self, colormap, period, phase=0):
+            self.colormap = colormap
+            self.period = period
+            self.phase = phase
+
+        def scale_values(self, data):
+            """Scale data values to screen values."""
+            screen = array("h", bytearray(2 * len(data)))
+            phase = self.phase
+            period = self.period
+            colormap = self.colormap
+            scale = len(colormap) / period
+            for i, value in enumerate(data):
+                screen[i] = colormap[int(scale * ((value - phase) % period))]
+            return screen
+
+To be effective this needs a colormap which wraps around as well, so that the
+minimum and maximum colors are close.  The :py:mod:`tempe.colormaps.twilight`
+colormap is designed for such situations, for example, and suits the
+visualization as well.
+
+Except for the most intuitive situations, color scales need to have some sort
+of color bar to give context for the user.  Two common ways to do this are
+to use a rectangular greyscale bitmap with the colormap as the palette, or to
+draw a sequence of lines or rectangles though the color range.
+
+In this example, the color map is circular, so a standard colorbar isn't the
+best way to reprsent this: instead we can show-off the ability of Tempe to
+easily build non-standard visualization components by drawing the color bar
+as an annulus::
+
+    time_scale_geometry = polar_rects(
+        cx,
+        cy,
+        ColumnGeometry(
+            [
+                Repeat(20),
+                Range(0, 360, 15),
+                Repeat(15),
+                Repeat(15),
+            ]
+        ),
+    )
+    surface.polygons(
+        "DRAWING",
+        time_scale_geometry,
+        time_scale.scale_values([i * 3600 + 6 * 3600 for i in range(24)]),
+    )
+
+Marker Scales
+-------------
+
+Scaling numbers to the size of markers has a similar problem to color scales
+in that you need to be careful about the low end of the scale and what to do
+about negative numbers.  But there is an additional problem around the way that
+some marker types are percieved: 2D markers, such as squares and circles have
+a number of pixels proportional to the square of the size, which can cause larger
+values to be seen as disporoprtionately bigger.  Think of a circle of radius 1
+(a single pixel) vs. a circle of radius 10 (about 314 pixels): most people will
+percieve the radius 10 circle to be more than 10 times bigger.
+
+For these types of markers, it's common to take square roots of the values so
+that the values scale in a roughly linear manner as seen by the viewer.  For
+our humidity values, this moght look something like this::
+
+    class AreaScale:
+        """Object that maps data area for a radius parameter"""
+
+        def __init__(self, low_data, low_screen, high_data, high_screen):
+            self.low_data = low_data
+            self.low_screen = low_screen
+            self.high_data = high_data
+            self.high_screen = high_screen
+            data_range = high_data - low_data
+            screen_range = high_screen - low_screen
+            self.scale = screen_range / data_range
+
+        def scale_values(self, data):
+            """Scale data values to screen values."""
+            screen = array("h", bytearray(2 * len(data)))
+            low_data = self.low_data
+            low_screen = self.low_screen
+            scale = self.scale
+            for i, value in enumerate(data):
+                screen[i] = int(sqrt(low_screen + scale * (value - low_data)))
+            return screen
+
+Creating a scale legend for humidity just involves building a small table of
+markers and text giving the corresponding values::
+
+    sample_humidities = [40, 50, 60, 70]
+    surface.markers(
+        "DRAWING",
+        ColumnGeometry(
+            [
+                Repeat(x1 + 30),
+                Range(cy + 74, cy + 114, 12),
+                humidity_scale.scale_values(sample_humidities),
+            ]
+        ),
+        colors.blue,
+        Marker.CIRCLE,
+    )
+    surface.markers(
+        "DRAWING",
+        ColumnGeometry(
+            [
+                Repeat(x1 + 40),
+                Range(cy + 75, cy + 115, 12),
+                humidity_scale.scale_values(sample_humidities),
+            ]
+        ),
+        colors.grey_a,
+        [f"{h}%" for h in sample_humidities],
+    )
+
+Distribution Plots
+------------------
+
+Another common feature of scatter plots is to render the distribution of
+values along the appropriate axes.  To do this, we need to bin the data
+appropriately.  For example, for temperature we might put the data into
+1°C bins::
+
+    temp_hist = {t: 0 for t in range(11, 22)}
+    for t in temperature:
+        temp_hist[int(t)] += 1
+    temp_hist_temps, temp_hist_counts = zip(*sorted(temp_hist.items()))
+
+We then can need a simple scale for the counts::
+
+    temp_count_scale = LinearScale(0, 0, 100, 20)
+
+and then we can create a bar plot using rectangles::
+
+    temp_rects = ColumnGeometry(
+        [
+            Repeat(plot_right + 2),
+            temperature_scale.scale_values(temp_hist_temps),
+            temp_count_scale.scale_values(temp_hist_counts),
+            # the `scale` parameter of the temperature scale gives the
+            # distance between rectangles (which is negative), add 2
+            # for a bit of visual separation between bars.
+            Repeat(int(temperature_scale.scale + 2)),
+        ]
+    )
+    surface.rectangles(
+        "DRAWING",
+        temp_rects,
+        colors.red,
+        clip=(x1, y, 20, h),
+    )
+
+Putting all of this together, we end up with a plot like the following:
+
 ..  image:: scatter_plot.png
-    :width: 160
+    :width: 320
 
 TODO: `see examples/scatter_plot_example.py <https://github.com/unital/tempe/blob/main/examples/scatter_plot_example.py>`_
 
 Polar Plots
 -----------
 
-..  image:: polar_plot.png
-    :width: 160
+To create plots which use polar coordinates, you first want to create your
+polar geometry in polar (r, theta) screen coordinates, where r is radial
+pixels from the center point, and theta is a the angle in degrees of a point.
 
-TODO:  `see examples/polar_plot_example.py <https://github.com/unital/tempe/blob/main/examples/polar_plot_example.py>`_
+For example, to create a polar line plot of the air quality data, we set
+up our geometry as if we were creating a regular line plot, but with scales
+for r and theta values::
+
+    air_quality_scale = LinearScale(0, 0, 150, max_r)
+    # want midnight at top, values going clockwise
+    time_scale = LinearScale(1729551600, -90, 1729638000, 270)
+
+    rs = air_quality_scale.scale_values(air_quality)
+    thetas = time_scale.scale_values(timestamps)
+
+    r_theta_points = ColumnGeometry([quality_rs, thetas])
+
+This is then converted to the cartesian points which correspond to the
+polar points::
+
+    xy_points = polar_points(cx, cy, ColumnGeometry([quality_rs, thetas]))
+
+and from here on we proceed as a regular line plot::
+
+    quality_lines = PointsToLines(xy_points)
+
+    surface.lines(
+        "DRAWING",
+        quality_lines,
+        line_colors,
+    )
+
+We can color the lines by absolute time to give a bit more
+context for newer vs. older values as the line wraps around::
+
+    color_scale = ColorScale(viridis, 1729500000, 1729500000 + 48 * 3600)
+    line_colors = color_scale.scale_values(timestamps)
+
+..  note::
+
+    Here we converted the points to Cartesian coordinates and then
+    connected them with lines, but an alternative would be to get
+    the line geometry and then convert to Cartesian coordinates::
+
+        r_theta_lines = PointsToLines(r_theta_points)
+        quality_lines = polar_lines(r_theta_lines)
+
+    Doing this makes the connecing lines *polar geodesics*, ie.
+    linear spiral segments between the points.
+
+    For this plot the difference is imperceptable, but if the theta
+    values are more widely spaced it will be noticable.  Polar
+    geodesics are generally slower to render, as each r-theta line
+    gets turned into a xy polyline, but the difference can be
+    important in some curcumstances, such as drawing a regression
+    line in polar coordinates.
+
+Polar Plot Decorations
+----------------------
+
+Drawing axes, ticks, grids and labels for a polar plot can be tricky to get
+a legible result, so it's hard to give absolute guidelines.
+
+Grids can be drawn using combinations of unfilled circles::
+
+    quality_label_values = [50, 100, 150]
+    quality_label_rs = air_quality_scale.scale_values(quality_label_values)
+
+    surface.circles(
+        "UNDERLAY",
+        ColumnGeometry(
+            [
+                Repeat(cx),
+                Repeat(cy),
+                quality_label_rs,
+            ]
+        ),
+        colors.grey_3,
+        fill=False,
+    )
+
+and radial lines::
+
+    # hourly grid lines
+    time_grid_values = [1729551600 + 3600 * i for i in range(24)]
+
+    r_lines = ColumnGeometry(
+        [
+            Repeat(air_quality_scale.scale_values([50])[0]),
+            time_scale.scale_values(time_grid_values),
+            Repeat(int(air_quality_scale.scale * 100)),
+        ]
+    )
+    xy_lines = polar_r_lines(cx, cy, r_lines)
+
+    surface.lines("UNDERLAY", xy_lines colors.grey_3)
+
+In a similar manner, other plot decorations can be positioned by
+computing their position in polar coordinates, and then transforming
+to xy-coordinates to draw the appropriate shapes.
+
+The end result might look something like this:
+
+..  image:: polar_plot.png
+    :width: 320
 
 
 Dynamic Updates
