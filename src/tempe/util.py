@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+
 def contains(rect_1, rect_2):
     return (
         rect_1[0] >= rect_2[0]

@@ -68,13 +68,12 @@ _assoc_values = array.array(
     b"P\x01\x07\x00,\x00\x03\x00\x0f\x00\x03\x00;\x00\x05\x00\x11\x00"
     b"\x03\x00P\x01\x8a\x00\x04\x00\x0f\x00%\x00\x0c\x005\x00\x88\x00"
     b"\x03\x00\x03\x00\n\x00@\x00(\x00l\x00\x17\x00o\x00P\x01\x08\x00"
-    b"P\x01"
+    b"P\x01",
 )
 
 
 def _perf_hash(s):
-    """Hash function that gives a unique value for each web color.
-    """
+    """Hash function that gives a unique value for each web color."""
     l = len(s)
     v = l
     for i in [0, 2, 5, 6, 7, 11, 12]:

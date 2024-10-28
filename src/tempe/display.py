@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+
 class Display:
     """Abstract base class for Displays"""
 

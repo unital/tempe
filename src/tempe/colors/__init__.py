@@ -5,8 +5,22 @@
 """Basic colors and conversion routines."""
 
 from .basic import (
-    aqua, black, blue, fuchsia, gray, grey, green, lime,
-    maroon, navy, olive, purple, red, silver, teal, white,
+    aqua,
+    black,
+    blue,
+    fuchsia,
+    gray,
+    grey,
+    green,
+    lime,
+    maroon,
+    navy,
+    olive,
+    purple,
+    red,
+    silver,
+    teal,
+    white,
     yellow,
 )
 from .convert import from_str, rgb444_to_rgb565, rgb565

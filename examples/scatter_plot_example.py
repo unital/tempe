@@ -404,7 +404,7 @@ if __name__ == "__main__":
     # if we have an actual screen, use it
     main(surface, working_buffer)
 
-elif __name__ != '__test__':
+elif __name__ != "__test__":
     from tempe.display import FileDisplay
 
     # set up the display object
