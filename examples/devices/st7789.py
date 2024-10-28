@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example Display class for SPI-based ST7789 screens."""
+
 from machine import SPI, Pin
 import uasyncio
 import utime

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 """Basic colors
 
 These are basic named colors from VGA and early HTML and CSS definitions.

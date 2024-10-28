@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 """Conversion from polar coordinate geometries to cartesian geometries.
 
 These convert geometries in (r, theta) polar coordinates to cartesian

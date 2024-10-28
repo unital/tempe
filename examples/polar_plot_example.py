@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing how to build a polar plot from Tempe Shapes."""
+
 from array import array
 import gc
 from math import sqrt, log

@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example data from an environment sensor."""
+
 from array import array
 
 timestamps = array("L", [1729500000 + 600 * i for i in range(288)])

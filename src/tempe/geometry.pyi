@@ -1,9 +1,12 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 from array import array
-
-from .data_view import DataView
-
 from collections.abc import Sequence, Iterator, Iterable
 from typing import Any, Generic, TypeVar
+
+from .data_view import DataView
 
 _T = TypeVar("_T", bound=Sequence[int])
 

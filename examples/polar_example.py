@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing support for polar geometries."""
+
 import asyncio
 from array import array
 import framebuf

@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Color conversion routines."""
 
 def rgb_to_rgb565(colors):
     rgb565_colors = []

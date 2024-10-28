@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 """Drawing surface class and related objects.
 
 This module defines the Surface class and related constants for using

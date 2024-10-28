@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 from array import array
 
 from .colors import grey_1, grey_2, grey_e, grey_f

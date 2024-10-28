@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Bitmap shape classes."""
+
 from array import array
 from collections.abc import Sequence, Iterable
 import framebuf

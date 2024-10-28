@@ -1,3 +1,12 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing live updating of microcontroller state.
+
+Note: this is currently not working as it uses earlier version of code.
+"""
+
 from array import array
 import asyncio
 import gc

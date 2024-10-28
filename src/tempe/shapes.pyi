@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 """Shape classes which efficiently draw fundamental geometries.
 
 This module provides the core shape abstract base classes, along with
