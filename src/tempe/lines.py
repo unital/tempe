@@ -35,7 +35,7 @@ class WideLines(ColoredGeometry):
                     buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
                     buffer.ellipse(x1 - x, y1 - y, r, r, color, True)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -78,7 +78,7 @@ class WidePolyLines(ColoredGeometry):
                     y0 = lines[i + 1]
                     buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF

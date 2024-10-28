@@ -57,15 +57,11 @@ class Markers(ColoredGeometry):
                 buffer.poly(px, py, marker, color, True)
 
     def update(self, geometry=None, colors=None, markers=None):
-        if geometry is not None:
-            self.geometry = geometry
-        if colors is not None:
-            self.colors = colors
         if markers is not None:
             self.markers = markers
-        super().update()
+        super().update(geometry=geometry, colors=colors)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
@@ -97,7 +93,7 @@ class Points(Markers):
             elif isinstance(marker, array):
                 buffer.poly(px, py, marker, color, True)
 
-    def _bounds(self):
+    def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
