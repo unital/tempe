@@ -397,22 +397,22 @@ class ST7789:
         self.fill(x, y, 1, length, color)
 
     def _blit565(self, buf, x, y, w, h, stride=None):
-        """Transfer a 565 buffer to the display (one row at a time)."""
-        if stride is None:
-            stride = w
+        """Transfer a 565 buffer to the display."""
         buf = memoryview(buf)
-        write = self.spi.write
         self.window(x, y, w, h)
-        self.write_to_memory(b"")
-        start = utime.ticks_us()
-        self.cs_pin(0)
-        self.dc_pin(1)
-        offset = 0
-        for i in range(h):
-            write(buf[offset : offset + w])
-            offset += stride
-        #         write(buf)
-        self.cs_pin(1)
+        if stride is None:
+            # fast path for contiguous memory
+            self.write_to_memory(buf[:w * h])
+        else:
+            self.write_to_memory(b"")
+            write = self.spi.write
+            self.cs_pin(0)
+            self.dc_pin(1)
+            offset = 0
+            for i in range(h):
+                write(buf[offset : offset + w])
+                offset += stride
+            self.cs_pin(1)
 
     def blit(self, buf, x, y, w, h, stride=None):
         self._blit565(buf, x, y, w, h, stride)
