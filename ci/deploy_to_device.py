@@ -13,14 +13,21 @@ import click
 def deploy(arch=""):
     """Deploy files to a device via mpremote"""
     try:
+        # make sure we have a :/lib directory
+        mpremote("mkdir", ":/lib")
+    except subprocess.CalledProcessError as exc:
+        # already exists
+        pass
+    try:
         deploy_py_files(Path("examples"), ":", clear=False, arch="")
-        deploy_py_files(Path("examples/devices"), ":/devices", arch="")
         deploy_py_files(Path("examples/data"), ":/data", arch=arch)
         deploy_py_files(Path("examples/example_fonts"), ":/example_fonts", arch=arch)
         deploy_py_files(Path("src/tempe"), ":/lib/tempe", arch=arch)
         deploy_py_files(Path("src/tempe/colors"), ":/lib/tempe/colors", arch=arch)
         deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts", arch=arch)
         deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps", arch=arch)
+        deploy_py_files(Path("src/tempe_displays"), ":/lib/tempe_displays", arch=arch)
+        deploy_py_files(Path("src/tempe_displays/st7789"), ":/lib/tempe_displays/st7789", arch=arch)
     except subprocess.CalledProcessError as exc:
         print("Error:")
         print(exc.stderr)

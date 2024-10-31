@@ -20,7 +20,7 @@ from tempe.surface import Surface
 surface = Surface()
 
 # a buffer one third the size of the screen
-working_buffer = array("H", bytearray(2 * 320 * 81))
+working_buffer = array("H", range(320 * 81))
 
 
 # fill the background with off-black pixels
@@ -198,27 +198,17 @@ surface.text(
 )
 
 
+async def init_display():
+    from tempe_displays.st7789.pimoroni import PimoroniDisplay
+
+    display = PimoroniDisplay(size = (240, 320))
+    display.backlight_pin(1)
+    await display.init(270)
+    return display
+
+
 def main(surface, working_buffer):
     import asyncio
-
-    async def init_display():
-        from devices.st7789 import ST7789
-        from machine import Pin, SPI
-
-        spi = SPI(
-            0,
-            baudrate=62_500_000,
-            phase=1,
-            polarity=1,
-            sck=Pin(18, Pin.OUT),
-            mosi=Pin(19, Pin.OUT),
-            miso=Pin(16, Pin.OUT),
-        )
-        backlight = Pin(20, Pin.OUT)
-        display = ST7789(spi, cs_pin=Pin(17, Pin.OUT, value=1), dc_pin=Pin(16, Pin.OUT))
-        backlight(1)
-        await display.init()
-        return display
 
     # set up the display object
     display = asyncio.run(init_display())

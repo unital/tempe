@@ -2,84 +2,82 @@
 #
 # SPDX-License-Identifier: MIT
 
-"""Example Display class for SPI-based ST7789 screens."""
+"""Base Display class for ST7789 screens."""
 
-from machine import SPI, Pin
-import uasyncio
-import utime
+from machine import Pin
+import asyncio
 from struct import pack
-import array
-import framebuf
 
-NOP = const(b"\x00")
-SWRESET = const(b"\x01")
-RDDID = const(b"\x04")
-RDDST = const(b"\x09")
 
-SLPIN = const(b"\x10")
-SLPOUT = const(b"\x11")
-PTLON = const(b"\x12")
-NORON = const(b"\x13")
+_NOP = const(b"\x00")
+_SWRESET = const(b"\x01")
+_RDDID = const(b"\x04")
+_RDDST = const(b"\x09")
 
-INVOFF = const(b"\x20")
-INVON = const(b"\x21")
-DISPOFF = const(b"\x28")
-DISPON = const(b"\x29")
+_SLPIN = const(b"\x10")
+_SLPOUT = const(b"\x11")
+_PTLON = const(b"\x12")
+_NORON = const(b"\x13")
 
-CASET = const(b"\x2A")
-RASET = const(b"\x2B")
-RAMWR = const(b"\x2C")
-RAMRD = const(b"\x2E")
+_INVOFF = const(b"\x20")
+_INVON = const(b"\x21")
+_DISPOFF = const(b"\x28")
+_DISPON = const(b"\x29")
 
-PTLAR = const(b"\x30")
-VSCRDEF = const(b"\x33")
-TEOFF = const(b"\x34")
-TEON = const(b"\x35")
-MADCTL = const(b"\x36")
-VSCSAD = const(b"\x37")
-IDMOFF = const(b"\x38")
-IDMON = const(b"\x39")
-COLMOD = const(b"\x3A")
-WRMEMC = const(b"\x3C")
+_CASET = const(b"\x2A")
+_RASET = const(b"\x2B")
+_RAMWR = const(b"\x2C")
+_RAMRD = const(b"\x2E")
 
-STE = const(b"\x44")
+_PTLAR = const(b"\x30")
+_VSCRDEF = const(b"\x33")
+_TEOFF = const(b"\x34")
+_TEON = const(b"\x35")
+_MADCTL = const(b"\x36")
+_VSCSAD = const(b"\x37")
+_IDMOFF = const(b"\x38")
+_IDMON = const(b"\x39")
+_COLMOD = const(b"\x3A")
+_WRMEMC = const(b"\x3C")
 
-WRDISBV = const(b"\x51")
-WRCTRLD = const(b"\x53")
-WRCACE = const(b"\x55")
-WRCABCMB = const(b"\x5E")
+_STE = const(b"\x44")
 
-RAMCTRL = const(b"\xB0")
-RGBCTRL = const(b"\xB1")
-PORCTRL = const(b"\xB2")
-FRMCTR1 = const(b"\xB3")
+_WRDISBV = const(b"\x51")
+_WRCTRLD = const(b"\x53")
+_WRCACE = const(b"\x55")
+_WRCABCMB = const(b"\x5E")
 
-GCTRL = const(b"\xB7")
-GTADJ = const(b"\xB8")
-DGMEN = const(b"\xBA")
-VCOMS = const(b"\xBB")
-POWSAVE = const(b"\xBC")
-DLPOFFSAVE = const(b"\xBD")
+_RAMCTRL = const(b"\xB0")
+_RGBCTRL = const(b"\xB1")
+_PORCTRL = const(b"\xB2")
+_FRMCTR1 = const(b"\xB3")
 
-LCMCTRL = const(b"\xC0")
-IDSET = const(b"\xC1")
-VDVVRHEN = const(b"\xC2")
-VRHS = const(b"\xC3")
-VDVS = const(b"\xC4")
-VCMOFSET = const(b"\xC5")
-FRCTRL2 = const(b"\xC6")
-CABCCTRL = const(b"\xC7")
+_GCTRL = const(b"\xB7")
+_GTADJ = const(b"\xB8")
+_DGMEN = const(b"\xBA")
+_VCOMS = const(b"\xBB")
+_POWSAVE = const(b"\xBC")
+_DLPOFFSAVE = const(b"\xBD")
 
-PWCTRL1 = const(b"\xD0")
-RDID1 = const(b"\xDA")
-RDID2 = const(b"\xDB")
-RDID3 = const(b"\xDC")
-RDID4 = const(b"\xDD")
+_LCMCTRL = const(b"\xC0")
+_IDSET = const(b"\xC1")
+_VDVVRHEN = const(b"\xC2")
+_VRHS = const(b"\xC3")
+_VDVS = const(b"\xC4")
+_VCMOFSET = const(b"\xC5")
+_FRCTRL2 = const(b"\xC6")
+_CABCCTRL = const(b"\xC7")
 
-PVGAMCTRL = const(b"\xE0")
-NVGAMCTRL = const(b"\xE1")
+_PWCTRL1 = const(b"\xD0")
+_RDID1 = const(b"\xDA")
+_RDID2 = const(b"\xDB")
+_RDID3 = const(b"\xDC")
+_RDID4 = const(b"\xDD")
 
-NVMSET = const(b"\xFC")
+_PVGAMCTRL = const(b"\xE0")
+_NVGAMCTRL = const(b"\xE1")
+
+_NVMSET = const(b"\xFC")
 
 # COLMOD Flags
 COLMOD_65K = const(0x05)
@@ -100,234 +98,232 @@ MADCTL_RGB = const(0x00)
 
 
 class ST7789:
-
-    spi: SPI
-
-    cs_pin: Pin
-
-    dc_pin: Pin
+    """Base class for ST7789-based displays"""
 
     reset_pin: Pin
 
-    def __init__(self, spi, cs_pin, dc_pin, reset_pin=None):
-        self.spi = spi
-        self.cs_pin = cs_pin
-        self.dc_pin = dc_pin
-        self.size = (320, 240)
+    def __init__(self, size, reset_pin=None):
+        self.size = size
+        self.reset_pin = reset_pin
+        self.x_offset = 0
+        self.y_offset = 0
 
     def send(self, dc, buf):
-        if buf:
-            self.cs_pin(0)
-            self.dc_pin(dc)
-            self.spi.write(buf)
-            self.cs_pin(1)
+        """Send to the display."""
+        raise NotImplementedError()
+
+    def send_iterator(self, dc, buf_iter):
+        """Send to the display."""
+        raise NotImplementedError()
 
     def command(self, command):
+        """Send a command to the display."""
         self.send(0, command)
 
     def data(self, data):
+        """Send data to the display."""
         self.send(1, data)
 
     async def reset(self):
         """Perform a hard reset of the screen, if available."""
         if self.reset_pin is not None:
             self.reset_pin(True)
-            uasyncio.sleep(0.500)
+            asyncio.sleep(0.500)
             self.reset_pin(False)
-            uasyncio.sleep(0.500)
+            asyncio.sleep(0.500)
             self.reset_pin(True)
-            uasyncio.sleep(0.500)
+            asyncio.sleep(0.500)
 
     async def soft_reset(self):
         """Perform a soft reset of the screen."""
-        self.command(SWRESET)
-        await uasyncio.sleep(0.150)
+        self.command(_SWRESET)
+        await asyncio.sleep(0.150)
 
     async def sleep_in(self):
         """Enter minimum power consumption mode."""
-        self.command(SLPIN)
-        await uasyncio.sleep(0.005)
+        self.command(_SLPIN)
+        await asyncio.sleep(0.005)
 
     async def sleep_out(self):
         """Exit minimum power consumption mode."""
-        self.command(SLPOUT)
-        await uasyncio.sleep(0.005)
+        self.command(_SLPOUT)
+        await asyncio.sleep(0.005)
 
     async def partial_on(self):
         """Enter partial mode."""
-        self.command(PTLON)
-        await uasyncio.sleep(0.010)
+        self.command(_PTLON)
+        await asyncio.sleep(0.010)
 
     async def normal_on(self):
         """Exit partial mode."""
-        self.command(NORON)
-        await uasyncio.sleep(0.010)
+        self.command(_NORON)
+        await asyncio.sleep(0.010)
 
     async def inverse_off(self):
         """Exit display inversion mode."""
-        self.command(INVOFF)
-        await uasyncio.sleep(0.010)
+        self.command(_INVOFF)
+        await asyncio.sleep(0.010)
 
     async def inverse_on(self):
         """Enter display inversion mode."""
-        self.command(INVON)
-        await uasyncio.sleep(0.010)
+        self.command(_INVON)
+        await asyncio.sleep(0.010)
 
     async def display_on(self):
         """Turn the display on."""
-        self.command(DISPON)
-        await uasyncio.sleep(0.5)
+        self.command(_DISPON)
+        await asyncio.sleep(0.5)
 
     async def display_off(self):
         """Turn the display off."""
-        self.command(DISPOFF)
-        await uasyncio.sleep(0.5)
+        self.command(_DISPOFF)
+        await asyncio.sleep(0.5)
 
     def set_column_address(self, start, end):
         """Set the column range for writing."""
-        self.command(CASET)
+        self.command(_CASET)
         self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def set_row_address(self, start, end):
         """Set the row range for writing."""
-        self.command(RASET)
+        self.command(_RASET)
         self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def write_to_memory(self, buf):
         """Write data to memory."""
-        self.command(RAMWR)
+        self.command(_RAMWR)
         self.data(buf)
 
     def partial_area(self, start, end):
         """Define partial mode's area."""
-        self.command(PTLAR)
+        self.command(_PTLAR)
         self.data(pack(">HH", start & 0xFFFF, end & 0xFFFF))
 
     def vertical_scroll_area(self, top, height, bottom):
         """Define vertical scroll area."""
-        self.command(VSCRDEF)
+        self.command(_VSCRDEF)
         self.data(pack(">HHH", top & 0xFFFF, height & 0xFFFF, bottom & 0xFFFF))
 
     def tearing_effect_off(self):
         """Turn tearing effect line off."""
-        self.command(TEOFF)
+        self.command(_TEOFF)
 
     def tearing_effect_on(self, horizontal_blanking=False):
         """Turn tearing effect line on."""
-        self.command(TEON)
+        self.command(_TEON)
         self.data(bytes([horizontal_blanking]))
 
     def memory_data_access_control(self, parameter):
         """Set memory data access parameters."""
-        self.command(MADCTL)
+        self.command(_MADCTL)
         self.data(bytes([parameter]))
 
     def vertical_scroll_start_address(self, start):
         """Set the start address of the vertical scroll area."""
-        self.command(VSCSAD)
+        self.command(_VSCSAD)
         self.data(pack(">H", start & 0xFFFF))
 
     def idle_mode_off(self):
         """Turn idle mode off."""
-        self.command(IDMOFF)
+        self.command(_IDMOFF)
 
     def idle_mode_on(self):
         """Turn idle mode on."""
-        self.command(IDMON)
+        self.command(_IDMON)
 
     def set_color_mode(self, parameter):
         """Set the color mode."""
-        self.command(COLMOD)
+        self.command(_COLMOD)
         self.data(bytes([parameter]))
 
     def write_to_memory_continue(self, buf):
         """Continue writing data to memory from last pixel location."""
-        self.command(WRMEMC)
+        self.command(_WRMEMC)
         self.data(buf)
 
     def set_tear_scanline(self, start):
         """Set the tear scanline start."""
-        self.command(STE)
+        self.command(_STE)
         self.data(pack(">H", start & 0xFFFF))
 
     def write_display_brightness(self, parameter):
-        self.command(WRDISBV)
+        self.command(_WRDISBV)
         self.data(bytes([parameter]))
 
     def write_ctrl_display(self, parameter):
-        self.command(WRCTRLD)
+        self.command(_WRCTRLD)
         self.data(bytes([parameter]))
 
     def write_adaptive_enhancement(self, parameter):
-        self.command(WRCACE)
+        self.command(_WRCACE)
         self.data(bytes([parameter]))
 
     def write_adaptive_minimum_brightness(self, parameter):
-        self.command(WRCABCMB)
+        self.command(_WRCABCMB)
         self.data(bytes([parameter]))
 
     def set_ram_control(self, parameter_1, parameter_2):
-        self.command(RAMCTRL)
+        self.command(_RAMCTRL)
         self.data(bytes([parameter_1, parameter_2]))
 
     def set_rgb_control(self, parameter_1, parameter_2, parameter_3):
-        self.command(RGBCTRL)
+        self.command(_RGBCTRL)
         self.data(bytes([parameter_1, parameter_2, parameter_3]))
 
     def set_porch_control(
         self, parameter_1, parameter_2, parameter_3, parameter_4, parameter_5
     ):
-        self.command(PORCTRL)
+        self.command(_PORCTRL)
         self.data(
             bytes([parameter_1, parameter_2, parameter_3, parameter_4, parameter_5])
         )
 
     def set_lcm_control(self, parameter_1):
-        self.command(LCMCTRL)
+        self.command(_LCMCTRL)
         self.data(bytes([parameter_1]))
 
     def set_vdv_vrh_enable(self, parameter_1):
-        self.command(VDVVRHEN)
+        self.command(_VDVVRHEN)
         self.data(bytes([parameter_1, 0xFF]))
 
     def set_vrh(self, parameter_1):
-        self.command(VRHS)
+        self.command(_VRHS)
         self.data(bytes([parameter_1]))
 
     def set_vdv(self, parameter_1):
-        self.command(VDVS)
+        self.command(_VDVS)
         self.data(bytes([parameter_1]))
 
     def set_frame_control_1(self, parameter_1, parameter_2, parameter_3):
-        self.command(FRMCTR1)
+        self.command(_FRMCTR1)
         self.data(bytes([parameter_1, parameter_2, parameter_3]))
 
     def set_frame_rate_control(self, parameter_1):
-        self.command(FRCTRL2)
+        self.command(_FRCTRL2)
         self.data(bytes([parameter_1]))
 
     def set_power_control_1(self, parameter_1, parameter_2):
-        self.command(PWCTRL1)
+        self.command(_PWCTRL1)
         self.data(bytes([parameter_1, parameter_2]))
 
     def set_gate_control(self, parameter_1):
-        self.command(GCTRL)
+        self.command(_GCTRL)
         self.data(bytes([parameter_1]))
 
     def set_vcom(self, parameter_1):
-        self.command(VCOMS)
+        self.command(_VCOMS)
         self.data(bytes([parameter_1]))
 
     def set_gate_adjustment(self, parameter_1, parameter_2, parameter_3, parameter_4):
-        self.command(GTADJ)
+        self.command(_GTADJ)
         self.data(bytes([parameter_1, parameter_2, parameter_3, parameter_4]))
 
     def set_positive_gamma(self, curve):
-        self.command(PVGAMCTRL)
+        self.command(_PVGAMCTRL)
         self.data(curve)
 
     def set_negative_gamma(self, curve):
-        self.command(NVGAMCTRL)
+        self.command(_NVGAMCTRL)
         self.data(curve)
 
     async def sleep(self, value):
@@ -343,37 +339,8 @@ class ST7789:
             await self.inverse_off()
 
     def window(self, x, y, w, h):
-        self.set_column_address(x, x + w - 1)
-        self.set_row_address(y, y + h - 1)
-
-    async def init(self):
-        await self.soft_reset()
-        self.tearing_effect_on(0)
-        self.set_color_mode(0x05)
-        self.set_porch_control(0x0C, 0x0C, 0x00, 0x33, 0x33)
-        self.set_lcm_control(0x2C)
-        self.set_vdv_vrh_enable(0x01)
-        self.set_vrh(0x12)
-        self.set_vdv(0x20)
-        self.set_power_control_1(0xA4, 0xA1)
-        self.set_frame_rate_control(0x1F)  # turn it way down ~39 fps
-
-        self.set_gate_control(0x35)
-        self.set_vcom(0x1F)
-        self.set_positive_gamma(
-            b"\xD0\x08\x11\x08\x0C\x15\x39\x33\x50\x36\x13\x14\x29\x2D"
-        )
-        self.set_negative_gamma(
-            b"\xD0\x08\x10\x08\x06\x06\x39\x44\x51\x0B\x16\x14\x2F\x31"
-        )
-
-        await self.inversion(True)
-        await self.sleep(False)
-        await self.normal_on()
-
-        self.memory_data_access_control(MADCTL_MV | MADCTL_MX)
-        self.clear()
-        await self.display_on()
+        self.set_column_address(self.x_offset + x, self.x_offset + x + w - 1)
+        self.set_row_address(self.y_offset + y, self.y_offset + y + h - 1)
 
     def clear(self):
         self.fill(0, 0, self.size[0], self.size[1], b"\x00\x00")
@@ -383,18 +350,10 @@ class ST7789:
         row_bytes = color * w
         write = self.spi.write
         self.write_to_memory(b"")
-        start = utime.ticks_us()
-        self.cs_pin(0)
-        self.dc_pin(1)
-        for _ in range(h):
-            write(row_bytes)
-        self.cs_pin(1)
+        self.send_iterator(1, (row_bytes for _ in range(h)))
 
-    def hline(self, x, y, length, color=b"\xff\xff"):
-        self.fill(x, y, length, 1, color)
-
-    def vline(self, x, y, length, color=b"\xff\xff"):
-        self.fill(x, y, 1, length, color)
+    def blit(self, buf, x, y, w, h, stride=None):
+        self._blit565(buf, x, y, w, h, stride)
 
     def _blit565(self, buf, x, y, w, h, stride=None):
         """Transfer a 565 buffer to the display."""
@@ -404,15 +363,13 @@ class ST7789:
             # fast path for contiguous memory
             self.write_to_memory(buf[:w * h])
         else:
+            buf = memoryview(buf)
+            self.window(x, y, w, h)
             self.write_to_memory(b"")
-            write = self.spi.write
-            self.cs_pin(0)
-            self.dc_pin(1)
-            offset = 0
-            for i in range(h):
-                write(buf[offset : offset + w])
-                offset += stride
-            self.cs_pin(1)
-
-    def blit(self, buf, x, y, w, h, stride=None):
-        self._blit565(buf, x, y, w, h, stride)
+            self.send_iterator(
+                1,
+                (
+                    buf[offset : offset + w]
+                    for offset in range(0, stride * h, stride)
+                )
+            )

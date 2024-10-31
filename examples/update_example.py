@@ -6,20 +6,21 @@
 
 import asyncio
 from array import array
-from machine import ADC, Pin, SPI, RTC
+from machine import ADC, RTC
 
 from tempe import colors
 from tempe.font import TempeFont
 from tempe.surface import Surface
 
 
-# a buffer one third the size of the screen
-WORKING_BUFFER = array("H", bytearray(2 * 320 * 81))
+# a buffer one half the size of the screen
+WORKING_BUFFER = array('H', range(240*161))
+
 
 
 async def init_surface(surface):
     # fill the background with off-white pixels
-    surface.rects("BACKGROUND", (0, 0, 320, 240), "#fff")
+    surface.rectangles("BACKGROUND", (0, 0, 240, 320), "#fff")
 
     # prepare the text fields
     from example_fonts import roboto32boldnumbers
@@ -30,7 +31,7 @@ async def init_surface(surface):
         "#aaa",
         "",
         font=TempeFont(roboto32boldnumbers),
-        clip=(10, 10, 240, 40),
+        clip=(10, 10, 229, 40),
     )
     temp_field = surface.text(
         "DRAWING",
@@ -38,27 +39,17 @@ async def init_surface(surface):
         colors.grey_a,
         "",
         font=TempeFont(roboto32boldnumbers),
-        clip=(10, 50, 240, 40),
+        clip=(10, 50, 229, 40),
     )
     return time_field, temp_field
 
 
 async def init_display():
-    from devices.st7789 import ST7789
+    from tempe_displays.st7789.pimoroni import PimoroniDisplay
 
-    spi = SPI(
-        0,
-        baudrate=62_500_000,
-        phase=1,
-        polarity=1,
-        sck=Pin(18, Pin.OUT),
-        mosi=Pin(19, Pin.OUT),
-        miso=Pin(16, Pin.OUT),
-    )
-    backlight = Pin(20, Pin.OUT)
-    display = ST7789(spi, cs_pin=Pin(17, Pin.OUT, value=1), dc_pin=Pin(16, Pin.OUT))
-    backlight(1)
-    await display.init()
+    display = PimoroniDisplay(size = (240, 320))
+    display.backlight_pin(1)
+    await display.init(270)
     return display
 
 
@@ -84,9 +75,12 @@ async def update_temperature(adc, text_field):
 
 
 async def refresh_display(surface, display, working_buffer):
+    import time
     while True:
         await surface.refresh_needed.wait()
+        start = time.ticks_us()
         surface.refresh(display, working_buffer)
+        print(time.ticks_diff(time.ticks_us(), start))
 
 
 async def main(working_buffer):
