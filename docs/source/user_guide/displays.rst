@@ -65,7 +65,7 @@ uses Pillow to convert these to PNG files.
 The |tempe_displays| library has a base class for devices which use the
 ST7789 controller, and a subclass |ST7789_SPI| which talks to the
 controller using SPI.  These classes are not complete: you will need to
-subclass and fill in mssing functionality for your particular device: for
+subclass and fill in missing functionality for your particular device: for
 the base device you will need to supply write methods, and for the SPI
 device you will need to provide appropriate initialization for the device
 (which may depend on physical properties of the hardware, such as gammma
