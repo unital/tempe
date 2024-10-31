@@ -41,7 +41,7 @@ class Surface:
         for rect in self._damage:
             x, y, w, h = rect
             # handle buffer too small
-            buffer_rows = (len(working_buffer) // (2 * w)) - 1
+            buffer_rows = (len(working_buffer) // w) - 1
             for start_row in range(0, h, buffer_rows):
                 raster_rows = min(buffer_rows, h - start_row)
                 raster = Raster(working_buffer, x, y + start_row, w, raster_rows)
