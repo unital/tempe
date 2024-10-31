@@ -21,6 +21,19 @@ or using :py:mod:`mpremote`:
 
     mpremote mip install github:unital/tempe/src/tempe/package.json
 
+Display drivers are in a separate package and need to be installed
+separately:
+
+..  code-block:: python-console
+
+    >>> mip.install("github:unital/tempe/src/tempe_displays/package.json")
+
+or:
+
+..  code-block:: console
+
+    mpremote mip install github:unital/tempe/src/tempe_displays/package.json
+
 Development Installation
 ------------------------
 
@@ -45,9 +58,8 @@ Ensure that the Pico is plugged in to your computer and no other program
     python -m ci.deploy_to_device
 
 and this will install the tempe code in the ``/lib`` directory (which is
-on :py:obj:`sys.path`) and the examples in the main directory, with
-example drivers in ``/devices``, example data in ``/data`` and example fonts
-in ``/example_fonts``.
+on :py:obj:`sys.path`) and the examples in the main directory, with example
+data in ``/data`` and example fonts in ``/example_fonts``.
 
 You can optionally used the ``-march`` argument to have the files (other than
 the examples and example driveers) cross-compiled for the specified architecture.
