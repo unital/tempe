@@ -5,7 +5,7 @@
 """Example showing core Tempe Shapes."""
 
 import asyncio
-
+from array import array
 import framebuf
 import random
 import math

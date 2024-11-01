@@ -5,10 +5,7 @@
 """Example showing support for polar geometries."""
 
 import asyncio
-
-import framebuf
 import random
-import math
 
 from tempe.colors import grey_e, grey_3
 from tempe.colormaps.viridis import viridis

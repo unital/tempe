@@ -5,7 +5,7 @@
 """Example showing support for thick lines."""
 
 import asyncio
-
+from array import array
 import framebuf
 import random
 import math

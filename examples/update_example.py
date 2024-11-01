@@ -5,7 +5,6 @@
 """Example showing asyncio updating of a surface."""
 
 import asyncio
-
 from machine import ADC, RTC
 
 from tempe import colors

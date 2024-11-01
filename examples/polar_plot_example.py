@@ -4,7 +4,7 @@
 
 """Example showing how to build a polar plot from Tempe Shapes."""
 
-
+from array import array
 import gc
 from math import sqrt, log
 
