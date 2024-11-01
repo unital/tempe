@@ -4,7 +4,7 @@
 
 """Font ABCs and support for bitmapped fonts."""
 
-from array import array
+
 import framebuf
 
 

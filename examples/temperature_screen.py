@@ -7,7 +7,7 @@
 Note: this is currently not working as it uses earlier version of code.
 """
 
-from array import array
+
 import asyncio
 import gc
 from machine import SPI, Pin, ADC, RTC
@@ -35,7 +35,7 @@ w = 320
 h = 240
 
 gc.collect()
-DRAWING_BUFFER = array("H", bytearray(2 * w * 31))
+DRAWING_BUFFER = bytearray(2 * w * 31)
 
 
 async def init_display():

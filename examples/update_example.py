@@ -5,7 +5,7 @@
 """Example showing asyncio updating of a surface."""
 
 import asyncio
-from array import array
+
 from machine import ADC, RTC
 
 from tempe import colors
@@ -14,7 +14,7 @@ from tempe.surface import Surface
 
 
 # a buffer one half the size of the screen
-WORKING_BUFFER = array('H', range(240*161))
+WORKING_BUFFER = bytearray(2*240*161)
 
 
 

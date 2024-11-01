@@ -4,7 +4,7 @@
 
 """Example showing how to create a scatter plot from Tempe Shapes."""
 
-from array import array
+
 import gc
 from math import sqrt, log
 
@@ -20,7 +20,7 @@ from tempe.surface import Surface
 surface = Surface()
 
 # a buffer one half the size of the screen
-working_buffer = array("H", bytearray(2 * 320 * 121))
+working_buffer = bytearray(2 * 320 * 121)
 
 
 # fill the background with off-white pixels
@@ -370,7 +370,7 @@ async def init_display():
 
     display = PimoroniDisplay(size = (240, 320))
     display.backlight_pin(1)
-    await display.init(270)
+    await display.init()
     return display
 
 

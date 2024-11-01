@@ -2,13 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-import array
 import gc
 import unittest
 
 from tempe.display import FileDisplay
 
-working_buffer = array.array("H", bytearray(320 * 61 * 2))
+working_buffer = bytearray(320 * 61 * 2)
 
 
 class TestExamples(unittest.TestCase):
