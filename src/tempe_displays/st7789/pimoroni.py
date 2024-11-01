@@ -116,7 +116,7 @@ class PimoroniDisplay(ST7789_SPI):
         await self.normal_on()
 
         if rotation == 90:
-            self.memory_data_access_control(MADCTL_MH | MADCTL_MX| MADCTL_MY)
+            self.memory_data_access_control(MADCTL_MH | MADCTL_MX | MADCTL_MY)
             if self.centered:
                 self.x_offset = (240 - self.size[0]) // 2 + (240 - self.size[0]) % 2
                 self.y_offset = (320 - self.size[1]) // 2 + (320 - self.size[0]) % 2

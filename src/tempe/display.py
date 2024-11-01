@@ -13,29 +13,30 @@ class Display:
 class FileDisplay(Display):
     """Display that renders raw RGB565 data to a file."""
 
-    def __init__(self, name, size=(320, 240)):
+    def __init__(self, name, size=(320, 240), pixel_size=2):
         self.name = name
         self.size = size
+        self.pixel_size = pixel_size
         self._io = None
 
     def clear(self):
         self._io.seek(0)
-        row = b"\x00\x00" * (self.size[0])
+        row = b"\x00" * (self.pixel_size * self.size[0])
         for i in range(self.size[1]):
             self._io.write(row)
 
     def blit(self, buffer, x, y, w, h):
         cols, rows = self.size
-        print(x, w, cols, y, h, rows)
         if x + w > cols or y + h > rows:
             raise ValueError("Buffer too large")
         if self._io is None:
             raise RuntimeError("File is not open")
 
         # write out a row at a time
+        ps = self.pixel_size
         for i in range(h):
-            self._io.seek(2 * (cols * (y + i) + x))
-            self._io.write(memoryview(buffer)[w * i : w * (i + 1)])
+            self._io.seek(ps * (cols * (y + i) + x))
+            self._io.write(memoryview(buffer)[ps * w * i : ps * w * (i + 1)])
 
     def __enter__(self):
         if self._io is None:

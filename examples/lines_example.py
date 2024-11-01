@@ -24,8 +24,8 @@ random.seed(0)
 
 surface = Surface()
 
-# a buffer one quarter the size of the screen
-working_buffer = array("H", bytearray(2 * 320 * 61))
+# a buffer one half the size of the screen
+working_buffer = bytearray(2 * 320 * 121)
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
@@ -88,12 +88,13 @@ polylines = WidePolyLines(
 )
 surface.add_shape("DRAWING", polylines)
 
+
 async def init_display():
     from tempe_displays.st7789.pimoroni import PimoroniDisplay
 
-    display = PimoroniDisplay(size = (240, 320))
+    display = PimoroniDisplay(size=(240, 320))
     display.backlight_pin(1)
-    await display.init(270)
+    await display.init()
     return display
 
 

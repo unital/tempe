@@ -4,7 +4,6 @@
 
 """Example showing basic display of text."""
 
-from array import array
 
 from tempe.surface import Surface
 from tempe.text import Text
@@ -14,8 +13,8 @@ from tempe.font import TempeFont
 from tempe.fonts import roboto16bold
 
 
-# a buffer one quarter the size of the screen
-working_buffer = array("H", bytearray(2 * 320 * 61))
+# a buffer one half the size of the screen
+working_buffer = bytearray(2 * 320 * 121)
 
 surface = Surface()
 

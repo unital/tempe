@@ -41,4 +41,3 @@ class ST7789_SPI(ST7789):
             if buf:
                 write(buf)
         self.cs_pin(1)
-

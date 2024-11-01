@@ -27,7 +27,9 @@ def deploy(arch=""):
         deploy_py_files(Path("src/tempe/fonts"), ":/lib/tempe/fonts", arch=arch)
         deploy_py_files(Path("src/tempe/colormaps"), ":/lib/tempe/colormaps", arch=arch)
         deploy_py_files(Path("src/tempe_displays"), ":/lib/tempe_displays", arch=arch)
-        deploy_py_files(Path("src/tempe_displays/st7789"), ":/lib/tempe_displays/st7789", arch=arch)
+        deploy_py_files(
+            Path("src/tempe_displays/st7789"), ":/lib/tempe_displays/st7789", arch=arch
+        )
     except subprocess.CalledProcessError as exc:
         print("Error:")
         print(exc.stderr)
