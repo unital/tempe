@@ -5,7 +5,6 @@
 """Example showing basic display of text."""
 
 
-
 from tempe.surface import Surface
 from tempe.text import Text
 from tempe.shapes import Rectangles

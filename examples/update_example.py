@@ -13,8 +13,7 @@ from tempe.surface import Surface
 
 
 # a buffer one half the size of the screen
-WORKING_BUFFER = bytearray(2*240*161)
-
+WORKING_BUFFER = bytearray(2 * 240 * 161)
 
 
 async def init_surface(surface):
@@ -46,7 +45,7 @@ async def init_surface(surface):
 async def init_display():
     from tempe_displays.st7789.pimoroni import PimoroniDisplay
 
-    display = PimoroniDisplay(size = (240, 320))
+    display = PimoroniDisplay(size=(240, 320))
     display.backlight_pin(1)
     await display.init(270)
     return display
@@ -75,6 +74,7 @@ async def update_temperature(adc, text_field):
 
 async def refresh_display(surface, display, working_buffer):
     import time
+
     while True:
         await surface.refresh_needed.wait()
         start = time.ticks_us()

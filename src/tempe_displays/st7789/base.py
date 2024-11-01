@@ -361,7 +361,7 @@ class ST7789:
         self.window(x, y, w, h)
         if stride is None:
             # fast path for contiguous memory
-            self.write_to_memory(buf[:2 * w * h])
+            self.write_to_memory(buf[: 2 * w * h])
         else:
             buf = memoryview(buf)
             self.window(x, y, w, h)
@@ -371,5 +371,5 @@ class ST7789:
                 (
                     buf[offset : offset + 2 * w]
                     for offset in range(0, 2 * stride * h, 2 * stride)
-                )
+                ),
             )

@@ -88,10 +88,11 @@ polylines = WidePolyLines(
 )
 surface.add_shape("DRAWING", polylines)
 
+
 async def init_display():
     from tempe_displays.st7789.pimoroni import PimoroniDisplay
 
-    display = PimoroniDisplay(size = (240, 320))
+    display = PimoroniDisplay(size=(240, 320))
     display.backlight_pin(1)
     await display.init()
     return display

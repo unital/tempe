@@ -20,7 +20,7 @@ class Raster:
         self.stride = stride
         self.format = format
         self.fbuf = framebuf.FrameBuffer(
-            memoryview(buf)[self.pixel_size * offset:], w, h, self.format, stride
+            memoryview(buf)[self.pixel_size * offset :], w, h, self.format, stride
         )
 
     @classmethod
