@@ -34,16 +34,17 @@ Particularly for non-standard devices or interfaces, you may need to
 write this code, but there are examples of how to do this for common
 displays.
 
-You also need to provide a writable array of unsigned 16-bit integers
-that Tempe can use to render raster images into before copying them to
-the display.  The larger this chunk of memory is the better, but it can
-be allocated once and re-used repeatedly for drawing operations.
+You also need to provide a writable chunk of memory (such as a
+:py:class:`bytearray`) that Tempe can use to render raster images into before
+copying them to the display.  The larger this chunk of memory is the better,
+but it can (and probably *should*) be allocated once at the start of the
+application and re-used repeatedly for drawing operations.
 
 Actual drawing is performed by calling |refresh| with the display and
 the buffer::
 
     # a buffer one quarter the size of the screen
-    working_buffer = array('H', bytearray(2*320*61))
+    working_buffer = bytearray(2*320*61)
 
     # set up the display object
     display = ST7789()
