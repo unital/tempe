@@ -9,29 +9,46 @@ At the moment installation is experimental, but should work.
 Installation
 ------------
 
-Tempe can be installed from github via :py:mod:`mip`.
+Tempe can be installed from github via :py:mod:`mip`.  You can
+install either released versions or the unstable head of the main
+branch, as needed.
+
+You need to install the Tempe library and display drivers separately.
+If you do not need the ST7789 drivers and are writing your own, you don't
+need to install the display drivers.
+
+Released Versions
+~~~~~~~~~~~~~~~~~
+
+Released versions are found at ``github:unital/tempe/releases/<version>/``:
+
+..  code-block:: python-console
+
+    >>> mip.install("github:unital/tempe/releases/0.2/src/tempe/package.json")
+    >>> mip.install("github:unital/tempe/releases/0.2/src/tempe_displays/package.json")
+
+or using :py:mod:`mpremote`:
+
+..  code-block:: console
+
+    mpremote mip install github:unital/tempe/releases/0.2/src/tempe/package.json
+    mpremote mip install github:unital/tempe/releases/0.2/src/tempe_displays/package.json
+
+Unstable
+~~~~~~~~
+
+Unstable versions are installed from the main branch of the Github repo:
 
 ..  code-block:: python-console
 
     >>> mip.install("github:unital/tempe/src/tempe/package.json")
+    >>> mip.install("github:unital/tempe/src/tempe_displays/package.json")
 
 or using :py:mod:`mpremote`:
 
 ..  code-block:: console
 
     mpremote mip install github:unital/tempe/src/tempe/package.json
-
-Display drivers are in a separate package and need to be installed
-separately:
-
-..  code-block:: python-console
-
-    >>> mip.install("github:unital/tempe/src/tempe_displays/package.json")
-
-or:
-
-..  code-block:: console
-
     mpremote mip install github:unital/tempe/src/tempe_displays/package.json
 
 Development Installation

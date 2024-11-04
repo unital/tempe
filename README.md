@@ -22,7 +22,9 @@ visualization tasks on small, 16-bit+ color screens.
 
 [Tempe Documentation](https://unital.github.io/tempe)
 - [User Guide](https://unital.github.io/tempe/user_guide)
+  - [Tutorial](https://unital.github.io/tempe/user_guide/tutorial)
 - [API docs](https://unital.github.io/tempe/api)
+- [Change Log](https://unital.github.io/tempe/changes)
 
 ## Gallery
 
