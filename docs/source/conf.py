@@ -13,7 +13,7 @@
 project = "Tempe"
 copyright = "2024, Unital Software"
 author = "Unital Software"
-release = "0.1"
+release = "0.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -53,7 +53,7 @@ html_theme_options = {
         {
             "name": "Unital",
             "url": "https://www.unital.dev",
-            "icon": "_static/logo-dark.svg",
+            "icon": "_static/unital.png",
             "type": "local",
         },
     ],

@@ -30,5 +30,5 @@
         ["tempe/fonts/roboto16.py", "github:unital/tempe/src/tempe/fonts/roboto16.py"],
         ["tempe/fonts/roboto16bold.py", "github:unital/tempe/src/tempe/fonts/roboto16bold.py"]
     ],
-    "version": "0.1"
+    "version": "0.2"
 }
