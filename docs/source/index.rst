@@ -31,6 +31,7 @@ visualization tasks on small, 16-bit+ color screens.
    :caption: Contents:
 
    user_guide/index.rst
+   changes.rst
 
 
 
