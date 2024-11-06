@@ -11,44 +11,76 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
 class Text(ColoredGeometry):
     def __init__(
-        self, geometry, colors, texts, *, bold=False, font=None, surface=None, clip=None
+        self,
+        geometry,
+        colors,
+        texts,
+        *,
+        bold=False,
+        font=None,
+        letter_spacing=0,
+        line_spacing=0,
+        surface=None,
+        clip=None,
     ):
         super().__init__(geometry, colors, surface=surface, clip=clip)
         self.texts = texts
         self.bold = bold
         self.font = font
+        self.letter_spacing = letter_spacing
+        self.line_spacing = line_spacing
 
     def __iter__(self):
         yield from zip(self.geometry, self.colors, self.texts)
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         if self.font is None:
-            line_height = 10
+            line_height = 10 + self.line_spacing
             for geometry, color, text in self:
                 px = geometry[0] - x
                 py = geometry[1] - y
+                if px > w or py > h:
+                    continue
                 for i, line in enumerate(text.splitlines()):
+                    line_y = py + i * line_height
+                    if line_y > h:
+                        break
+                    if px + 8 * len(line) < 0 or line_y + line_height < 0:
+                        continue
                     buffer.text(line, px, py + i * line_height, color)
                     if self.bold:
                         buffer.text(line, px + 1, py + i * line_height, color)
         elif isinstance(self.font, BitmapFont):
-            line_height = self.font.height
+            line_height = self.font.height + self.line_spacing
             palette_buf = array("H", [BLIT_KEY_RGB565, 0xFFFF])
             palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
             for geometry, color, text in self:
                 palette_buf[1] = color
                 py = geometry[1] - y
-                for i, line in enumerate(text.splitlines()):
-                    px = geometry[0] - x
-                    for char in line:
-                        buf, height, width = self.font.bitmap(char)
-                        buf = bytearray(buf)
-                        fbuf = framebuf.FrameBuffer(
-                            buf, width, height, framebuf.MONO_HLSB
-                        )
-                        buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
-                        px += width
+                if py > h:
+                    continue
+                for line in text.splitlines():
+                    if (px := geometry[0] - x) > w:
+                        break
+                    if py + line_height > 0:
+                        for char in line:
+                            buf, height, width = self.font.bitmap(char)
+                            if px + width >= 0:
+                                fbuf = framebuf.FrameBuffer(
+                                    buf, width, height, framebuf.MONO_HLSB
+                                )
+                                buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
+                            px += width + self.letter_spacing
+                            if px > w:
+                                break
                     py += line_height
+                    if py > h:
+                        break
 
     def update(self, geometry=None, colors=None, texts=None):
         if texts is not None:
