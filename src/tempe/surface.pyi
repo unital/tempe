@@ -334,6 +334,7 @@ class Surface:
         colors: Iterable[int] | int,
         text: Iterable[str] | str,
         font: AbstractFont | None = None,
+        line_spacing: int = 0,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Text:
         """Create a new Text object and add it to the layer.
@@ -351,6 +352,8 @@ class Surface:
         font : AbstractFont | None
             The font to use for the text.  If None, the default FrameBuffer
             8x8 monospaced font will be used.
+        line_spacing: int
+            Add more or less space between adjacent lines.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the text.
         """

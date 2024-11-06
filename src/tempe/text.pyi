@@ -21,7 +21,6 @@ class Text(ColoredGeometry[tuple[int, int]]):
         bold: bool = False,
         font: AbstractFont | None = None,
         letter_spacing: int = 0,
-        line_spacing: int = 0,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...

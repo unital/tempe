@@ -18,7 +18,6 @@ class Text(ColoredGeometry):
         *,
         bold=False,
         font=None,
-        letter_spacing=0,
         line_spacing=0,
         surface=None,
         clip=None,
@@ -27,7 +26,6 @@ class Text(ColoredGeometry):
         self.texts = texts
         self.bold = bold
         self.font = font
-        self.letter_spacing = letter_spacing
         self.line_spacing = line_spacing
 
     def __iter__(self):
@@ -75,7 +73,7 @@ class Text(ColoredGeometry):
                                     buf, width, height, framebuf.MONO_HLSB
                                 )
                                 buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
-                            px += width + self.letter_spacing
+                            px += width
                             if px > w:
                                 break
                     py += line_height
