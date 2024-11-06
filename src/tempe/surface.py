@@ -151,13 +151,22 @@ class Surface:
         self.add_shape(layer, points)
         return points
 
-    def text(self, layer, geometry, colors, texts, font=None, clip=None):
+    def text(
+        self,
+        layer,
+        geometry,
+        colors,
+        texts,
+        font=None,
+        line_spacing=0,
+        clip=None,
+    ):
         from .text import Text
 
         geometry = self._check_geometry(geometry, 2)
         colors = self._check_colors(colors)
         texts = self._check_texts(texts)
-        text = Text(geometry, colors, texts, font=font, clip=clip)
+        text = Text(geometry, colors, texts, font=font, line_spacing=line_spacing, clip=clip)
         self.add_shape(layer, text)
         return text
 

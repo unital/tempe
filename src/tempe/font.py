@@ -6,7 +6,9 @@
 
 
 import framebuf
+from uctypes import bytearray_at, addressof
 
+from .util import bisect16
 
 class AbstractFont:
     def measure(self, text):
@@ -26,15 +28,35 @@ class FontToPy(BitmapFont):
         self.height = mod.height()
         self.baseline = mod.baseline()
         self.monospaced = mod.monospaced()
+        self._mvfont = memoryview(mod._mvfont)
+        self._msvp = memoryview(mod._mvsp)
+        self._cache = {}
 
     def measure(self, text):
         width = 0
         for char in text:
-            width += self.font.get_ch(char)[2]
+            n  = ord(char)
+            if n not in self._cache:
+                self._cache[n] = self._get_char(n)
+            width += self._cache[n][2]
         return (0, self.height - self.baseline, width, self.height)
 
     def bitmap(self, char):
-        return self.font.get_ch(char)
+        n  = ord(char)
+        if n not in self._cache:
+            self._cache[n] = self._get_char(n)
+        return self._cache[n]
+
+    def clear_cache(self):
+        self._cache = {}
+
+    def _get_char(self, n):
+        offset = bisect16(self._msvp, n, len(self._msvp) >> 2) << 3
+        width = self._mvfont[offset] | (self._mvfont[offset + 1] << 8)
+        next_offset = offset + 2 + (((width - 1) >> 3) + 1) << 4
+        buf = self._mvfont[offset + 2:next_offset]
+        buf = bytearray_at(addressof(buf), len(buf))
+        return buf, self.height, width
 
 
 class MicroFont(BitmapFont):
@@ -62,12 +84,32 @@ class TempeFont(BitmapFont):
         self.height = mod.height
         self.baseline = mod.baseline
         self.monospaced = mod.monospaced
+        self._mvfont = memoryview(mod._mvfont)
+        self._msvp = memoryview(mod._mvsp)
+        self._cache = {}
 
     def measure(self, text):
         width = 0
         for char in text:
-            width += self.font.get_ch(char)[2]
+            n  = ord(char)
+            if n not in self._cache:
+                self._cache[n] = self._get_char(n)
+            width += self._cache[n][2]
         return (0, self.height - self.baseline, width, self.height)
 
     def bitmap(self, char):
-        return self.font.get_ch(char)
+        n  = ord(char)
+        if n not in self._cache:
+            self._cache[n] = self._get_char(n)
+        return self._cache[n]
+
+    def clear_cache(self):
+        self._cache = {}
+
+    def _get_char(self, n):
+        offset = bisect16(self._msvp, n, len(self._msvp) >> 2) << 3
+        width = self._mvfont[offset] | (self._mvfont[offset + 1] << 8)
+        next_offset = offset + 2 + (((width - 1) >> 3) + 1) << 4
+        buf = self._mvfont[offset + 2:next_offset]
+        buf = bytearray_at(addressof(buf), len(buf))
+        return buf, self.height, width
