@@ -40,7 +40,12 @@ class Bitmaps(Shape):
     def __iter__(self):
         yield from zip(self.geometry, self.buffers)
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         if self.palette is not None:
             palette = framebuf.FrameBuffer(
                 self.palette, len(self.palette), 1, framebuf.RGB565
@@ -48,6 +53,10 @@ class Bitmaps(Shape):
         for geometry, fbuf in self:
             px = geometry[0] - x
             py = geometry[1] - y
+            pw = geometry[2]
+            ph = geometry[3]
+            if (px + pw < 0 or px > w or py + ph < 0 or py > h):
+                continue
             if self.palette is not None:
                 buffer.blit(fbuf, px, py, self.key, palette)
             else:
@@ -85,13 +94,22 @@ class ColoredBitmaps(ColoredGeometry):
     def __iter__(self):
         yield from zip(self.geometry, self.colors, self.buffers)
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         palette_buf = array("H", [BLIT_KEY_RGB565, 0x0000])
         palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
         for geometry, color, buf in self:
             palette_buf[1] = color
             px = geometry[0] - x
             py = geometry[1] - y
+            pw = geometry[2]
+            ph = geometry[3]
+            if (px + pw < 0 or px > w or py + ph < 0 or py > h):
+                continue
             buffer.blit(buf, px, py, BLIT_KEY_RGB565, palette)
 
     def _get_bounds(self):
