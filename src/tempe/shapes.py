@@ -5,6 +5,7 @@
 """Shape classes which efficiently draw primitives."""
 
 import asyncio
+from .util import intersect_poly_rect
 
 #: Transparent color when blitting bitmaps.
 BLIT_KEY_RGB565 = const(0b0000000000100000)
@@ -83,13 +84,19 @@ class Lines(ColoredGeometry):
     Geometry should produce x0, y0, x1, y1 arrays.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         for geometry, color in self:
-            x0 = geometry[0] - x
-            y0 = geometry[1] - y
-            x1 = geometry[2] - x
-            y1 = geometry[3] - y
-            buffer.line(x0, y0, x1, y1, color)
+            if intersect_poly_rect(geometry, 4, x, y, w, h):
+                x0 = geometry[0] - x
+                y0 = geometry[1] - y
+                x1 = geometry[2] - x
+                y1 = geometry[3] - y
+                buffer.line(x0, y0, x1, y1, color)
 
     def _get_bounds(self):
         max_x = -0x7FFF
@@ -165,14 +172,20 @@ class PolyLines(ColoredGeometry):
     Geometry should produce x0, y0, x1, y1 arrays.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         for geometry, color in self:
-            for i in range(0, len(geometry) - 2, 2):
-                x0 = geometry[i] - x
-                y0 = geometry[i + 1] - y
-                x1 = geometry[i + 2] - x
-                y1 = geometry[i + 3] - y
-                buffer.line(x0, y0, x1, y1, color)
+            if intersect_poly_rect(geometry, len(geometry), x, y, w, h):
+                for i in range(0, len(geometry) - 2, 2):
+                    x0 = geometry[i] - x
+                    y0 = geometry[i + 1] - y
+                    x1 = geometry[i + 2] - x
+                    y1 = geometry[i + 3] - y
+                    buffer.line(x0, y0, x1, y1, color)
 
     def _get_bounds(self):
         max_x = -0x7FFF
@@ -195,9 +208,15 @@ class Polygons(FillableGeometry):
     Geometry should produce vertex buffers.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         for polygon, color in self:
-            buffer.poly(-x, -y, polygon, color, self.fill)
+            if intersect_poly_rect(polygon, len(polygon), x, y, w, h):
+                buffer.poly(-x, -y, polygon, color, self.fill)
 
     def _get_bounds(self):
         max_x = -0x7FFF
@@ -254,11 +273,18 @@ class Circles(FillableGeometry):
     Geometry should produce cx, cy, r arrays.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         for geometry, color in self:
             px = geometry[0] - x
             py = geometry[1] - y
             r = geometry[2]
+            if px + r < 0 or px - r > w or py + r < 0 or py - r> h:
+                continue
             if r == 0:
                 # Avoid https://github.com/micropython/micropython/issues/16053
                 continue
@@ -284,12 +310,19 @@ class Ellipses(FillableGeometry):
     Geometry should produce cx, cy, rx, ry arrays.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         for geometry, color in self:
             px = geometry[0] - x
             py = geometry[1] - y
             rx = geometry[2]
             ry = geometry[3]
+            if px + rx < 0 or px - rx > w or py + ry < 0 or py - ry > h:
+                continue
             if rx == 0 and ry == 0:
                 # Avoid https://github.com/micropython/micropython/issues/16053
                 continue
