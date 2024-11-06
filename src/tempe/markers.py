@@ -26,13 +26,20 @@ class Markers(ColoredGeometry):
     def __iter__(self):
         yield from zip(self.geometry, self.colors, self.markers)
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         palette_buf = array("H", [BLIT_KEY_RGB565, 0x0000])
         palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
         for geometry, color, marker in self:
             px = geometry[0] - x
             py = geometry[1] - y
             size = geometry[2]
+            if px + size < 0 or px - size > w or py + size < 0 or py - size > h:
+                continue
             if size < 2 or marker == Marker.PIXEL:
                 buffer.pixel(px, py, color)
             elif marker == Marker.CIRCLE:
@@ -80,12 +87,20 @@ class Markers(ColoredGeometry):
 
 
 class Points(Markers):
-    def draw(self, buffer, x=0, y=0):
+
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         palette_buf = array("H", [BLIT_KEY_RGB565, 0x0000])
         palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
         for geometry, color, marker in self:
             px = geometry[0] - x
             py = geometry[1] - y
+            if px < 0 or px > w or py < 0 or py > h:
+                continue
             if marker == Marker.PIXEL:
                 buffer.pixel(px, py, color)
             elif isinstance(marker, str):

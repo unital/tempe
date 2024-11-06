@@ -336,9 +336,11 @@ def main(surface, working_buffer):
     # set up the display object
     display = asyncio.run(init_display())
 
-    # refresh the display
-    display.clear()
+    import time
+
+    start = time.ticks_us()
     surface.refresh(display, working_buffer)
+    print(time.ticks_diff(time.ticks_us(), start))
 
 
 if __name__ == "__main__":

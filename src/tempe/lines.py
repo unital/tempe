@@ -6,6 +6,7 @@ from array import array
 from math import sqrt
 
 from .shapes import ColoredGeometry
+from .util import line_points, intersect_poly_rect
 
 
 class WideLines(ColoredGeometry):
@@ -18,25 +19,31 @@ class WideLines(ColoredGeometry):
         super().__init__(geometry, colors, surface=surface, clip=clip)
         self.round = round
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         vertices = array("h", bytearray(16))
         should_round = self.round
         for geometry, color in self:
-            x0 = geometry[0]
-            y0 = geometry[1]
-            x1 = geometry[2]
-            y1 = geometry[3]
-            w = geometry[4]
-            if w < 2:
-                buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
-            else:
-                d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
-                line_points(x0, y0, x1, y1, w, d, vertices)
-                buffer.poly(-x, -y, vertices, color, True)
-                if should_round:
-                    r = w // 2
-                    buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
-                    buffer.ellipse(x1 - x, y1 - y, r, r, color, True)
+            lw = geometry[4]
+            if intersect_poly_rect(geometry[:4], 4, x - lw, y - lw, w + 2 * lw, h + 2 * lw):
+                x0 = geometry[0]
+                y0 = geometry[1]
+                x1 = geometry[2]
+                y1 = geometry[3]
+                if lw < 2:
+                    buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
+                else:
+                    d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
+                    line_points(x0, y0, x1, y1, lw, d, vertices)
+                    buffer.poly(-x, -y, vertices, color, True)
+                    if should_round:
+                        r = lw // 2
+                        buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
+                        buffer.ellipse(x1 - x, y1 - y, r, r, color, True)
 
     def _get_bounds(self):
         max_x = -0x7FFF
@@ -58,28 +65,34 @@ class WidePolyLines(ColoredGeometry):
     Geometry should produce array of [x0, y0, x1, y1, ...] and width.
     """
 
-    def draw(self, buffer, x=0, y=0):
+    def draw_raster(self, raster):
+        buffer = raster.fbuf
+        x = raster.x
+        y = raster.y
+        w = raster.w
+        h = raster.h
         vertices = array("h", bytearray(16))
         for geometry, color in self:
-            w = geometry[-1]
+            lw = geometry[-1]
             lines = geometry[:-1]
-            for i in range(0, len(lines) - 2, 2):
-                x0 = lines[i]
-                y0 = lines[i + 1]
-                x1 = lines[i + 2]
-                y1 = lines[i + 3]
-                if w < 2:
-                    buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
-                else:
-                    d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
-                    line_points(x0, y0, x1, y1, w, d, vertices)
-                    buffer.poly(-x, -y, vertices, color, True)
-            if w >= 2:
-                r = w // 2
-                for i in range(0, len(lines), 2):
+            if intersect_poly_rect(lines, len(lines), x - lw, y - lw, w + 2 * lw, h + 2 * lw):
+                for i in range(0, len(lines) - 2, 2):
                     x0 = lines[i]
                     y0 = lines[i + 1]
-                    buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
+                    x1 = lines[i + 2]
+                    y1 = lines[i + 3]
+                    if lw < 2:
+                        buffer.line(x0 - x, y0 - y, x1 - x, y1 - y, color)
+                    else:
+                        d = 2 * int(sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2))
+                        line_points(x0, y0, x1, y1, lw, d, vertices)
+                        buffer.poly(-x, -y, vertices, color, True)
+                if lw >= 2:
+                    r = lw // 2
+                    for i in range(0, len(lines), 2):
+                        x0 = lines[i]
+                        y0 = lines[i + 1]
+                        buffer.ellipse(x0 - x, y0 - y, r, r, color, True)
 
     def _get_bounds(self):
         max_x = -0x7FFF
@@ -96,40 +109,3 @@ class WidePolyLines(ColoredGeometry):
                 min_y = min(min_y, lines[i + 1] - w)
 
         return (min_x, min_y, max_x - min_x, max_y - min_y)
-
-
-def line_points(x0, y0, x1, y1, w, d, vertices):
-    dx = x1 - x0
-    dy = y1 - y0
-
-    # stuff to handle inter division always round down, when we really
-    # want away from 0
-    if dx == 0:
-        mx = -((w + 1) // 2)
-    else:
-        if dy > 0:
-            mx = -w * dy // d
-        else:
-            mx = -(w * dy // d)
-    if dy == 0:
-        my = (w + 1) // 2
-    else:
-        if dx > 0:
-            my = -(-w * dx // d)
-        else:
-            my = w * dx // d
-
-    vertices[0] = x0 + mx
-    vertices[1] = y0 + my
-    vertices[2] = x1 + mx
-    vertices[3] = y1 + my
-    vertices[4] = x1 - mx
-    vertices[5] = y1 - my
-    vertices[6] = x0 - mx
-    vertices[7] = y0 - my
-
-
-try:
-    from ._speedups import line_points
-except SyntaxError:
-    pass

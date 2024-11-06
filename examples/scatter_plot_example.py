@@ -316,7 +316,7 @@ surface.text(
     [f"{t}" for t in label_temps],
 )
 
-# # Air Quality axis: tick marks, grid lines, labels
+# Air Quality axis: tick marks, grid lines, labels
 tick_quality = list(range(0, 150, 10))
 quality_marks = air_quality_scale.scale_values(tick_quality)
 label_air_quality = [50, 100]
@@ -339,7 +339,7 @@ surface.text(
 )
 
 # Plot title and additional information
-from tempe.fonts import roboto16bold, roboto16
+from tempe.fonts import roboto16bold
 from tempe.font import TempeFont
 
 surface.text(

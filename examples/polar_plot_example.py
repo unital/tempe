@@ -19,8 +19,8 @@ from tempe.surface import Surface
 
 surface = Surface()
 
-# a buffer one half the size of the screen
-working_buffer = bytearray(2 * 320 * 121)
+# a buffer one third the size of the screen
+working_buffer = bytearray(2 * 320 * 81)
 
 
 # fill the background with off-black pixels
@@ -177,6 +177,7 @@ surface.text(
     time_label_strings,
     clip=(0, 0, 320, 240),
 )
+gc.collect()
 
 # Plot title and additional information
 from tempe.fonts import roboto16bold, roboto16
