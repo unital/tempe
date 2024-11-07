@@ -69,8 +69,43 @@ def intersect_poly_rect(polygon, n, x, y, w, h):
     )
 
 
+def blit_argb16_rgb565(rgb_buf, w1: int, h1: int, s1: int, argb_buf, x: int, y: int, w2: int, h2: int, s2: int):
+    for i in range(h2):
+        y1 = y + i
+        if y1 < 0:
+            continue
+        if y1 >= h1:
+            break
+        for j in range(w2):
+            x1 = x + j
+            if x1 < 0:
+                continue
+            if x1 >= w1:
+                break
+            argb16 = argb_buf.pixel(j, i)
+            a = argb16 >> 12
+            if a == 0:
+                continue
+            else:
+                r1 = (argb16 & 0x0f00) >> 7
+                g1 = (argb16 & 0x00f0) >> 2
+                b1 = (argb16 & 0x000f) << 1
+                if a != 0xf:
+                    fade = 0x10 - a
+                    rgb565 = rgb_buf.pixel(x1, y1)
+                    rgb565 = (rgb565 >> 8) | ((rgb565 & 0xff) << 8)
+                    r2 = rgb565 >> 11
+                    g2 = (rgb565 & 0x00000_111111_00000) >> 5
+                    b2 = rgb565 & 0x00000_000000_11111
+                    r1 += (fade * r2) >> 4
+                    g1 += (fade * g2) >> 4
+                    b1 += (fade * b2) >> 4
+                rgb565 = (r1 << 11) | (g1 << 5) | b1
+                rgb565 = (rgb565 >> 8) | ((rgb565 & 0xff) << 8)
+                rgb_buf.pixel(x1, y1, rgb565)
+
 # replace with faster viper versions where available
 try:
-    from ._speedups import bisect16, line_points, intersect_poly_rect
+    from ._speedups import bisect16, line_points, intersect_poly_rect, blit_argb16_rgb565
 except SyntaxError:
     pass

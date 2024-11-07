@@ -6,19 +6,21 @@ from array import array
 import framebuf
 
 from .shapes import ColoredGeometry, Shape, BLIT_KEY_RGB565
+from .util import blit_argb16_rgb565
 
 
 class Bitmaps(Shape):
     """Draw framebuffer bitmaps at points"""
 
     def __init__(
-        self, geometry, buffers, *, key=-1, palette=None, surface=None, clip=None
+        self, geometry, buffers, *, key=-1, palette=None, alpha=False, surface=None, clip=None
     ):
         super().__init__(surface, clip=clip)
         self.geometry = geometry
         self.buffers = buffers
         self.key = key
         self.palette = palette
+        self.alpha = alpha
 
     def update(self, geometry=None, buffers=None):
         if geometry is not None:
@@ -59,6 +61,10 @@ class Bitmaps(Shape):
                 continue
             if self.palette is not None:
                 buffer.blit(fbuf, px, py, self.key, palette)
+            elif self.alpha:
+                blit_argb16_rgb565(
+                    raster.buf, w, h, raster.stride, memoryview(fbuf), px, py, pw, ph, pw
+                )
             else:
                 buffer.blit(fbuf, px, py, self.key)
 
