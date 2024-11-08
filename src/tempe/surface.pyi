@@ -40,7 +40,7 @@ from .shapes import (
 )
 from .markers import Marker, Markers, Points
 from .bitmaps import Bitmaps, ColoredBitmaps
-from .text import Text
+from .text import Text, HALIGN, VALIGN, LEFT, TOP
 from .util import contains
 
 #: The default set of layers used by Surfaces, in order from back to front.
@@ -333,6 +333,7 @@ class Surface:
         geometry: Geometry[tuple[int, int]] | tuple[int, int],
         colors: Iterable[int] | int,
         text: Iterable[str] | str,
+        alignments: Iterable[tuple[HALIGN, VALIGN]] | tuple[HALIGN, VALIGN] = (LEFT, TOP),
         font: AbstractFont | None = None,
         line_spacing: int = 0,
         clip: tuple[int, int, int, int] | None = None,
@@ -349,6 +350,10 @@ class Surface:
             The colors of each string, or a color to use for all strings.
         text : Iterable[str] | str
             The strings to display at each point, or a single string to use at all points.
+        alignments : Iterable[tuple[HALIGN, VALIGN]] | tuple[HALIGN, VALIGN]
+            The the alignments of the text relative to the point specified in the
+            geometry.  The default is `(LEFT, TOP)`, which places the top-left corner
+            of the text at the specified points.
         font : AbstractFont | None
             The font to use for the text.  If None, the default FrameBuffer
             8x8 monospaced font will be used.
