@@ -114,14 +114,17 @@ class Text(ColoredGeometry):
                     if py > h:
                         break
 
-    def update(self, geometry=None, colors=None, texts=None):
-        if texts is not None:
+    def update(self, geometry=None, colors=None, texts=None, alignments=None):
+        if texts is not None or alignments is not None:
             if self.clip is None:
                 # invalidate old text bounds
                 if self._get_bounds is None:
                     self._get_bounds = self._get_bounds()
                 self.surface.damage(self._get_bounds)
-            self.texts = texts
+            if texts is not None:
+                self.texts = texts
+            if alignments is not None:
+                self.alignments = alignments
             # bounds are no longer valid
             self._get_bounds = None
         super().update(geometry=geometry, colors=colors)
