@@ -12,6 +12,7 @@ from tempe.data_view import Repeat
 from tempe.geometry import ColumnGeometry, PointsToLines
 from tempe.markers import Marker
 from tempe.surface import Surface
+from tempe.text import CENTER, TOP, RIGHT
 
 
 surface = Surface()
@@ -105,9 +106,10 @@ surface.hlines(
 )
 surface.text(
     "OVERLAY",
-    ColumnGeometry([Repeat(4), temp_labels]),
+    ColumnGeometry([Repeat(x - tick_length - 1), temp_labels]),
     colors.grey_a,
     [f"{t}" for t in label_temps],
+    (RIGHT, CENTER),
 )
 
 # Time axis: tick marks, grid lines, labels
@@ -123,18 +125,19 @@ time_labels = time_scale.scale_values(
 surface.vlines(
     "OVERLAY",
     ColumnGeometry([time_marks, Repeat(y1), Repeat(tick_length)]),
-    Repeat(colors.grey_c),
+    colors.grey_c,
 )
 surface.vlines(
     "UNDERLAY",
     ColumnGeometry([time_labels, Repeat(y), Repeat(h)]),
-    Repeat(colors.grey_f),
+    colors.grey_f,
 )
 surface.text(
     "OVERLAY",
     ColumnGeometry([time_labels, Repeat(y1 + 8)]),
-    Repeat(colors.grey_a),
+    colors.grey_a,
     [f"{t % 24}:00" for t in label_times],
+    (CENTER, TOP),
 )
 
 # Plot title and additional information
@@ -143,16 +146,17 @@ from tempe.font import TempeFont
 
 surface.text(
     "DRAWING",
-    [[4, 0]],
-    [colors.grey_a],
-    ["Temperature (°C)"],
+    (4, 0),
+    colors.grey_a,
+    "Temperature (°C)",
     font=TempeFont(roboto16bold),
 )
 surface.text(
     "DRAWING",
-    [[160, 0]],
-    [colors.grey_a],
-    ["October 21-22, 2024"],
+    (320, 0),
+    colors.grey_a,
+    "October 21-22, 2024",
+    (RIGHT, TOP),
     font=TempeFont(roboto16),
 )
 

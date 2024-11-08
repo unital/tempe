@@ -15,6 +15,7 @@ from tempe.geometry import ColumnGeometry, RowGeometry, PointsToLines
 from tempe.markers import Marker
 from tempe.polar_geometry import polar_points, polar_r_lines
 from tempe.surface import Surface
+from tempe.text import LEFT, CENTER, RIGHT, TOP, BOTTOM
 
 
 surface = Surface()
@@ -119,14 +120,15 @@ quality_label_values = [50, 100, 150]
 quality_label_rs = air_quality_scale.scale_values(quality_label_values)
 time_label_values = [1729551600 + i * 3600 for i in range(6, 24, 6)]
 time_label_strings = ["0:00", "9:00", "12:00", "18:00"]
-time_label_xs = [cx - 8, cx + max_r + 4, cx - 20, cx - max_r - 44]
-time_label_ys = [cy - max_r - 12, cy - 4, cy + max_r + 4, cy - 4]
+time_label_alignment = [(CENTER, BOTTOM), (LEFT, CENTER), (CENTER, TOP), (RIGHT, CENTER)]
+time_label_xs = [cx, cx + max_r + 4, cx, cx - max_r - 4]
+time_label_ys = [cy - max_r - 4, cy, cy + max_r + 4, cy]
 
 
 surface.circles(
     "BACKGROUND",
-    RowGeometry([[cx, cy, max_r]]),
-    Repeat(colors.black),
+    (cx, cy, max_r),
+    colors.black,
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
 )
 surface.circles(
@@ -138,7 +140,7 @@ surface.circles(
             quality_label_rs,
         ]
     ),
-    Repeat(colors.grey_3),
+    colors.grey_3,
     fill=False,
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
 )
@@ -155,7 +157,7 @@ surface.lines(
             ]
         ),
     ),
-    Repeat(colors.grey_3),
+    colors.grey_3,
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
 )
 
@@ -165,7 +167,7 @@ quality_label_geometry = polar_points(
 surface.text(
     "OVERLAY",
     quality_label_geometry,
-    Repeat(colors.grey_7),
+    colors.grey_7,
     [f"{value:d}" for value in quality_label_values],
     clip=(cx, cy - max_r - 4, 64, 100),
 )
@@ -173,8 +175,9 @@ time_label_geometry = ColumnGeometry([time_label_xs, time_label_ys])
 surface.text(
     "OVERLAY",
     time_label_geometry,
-    Repeat(colors.grey_7),
+    colors.grey_7,
     time_label_strings,
+    time_label_alignment,
     clip=(0, 0, 320, 240),
 )
 gc.collect()
@@ -185,16 +188,16 @@ from tempe.font import TempeFont
 
 surface.text(
     "DRAWING",
-    [[4, 0]],
-    [colors.grey_a],
-    ["Air Quality (ppb)"],
+    (4, 0),
+    colors.grey_a,
+    "Air Quality (ppb)",
     font=TempeFont(roboto16bold),
 )
 surface.text(
     "DRAWING",
-    [[4, 20]],
-    [colors.grey_8],
-    ["20/8/24--\n22/8/24"],
+    (4, 20),
+    colors.grey_8,
+    "20/8/24--\n22/8/24",
     font=TempeFont(roboto16),
 )
 

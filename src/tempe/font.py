@@ -28,6 +28,7 @@ class FontToPy(BitmapFont):
         self.height = mod.height()
         self.baseline = mod.baseline()
         self.monospaced = mod.monospaced()
+        self.max_width = mod.max_width()
         self._mvfont = memoryview(mod._mvfont)
         self._msvp = memoryview(mod._mvsp)
         self._cache = {}
@@ -84,6 +85,7 @@ class TempeFont(BitmapFont):
         self.height = mod.height
         self.baseline = mod.baseline
         self.monospaced = mod.monospaced
+        self.max_width = mod.max_width
         self._mvfont = memoryview(mod._mvfont)
         self._msvp = memoryview(mod._mvsp)
         self._cache = {}

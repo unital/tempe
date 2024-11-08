@@ -10,6 +10,7 @@ from machine import ADC, RTC
 from tempe import colors
 from tempe.font import TempeFont
 from tempe.surface import Surface
+from tempe.text import TOP, RIGHT
 
 
 # a buffer one half the size of the screen
@@ -25,17 +26,19 @@ async def init_surface(surface):
 
     time_field = surface.text(
         "DRAWING",
-        (10, 10),
+        (230, 10),
         "#aaa",
         "",
+        (RIGHT, TOP),
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 10, 229, 40),
     )
     temp_field = surface.text(
         "DRAWING",
-        (10, 50),
+        (230, 50),
         colors.grey_a,
         "",
+        (RIGHT, TOP),
         font=TempeFont(roboto32boldnumbers),
         clip=(10, 50, 229, 40),
     )
