@@ -52,6 +52,23 @@ class Surface:
         self._damage = []
         self.refresh_needed.clear()
 
+    async def arefresh(self, display, working_buffer):
+        """Refresh the surface on the display."""
+        while True:
+            while self._damage:
+                rect = self._damage.pop(0)
+                x, y, w, h = rect
+                # handle buffer too small
+                buffer_rows = (len(working_buffer) // (w * self.pixel_size)) - 1
+                for start_row in range(0, h, buffer_rows):
+                    raster_rows = min(buffer_rows, h - start_row)
+                    raster = Raster(working_buffer, x, y + start_row, w, raster_rows)
+                    self.draw(raster)
+                    display.blit(working_buffer, x, y + start_row, w, raster_rows)
+                await asyncio.sleep(0)  # note: self._damage may be modified here
+            self.refresh_needed.clear()
+            await self.refresh_needed.wait()
+
     def damage(self, rect):
         """Mark a rectangle as needing to be refreshed."""
         if not any(contains(rect, rect2) for rect2 in self._damage):
@@ -157,6 +174,7 @@ class Surface:
         geometry,
         colors,
         texts,
+        alignments=None,
         font=None,
         line_spacing=0,
         clip=None,
@@ -166,7 +184,8 @@ class Surface:
         geometry = self._check_geometry(geometry, 2)
         colors = self._check_colors(colors)
         texts = self._check_texts(texts)
-        text = Text(geometry, colors, texts, font=font, line_spacing=line_spacing, clip=clip)
+        alignments = self._check_alignments(alignments)
+        text = Text(geometry, colors, texts, alignments, font=font, line_spacing=line_spacing, clip=clip)
         self.add_shape(layer, text)
         return text
 
@@ -227,6 +246,15 @@ class Surface:
             return Repeat(texts)
         else:
             return texts
+
+    def _check_alignments(self, alignments):
+        from .text import LEFT, TOP
+        if alignments is None:
+            return Repeat((LEFT, TOP))
+        elif isinstance(alignments, tuple) and len(alignments) == 2:
+            return Repeat(alignments)
+        else:
+            return alignments
 
     def _check_bitmaps(self, bitmaps):
         if isinstance(bitmaps, framebuf.FrameBuffer):

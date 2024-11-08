@@ -25,7 +25,7 @@ that are drawn to it::
     surface.add_shape('BACKGROUND', background)
 
     # draw some black text in the main drawing layer
-    hello_tempe = Text([(112, 116)], [0x0000], ["Hello Tempe!"])
+    hello_tempe = Text([(160, 120)], [0x0000], ["Hello Tempe!"], [(CENTER, CENTER)])
     surface.add_shape('DRAWING', hello_tempe)
 
 To actually render the image, you need to provide a |Display| subclass
@@ -415,7 +415,7 @@ By default it uses the built-in :py:mod:`framebuf` font, which is a simple
 but is not ideal for general interfaces: in particular it is available in
 just one size.
 
-For more better text rendering, Tempe currently can use bitmap fonts of the
+For better text rendering, Tempe currently can use bitmap fonts of the
 format produced by Peter Hinch's
 `font_to_py script <https://github.com/peterhinch/micropython-font-to-py>`_,
 or AntiRez's `microfont library <https://github.com/antirez/microfont>`_,
@@ -427,10 +427,18 @@ These fonts are typically shipped as modules::
 
     from tempe.font import TempeFont
     from tempe.fonts import roboto16bold
+    from tempe.text import CENTER
 
     font = TempeFont(roboto16bold)
 
-    surface.text("DRAWING", [(64, 107)], [0x0000], ["Hello Tempe!"], font=font)
+    surface.text(
+        "DRAWING",
+        (160, 120),
+        "#000",
+        "Hello Tempe!",
+        (CENTER, CENTER),
+        font=font,
+    )
 
 Using this in the original example from the tutorial will generate something
 like the following:

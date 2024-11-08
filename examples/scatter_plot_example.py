@@ -15,6 +15,7 @@ from tempe.geometry import ColumnGeometry, RowGeometry
 from tempe.markers import Marker
 from tempe.polar_geometry import polar_rects
 from tempe.surface import Surface
+from tempe.text import TOP, BOTTOM, CENTER, RIGHT
 
 
 surface = Surface()
@@ -251,9 +252,10 @@ surface.polygons(
 )
 surface.text(
     "DRAWING",
-    RowGeometry.from_lists([[cx - 12, cy - 45], [cx - 20, cy + 38]]),
+    RowGeometry.from_lists([[cx, cy - 35], [cx, cy + 38]]),
     Repeat(colors.grey_a),
     ["0:00", "12:00"],
+    [(CENTER, BOTTOM), (CENTER, TOP)]
 )
 
 sample_humidities = [40, 50, 60, 70]
@@ -311,9 +313,10 @@ surface.hlines(
 )
 surface.text(
     "OVERLAY",
-    ColumnGeometry([Repeat(4), temp_labels]),
+    ColumnGeometry([Repeat(x - tick_length), temp_labels]),
     Repeat(colors.grey_a),
     [f"{t}" for t in label_temps],
+    (RIGHT, CENTER),
 )
 
 # Air Quality axis: tick marks, grid lines, labels
@@ -336,6 +339,7 @@ surface.text(
     ColumnGeometry([air_quality_labels, Repeat(y1 + 8)]),
     Repeat(colors.grey_a),
     [str(t) for t in label_air_quality],
+    (CENTER, TOP),
 )
 
 # Plot title and additional information

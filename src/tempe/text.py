@@ -5,9 +5,15 @@
 from array import array
 import framebuf
 
+from .data_view import Repeat
 from .font import BitmapFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 
+LEFT = 0
+RIGHT = 1
+CENTER = 2
+TOP = 0
+BOTTOM = 1
 
 class Text(ColoredGeometry):
     def __init__(
@@ -15,6 +21,7 @@ class Text(ColoredGeometry):
         geometry,
         colors,
         texts,
+        alignments=Repeat((LEFT, TOP)),
         *,
         bold=False,
         font=None,
@@ -27,9 +34,10 @@ class Text(ColoredGeometry):
         self.bold = bold
         self.font = font
         self.line_spacing = line_spacing
+        self.alignments = alignments
 
     def __iter__(self):
-        yield from zip(self.geometry, self.colors, self.texts)
+        yield from zip(self.geometry, self.colors, self.texts, self.alignments)
 
     def draw_raster(self, raster):
         buffer = raster.fbuf
@@ -39,43 +47,69 @@ class Text(ColoredGeometry):
         h = raster.h
         if self.font is None:
             line_height = 10 + self.line_spacing
-            for geometry, color, text in self:
+            for geometry, color, text, alignment in self:
                 px = geometry[0] - x
                 py = geometry[1] - y
-                if px > w or py > h:
+                halign, valign = alignment
+                lines = text.splitlines()
+                text_height = len(lines) * line_height - self.line_spacing
+                if valign == BOTTOM:
+                    py -= text_height
+                elif valign == CENTER:
+                    py -= text_height // 2
+                if py > h or py + text_height < 0:
                     continue
-                for i, line in enumerate(text.splitlines()):
-                    line_y = py + i * line_height
-                    if line_y > h:
+                for i, line in enumerate(lines):
+                    ly = py + i * line_height
+                    if ly > h:
                         break
-                    if px + 8 * len(line) < 0 or line_y + line_height < 0:
+                    line_width = 8 * len(line)
+                    lx = px
+                    if halign == RIGHT:
+                        lx = px - line_width
+                    elif halign == CENTER:
+                        lx = px - line_width // 2
+                    if lx + line_width < 0 or lx > w or ly + line_height < 0:
                         continue
-                    buffer.text(line, px, py + i * line_height, color)
+                    buffer.text(line, lx, ly, color)
                     if self.bold:
-                        buffer.text(line, px + 1, py + i * line_height, color)
+                        buffer.text(line, lx + 1, ly, color)
         elif isinstance(self.font, BitmapFont):
             line_height = self.font.height + self.line_spacing
             palette_buf = array("H", [BLIT_KEY_RGB565, 0xFFFF])
             palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
-            for geometry, color, text in self:
+            for geometry, color, text, alignments in self:
                 palette_buf[1] = color
                 py = geometry[1] - y
-                if py > h:
+                px = geometry[0] - x
+                halign, valign = alignments
+                lines = text.splitlines()
+                text_height = len(lines) * line_height - self.line_spacing
+                if valign == BOTTOM:
+                    py -= text_height
+                elif valign == CENTER:
+                    py -= text_height // 2
+                if py > h or py + text_height < 0:
                     continue
-                for line in text.splitlines():
-                    if (px := geometry[0] - x) > w:
-                        break
-                    if py + line_height > 0:
-                        for char in line:
-                            buf, height, width = self.font.bitmap(char)
-                            if px + width >= 0:
+                for line in lines:
+                    widths = [self.font.measure(c)[2] for c in line]
+                    line_width = sum(widths)
+                    lx = px
+                    if halign == RIGHT:
+                        lx = px - line_width
+                    elif halign == CENTER:
+                        lx = px - line_width // 2
+                    if lx + line_width >= 0 and py + line_height >= 0:
+                        for char, width in zip(line, widths):
+                            if lx > w:
+                                break
+                            if lx + width >= 0:
+                                buf, height, _ = self.font.bitmap(char)
                                 fbuf = framebuf.FrameBuffer(
                                     buf, width, height, framebuf.MONO_HLSB
                                 )
-                                buffer.blit(fbuf, px, py, BLIT_KEY_RGB565, palette)
-                            px += width
-                            if px > w:
-                                break
+                                buffer.blit(fbuf, lx, py, BLIT_KEY_RGB565, palette)
+                            lx += width
                     py += line_height
                     if py > h:
                         break
@@ -98,20 +132,52 @@ class Text(ColoredGeometry):
         max_y = -0x7FFF
         min_y = 0x7FFF
         if self.font is None:
-            for geometry, text in zip(self.geometry, self.texts):
+            line_height = 8 + self.line_spacing
+            for geometry, text, alignments in zip(self.geometry, self.texts, self.alignments):
                 width = 8 * max(len(line) for line in text.splitlines())
-                height = 8 * len(text.splitlines())
-                max_x = max(max_x, geometry[0] + width)
-                min_x = min(min_x, geometry[0])
-                max_y = max(max_y, geometry[1] + height)
-                min_y = min(min_y, geometry[1])
+                height = line_height * len(text.splitlines()) - self.line_spacing
+                halign, valign = alignments
+                if halign == RIGHT:
+                    max_x = max(max_x, geometry[0])
+                    min_x = min(min_x, geometry[0] - width)
+                elif halign == CENTER:
+                    max_x = max(max_x, geometry[0] + width // 2)
+                    min_x = min(min_x, geometry[0] - width // 2)
+                else:
+                    max_x = max(max_x, geometry[0] + width)
+                    min_x = min(min_x, geometry[0])
+                if valign == BOTTOM:
+                    max_y = max(max_y, geometry[1])
+                    min_y = min(min_y, geometry[1] - height)
+                elif valign == CENTER:
+                    max_y = max(max_y, geometry[1] + height // 2)
+                    min_y = min(min_y, geometry[1] - height // 2)
+                else:
+                    max_y = max(max_y, geometry[1] + height)
+                    min_y = min(min_y, geometry[1])
         else:
-            for geometry, text in zip(self.geometry, self.texts):
+            line_height = self.font.height + self.line_spacing
+            for geometry, text, alignments in zip(self.geometry, self.texts, self.alignments):
                 width = max(self.font.measure(line)[2] for line in text.splitlines())
-                height = self.font.height * len(text.splitlines())
-                max_x = max(max_x, geometry[0] + width)
-                min_x = min(min_x, geometry[0])
-                max_y = max(max_y, geometry[1] + height)
-                min_y = min(min_y, geometry[1])
+                height = line_height * len(text.splitlines()) - self.line_spacing
+                halign, valign = alignments
+                if halign == RIGHT:
+                    max_x = max(max_x, geometry[0])
+                    min_x = min(min_x, geometry[0] - width)
+                elif halign == CENTER:
+                    max_x = max(max_x, geometry[0] + width // 2)
+                    min_x = min(min_x, geometry[0] - width // 2)
+                else:
+                    max_x = max(max_x, geometry[0] + width)
+                    min_x = min(min_x, geometry[0])
+                if valign == BOTTOM:
+                    max_y = max(max_y, geometry[1])
+                    min_y = min(min_y, geometry[1] - height)
+                elif valign == CENTER:
+                    max_y = max(max_y, geometry[1] + height // 2)
+                    min_y = min(min_y, geometry[1] - height // 2)
+                else:
+                    max_y = max(max_y, geometry[1] + height)
+                    min_y = min(min_y, geometry[1])
 
         return (min_x, min_y, max_x - min_x, max_y - min_y)
