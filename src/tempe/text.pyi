@@ -20,7 +20,9 @@ BOTTOM: Literal[1] = 1
 HALIGN: TypeAlias = Literal[0, 1, 2]
 VALIGN: TypeAlias = Literal[0, 1, 2]
 
-class Text(ColoredGeometry[tuple[int, int]]):
+class Text(ColoredGeometry[point]):
+    """Draw coloured strings at points with alignment."""
+
     def __init__(
         self,
         geometry: Iterable[point],
@@ -34,10 +36,10 @@ class Text(ColoredGeometry[tuple[int, int]]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-    def __iter__(self) -> tuple[Geometry[tuple[int, int]], int, str, tuple[HALIGN, VALIGN]]: ...
+    def __iter__(self) -> tuple[Geometry[point], int, str, tuple[HALIGN, VALIGN]]: ...
     def update(
         self,
-        geometry: Iterable[tuple[int, int]] | None = None,
+        geometry: Iterable[point] | None = None,
         colors: Iterable[int] | None = None,
         texts: Iterable[str] | None = None,
         alignment: Iterable[tuple[HALIGN, VALIGN]] | None = None,

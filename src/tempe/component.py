@@ -22,9 +22,9 @@ from .data_view import DataView, Range
 from .markers import Marker
 
 try:
-    from .fonts import roboto16
+    from .fonts import ubuntu16
 
-    default_font = roboto16
+    default_font = ubuntu16
 except ImportError:
     default_font = None
 

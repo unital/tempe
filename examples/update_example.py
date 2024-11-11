@@ -5,12 +5,14 @@
 """Example showing asyncio updating of a surface."""
 
 import asyncio
-from machine import ADC, RTC
+from machine import ADC, RTC, I2C, Pin
 
 from tempe import colors
 from tempe.font import TempeFont
 from tempe.surface import Surface
 from tempe.text import TOP, RIGHT
+
+from example_devices.bme280 import BME280
 
 
 # a buffer one half the size of the screen
@@ -74,6 +76,15 @@ async def update_temperature(adc, text_field):
             text_field.update(texts=[text])
         await asyncio.sleep(1)
 
+async def update_temperature_bme(bme, text_field):
+    while True:
+        temp = bme.read_compensated_data()[0] / 100
+        text = f"{temp:.2f}°C"
+        # only update when needed
+        if text != text_field.texts[0]:
+            text_field.update(texts=[text])
+        await asyncio.sleep(1)
+
 
 async def refresh_display(surface, display, working_buffer):
     import time
@@ -91,6 +102,10 @@ async def main(working_buffer):
     surface = Surface()
     temp_adc = ADC(ADC.CORE_TEMP)
     rtc = RTC()
+
+    i2c = I2C(0, scl=Pin(5), sda=Pin(4))
+    bme = BME280(i2c=i2c)
+
     display, fields = await asyncio.gather(
         init_display(),
         init_surface(surface),
@@ -101,7 +116,8 @@ async def main(working_buffer):
     await asyncio.gather(
         refresh_display(surface, display, working_buffer),
         update_time(rtc, time_field),
-        update_temperature(temp_adc, temp_field),
+        #update_temperature(temp_adc, temp_field),
+        update_temperature_bme(bme, temp_field),
     )
 
 

@@ -141,7 +141,7 @@ surface.text(
 )
 
 # Plot title and additional information
-from tempe.fonts import roboto16bold, roboto16
+from tempe.fonts import ubuntu16bold, ubuntu16
 from tempe.font import TempeFont
 
 surface.text(
@@ -149,7 +149,7 @@ surface.text(
     (4, 0),
     colors.grey_a,
     "Temperature (°C)",
-    font=TempeFont(roboto16bold),
+    font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
@@ -157,7 +157,7 @@ surface.text(
     colors.grey_a,
     "October 21-22, 2024",
     (RIGHT, TOP),
-    font=TempeFont(roboto16),
+    font=TempeFont(ubuntu16),
 )
 
 

@@ -183,7 +183,7 @@ surface.text(
 gc.collect()
 
 # Plot title and additional information
-from tempe.fonts import roboto16bold, roboto16
+from tempe.fonts import ubuntu16bold, ubuntu16
 from tempe.font import TempeFont
 
 surface.text(
@@ -191,14 +191,14 @@ surface.text(
     (4, 0),
     colors.grey_a,
     "Air Quality (ppb)",
-    font=TempeFont(roboto16bold),
+    font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
     (4, 20),
     colors.grey_8,
     "20/8/24--\n22/8/24",
-    font=TempeFont(roboto16),
+    font=TempeFont(ubuntu16),
 )
 
 
