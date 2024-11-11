@@ -62,8 +62,8 @@ Most of the code is licensed using the MIT license:
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 
-The bitmap fonts included with the Tempe source are derived from Roboto and
-are licensed with the Apache License 2.0: see
+The bitmap fonts included with the Tempe source are derived from Ubuntu fonts
+and are licensed with the Ubuntu Font License: see
 `github.com/unital/tempe/blob/main/src/tempe/fonts/README.rst <https://github.com/unital/tempe/blob/main/src/tempe/fonts/README.rst>`_
 for details.
 
