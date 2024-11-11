@@ -104,6 +104,8 @@ class ST7789:
 
     def __init__(self, size, reset_pin=None):
         self.size = size
+        if isinstance(reset_pin, int):
+            reset_pin = Pin(reset_pin, Pin.OUT)
         self.reset_pin = reset_pin
         self.x_offset = 0
         self.y_offset = 0
