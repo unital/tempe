@@ -24,7 +24,7 @@ from tempe.colors import grey_7, grey_a, grey_d, grey_e, grey_f
 from tempe.markers import Marker
 from tempe.surface import Surface
 from tempe.component import Component, Label, LinePlot, ScatterPlot, BarPlot
-from tempe.fonts import roboto16bold, roboto32boldnumbers, roboto24boldnumbers
+from tempe.fonts import ubuntu16bold, roboto32boldnumbers, roboto24boldnumbers
 from tempe.colormaps.plasma import plasma
 from tempe.colormaps.viridis import viridis
 
@@ -343,11 +343,11 @@ async def main():
     display = await init_display()
     surface = Surface()
     background = Component(surface, (0, 0, w, h))
-    label_1 = Label(surface, (4, 4, 100, 20), "Temperature", font=roboto16bold)
-    label_2 = Label(surface, (4, 64, 152, 20), "Memory Pressure", font=roboto16bold)
-    label_3 = Label(surface, (4, 124, 152, 20), "Free Memory", font=roboto16bold)
-    label_4 = Label(surface, (4, 184, 152, 20), "Stack Use", font=roboto16bold)
-    label_5 = Label(surface, (164, 184, 152, 20), "Frequency", font=roboto16bold)
+    label_1 = Label(surface, (4, 4, 100, 20), "Temperature", font=ubuntu16bold)
+    label_2 = Label(surface, (4, 64, 152, 20), "Memory Pressure", font=ubuntu16bold)
+    label_3 = Label(surface, (4, 124, 152, 20), "Free Memory", font=ubuntu16bold)
+    label_4 = Label(surface, (4, 184, 152, 20), "Stack Use", font=ubuntu16bold)
+    label_5 = Label(surface, (164, 184, 152, 20), "Frequency", font=ubuntu16bold)
     freq_display = Label(
         surface,
         (164, 204, 76, 35),

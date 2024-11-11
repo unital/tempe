@@ -10,7 +10,7 @@ from tempe.text import Text
 from tempe.shapes import Rectangles
 from tempe.display import FileDisplay
 from tempe.font import TempeFont
-from tempe.fonts import roboto16bold
+from tempe.fonts import ubuntu16bold
 
 
 # a buffer one half the size of the screen
@@ -23,7 +23,7 @@ background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
 surface.add_shape("BACKGROUND", background)
 
 # draw some black text in the main drawing layer
-font = TempeFont(roboto16bold)
+font = TempeFont(ubuntu16bold)
 hello_tempe = Text(
     [(10, 10)], [0x0000], ["Hello Tempe!"], font=font, clip=(0, 0, 120, 60)
 )

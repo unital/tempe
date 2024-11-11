@@ -343,7 +343,7 @@ surface.text(
 )
 
 # Plot title and additional information
-from tempe.fonts import roboto16bold
+from tempe.fonts import ubuntu16bold
 from tempe.font import TempeFont
 
 surface.text(
@@ -351,21 +351,21 @@ surface.text(
     [[4, 0]],
     [colors.grey_a],
     ["Temperature (°C) vs. Air Quality (ppb)"],
-    font=TempeFont(roboto16bold),
+    font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
     [[x1 + 20, y - 20]],
     [colors.grey_a],
     ["20-22/8/24"],
-    font=TempeFont(roboto16bold),
+    font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
     [[x1 + 20, cy + 50]],
     [colors.grey_a],
     ["Humidity"],
-    font=TempeFont(roboto16bold),
+    font=TempeFont(ubuntu16bold),
 )
 
 

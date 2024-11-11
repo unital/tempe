@@ -420,16 +420,16 @@ format produced by Peter Hinch's
 `font_to_py script <https://github.com/peterhinch/micropython-font-to-py>`_,
 or AntiRez's `microfont library <https://github.com/antirez/microfont>`_,
 as well as a slightly more efficient internal variant.  Tempe provides bitmap
-versions of Google's Roboto font at 16 pt, which looks reasonably good on small
-screens.
+versions of Canconical's Ubuntu font at 16 pt, which looks reasonably good on
+small screens.
 
 These fonts are typically shipped as modules::
 
     from tempe.font import TempeFont
-    from tempe.fonts import roboto16bold
+    from tempe.fonts import ubuntu16bold
     from tempe.text import CENTER
 
-    font = TempeFont(roboto16bold)
+    font = TempeFont(ubuntu16bold)
 
     surface.text(
         "DRAWING",
