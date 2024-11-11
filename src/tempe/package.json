@@ -15,6 +15,7 @@
         ["tempe/shapes.py", "github:unital/tempe/src/tempe/shapes.py"],
         ["tempe/surface.py", "github:unital/tempe/src/tempe/surface.py"],
         ["tempe/text.py", "github:unital/tempe/src/tempe/text.py"],
+        ["tempe/window.py", "github:unital/tempe/src/tempe/window.py"],
         ["tempe/util.py", "github:unital/tempe/src/tempe/util.py"],
         ["tempe/colormaps/__init__.py", "github:unital/tempe/src/tempe/colormaps/__init__.py"],
         ["tempe/colormaps/inferno.py", "github:unital/tempe/src/tempe/colormaps/inferno.py"],
@@ -27,8 +28,8 @@
         ["tempe/colors/convert.py", "github:unital/tempe/src/tempe/colors/convert.py"],
         ["tempe/colors/web.py", "github:unital/tempe/src/tempe/colors/web.py"],
         ["tempe/fonts/__init__.py", "github:unital/tempe/src/tempe/fonts/__init__.py"],
-        ["tempe/fonts/roboto16.py", "github:unital/tempe/src/tempe/fonts/roboto16.py"],
-        ["tempe/fonts/roboto16bold.py", "github:unital/tempe/src/tempe/fonts/roboto16bold.py"]
+        ["tempe/fonts/ubuntu16.py", "github:unital/tempe/src/tempe/fonts/ubuntu16.py"],
+        ["tempe/fonts/ubuntu16bold.py", "github:unital/tempe/src/tempe/fonts/ubuntu16bold.py"]
     ],
     "version": "0.3.dev"
 }
