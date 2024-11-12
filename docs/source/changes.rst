@@ -25,6 +25,7 @@ a method to clear the cache if the memory is needed.
 These changes add up to an order of magnitude speed improvement in some cases.
 
 Additional improvements include:
+
 - Text objects can now be vertically and horizontally aligned relative to the
   geometry.
 - a new Window Shape that holds a subsurface that makes scrolling groups of
