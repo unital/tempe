@@ -4,13 +4,17 @@
 
 """Example showing live updating of microcontroller state.
 
-Note: this is currently not working as it uses earlier version of code.
+This is designed to work with a Raspberry Pi Pico.
+
+Note: this uses some experimental features (such as Plot object types) that
+will likely have a changed API in the future.  It could also do with some
+clean-up of duplicated code.
 """
 
 
 import asyncio
 import gc
-from machine import SPI, Pin, ADC, RTC
+from machine import SPI, Pin, ADC, RTC, freq
 import micropython
 import time
 
@@ -21,42 +25,40 @@ from ultimo_machine.gpio import PollADC
 from ultimo_machine.time import PollRTC
 
 from tempe.colors import grey_7, grey_a, grey_d, grey_e, grey_f
+from tempe.font import TempeFont
+from tempe.fonts import ubuntu16bold
 from tempe.markers import Marker
 from tempe.surface import Surface
 from tempe.component import Component, Label, LinePlot, ScatterPlot, BarPlot
-from tempe.fonts import ubuntu16bold, roboto32boldnumbers, roboto24boldnumbers
+from tempe.text import LEFT, RIGHT, TOP
 from tempe.colormaps.plasma import plasma
 from tempe.colormaps.viridis import viridis
 
-from devices.st7789 import ST7789
+from example_fonts import roboto32boldnumbers, roboto24boldnumbers
 
 
 w = 320
 h = 240
 
 gc.collect()
-DRAWING_BUFFER = bytearray(2 * w * 31)
+DRAWING_BUFFER = bytearray(2 * w * 61)
 
+large_numbers = TempeFont(roboto32boldnumbers)
+small_numbers = TempeFont(roboto24boldnumbers)
 
 async def init_display():
-    spi = SPI(
-        0,
-        baudrate=62_500_000,
-        phase=1,
-        polarity=1,
-        sck=Pin(18, Pin.OUT),
-        mosi=Pin(19, Pin.OUT),
-        miso=Pin(16, Pin.OUT),
-    )
-    backlight = Pin(20, Pin.OUT)
-    display = ST7789(spi, cs_pin=Pin(17, Pin.OUT, value=1), dc_pin=Pin(16, Pin.OUT))
-    backlight(1)
+    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
+    # or for Waveshare Pico-ResTouch-LCD-28:
+    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
+
+    display = Display()
     await display.init()
+    display.backlight_pin(1)
     return display
 
 
 def temp_to_color(temp):
-    index = int((len(plasma) - 1) * (temp - 25) / 10)
+    index = int((len(plasma) - 1) * (temp - 20) / 10)
     return plasma[index]
 
 
@@ -82,19 +84,18 @@ def u16_to_celcius(value: int) -> float:
 
 
 async def display_temperature(surface, value):
-    temp = await value()
-    temp_display = Label(
-        surface,
-        (164, 20, 152, 60),
-        temp,
-        color=temp_to_color(temp),
-        font=roboto32boldnumbers,
+    temp_display = surface.text(
+        "DRAWING",
+        (316, 20),
+        "#000",
+        "",
+        (RIGHT, TOP),
+        font=large_numbers,
+        clip=(164, 20, 152, 60),
     )
     format = pipe("{:.1f}°C".format)
     async for temp in value | format() | Dedup():
-        temp_display.value = temp
-        temp_display.style["color"] = temp_to_color(await value())
-        temp_display.update()
+        temp_display.update(texts=[temp], colors=[temp_to_color(await value())])
 
 
 @pipe
@@ -104,70 +105,84 @@ def format_memory(memory):
 
 async def display_free(surface, value):
     free = await value()
-    free_display = Label(
-        surface,
-        (164, 144, 80, 60),
-        free,
-        color=free_to_color(free),
-        font=roboto32boldnumbers,
+    free_display = surface.text(
+        "DRAWING",
+        (244, 144),
+        free_to_color(free),
+        str(free),
+        (RIGHT, TOP),
+        font=large_numbers,
+        clip=(164, 144, 80, 60),
     )
-    free_units = Label(
-        surface,
-        (252, 144, 64, 60),
+    free_units = surface.text(
+        "DRAWING",
+        (252, 144),
+        free_to_color(free),
         "KiB",
-        color=free_to_color(free),
-        font=roboto24boldnumbers,
+        (LEFT, TOP),
+        font=small_numbers,
+        clip=(252, 144, 64, 60),
     )
     async for free in value | format_memory() | Dedup():
-        free_display.value = free
-        free_display.style["color"] = free_to_color(await value())
-        free_units.style["color"] = free_to_color(await value())
-        free_display.update()
-        free_units.update()
+        colors = [free_to_color(await value())]
+        free_display.update(texts=[free], colors=colors)
+        free_units.update(colors=colors)
 
 
 async def display_alloc(surface, value):
     alloc = await value()
-    alloc_display = Label(
-        surface,
-        (164, 84, 80, 60),
-        alloc,
-        color=alloc_to_color(alloc),
-        font=roboto32boldnumbers,
+    alloc_display = surface.text(
+        "DRAWING",
+        (244, 84),
+        "#000",
+        str(alloc),
+        (RIGHT, TOP),
+        font=large_numbers,
+        clip=(164, 84, 80, 60),
     )
-    alloc_units = Label(
-        surface,
-        (252, 84, 64, 60),
+    alloc_units = surface.text(
+        "DRAWING",
+        (252, 84),
+        "#000",
         "KiB",
-        color=alloc_to_color(alloc),
-        font=roboto24boldnumbers,
+        (LEFT, TOP),
+        font=small_numbers,
+        clip=(252, 84, 64, 60),
     )
     async for alloc in value | format_memory() | Dedup():
-        alloc_display.value = alloc
-        alloc_display.style["color"] = alloc_to_color(await value())
-        alloc_units.style["color"] = alloc_to_color(await value())
-        alloc_display.update()
-        alloc_units.update()
+        colors = [alloc_to_color(await value())]
+        alloc_display.update(texts=[alloc], colors=colors)
+        alloc_units.update(colors=colors)
 
 
 async def display_stack(surface, value):
     stack = await value()
-    stack_display = Label(
-        surface,
-        (4, 204, 152, 35),
-        stack,
-        color=stack_to_color(stack),
-        font=roboto32boldnumbers,
+    stack_display = surface.text(
+        "DRAWING",
+        (128, 204),
+        "#000",
+        str(stack),
+        (RIGHT, TOP),
+        font=large_numbers,
+        clip=(4, 204, 128, 35),
     )
-    format = pipe("{} B".format)
+    stack_units = surface.text(
+        "DRAWING",
+        (132, 204),
+        "#000",
+        "B",
+        (LEFT, TOP),
+        font=small_numbers,
+        clip=(132, 204, 20, 35),
+    )
+    format = pipe(str)
     async for stack in value | format() | Dedup():
-        stack_display.value = stack
-        stack_display.style["color"] = stack_to_color(await value())
-        stack_display.update()
+        colors = [stack_to_color(await value())]
+        stack_display.update(texts=[stack], colors=colors)
+        stack_units.update(colors=colors)
 
 
-async def plot_average_temperature(surface, value):
-    temp_source = PollADC(ADC.CORE_TEMP, 1)
+async def plot_average_temperature(surface, value, temp_range=(20, 30)):
     times = [0] * 180
     temps = [0] * 180
     colors = [0] * 180
@@ -178,7 +193,7 @@ async def plot_average_temperature(surface, value):
         values=temps,
         index=times,
         colors=colors,
-        value_range=(27, 32),
+        value_range=temp_range,
         index_range=(time.time() - 180, time.time()),
     )
     temp_plot.style["background_color"] = None
@@ -193,7 +208,6 @@ async def plot_average_temperature(surface, value):
         colors[-1] = temp_to_color(temp)
         temp_plot.update()
 
-
 async def plot_spot_temperature(surface):
     temp_source = PollADC(ADC.CORE_TEMP, 1)
     times = [0] * 180
@@ -205,7 +219,7 @@ async def plot_spot_temperature(surface):
         index=times,
         colors=grey_d,
         sizes=4,
-        value_range=(27, 32),
+        value_range=(25, 30),
         index_range=(time.time() - 180, time.time()),
     )
     temp_plot.style["background_color"] = None
@@ -221,7 +235,7 @@ async def plot_spot_temperature(surface):
         colors=extreme_colors,
         markers=extreme_markers,
         sizes=5,
-        value_range=(27, 32),
+        value_range=(25, 30),
         index_range=(time.time() - 180, time.time()),
     )
     extreme_plot.style["background_color"] = None
@@ -278,7 +292,7 @@ async def plot_free(surface, value):
         values=frees,
         index=index,
         colors=colors,
-        value_range=(0, 1 << 18),
+        value_range=(0, 1 << 17),
         index_range=(0, 39),
     )
     free_plot.style["background_color"] = None
@@ -288,34 +302,6 @@ async def plot_free(surface, value):
         colors[:-1] = colors[1:]
         colors[-1] = free_to_color(free)
         free_plot.update()
-
-
-async def plot_stack(surface, value):
-    index = list(range(39))
-    stacks = [0] * 39
-    colors = [0] * 39
-    stack = await value()
-    stack_plot = BarPlot(
-        surface,
-        (4, 200, 156, 20),
-        values=stacks,
-        index=index,
-        colors=colors,
-        value_range=(0, 1 << 13),
-        index_range=(0, 39),
-    )
-    stack_plot.style["background_color"] = None
-    stack_plot.draw()
-    async for stack in value:
-        print(stack)
-        try:
-            stacks[:-1] = stacks[1:]
-            stacks[-1] = stack
-            colors[:-1] = colors[1:]
-            colors[-1] = stack_to_color(stack)
-            stack_plot.update()
-        except Exception as exc:
-            print(exc)
 
 
 async def refresh(surface, display):
@@ -342,35 +328,31 @@ def check_stack():
 async def main():
     display = await init_display()
     surface = Surface()
-    background = Component(surface, (0, 0, w, h))
-    label_1 = Label(surface, (4, 4, 100, 20), "Temperature", font=ubuntu16bold)
-    label_2 = Label(surface, (4, 64, 152, 20), "Memory Pressure", font=ubuntu16bold)
-    label_3 = Label(surface, (4, 124, 152, 20), "Free Memory", font=ubuntu16bold)
-    label_4 = Label(surface, (4, 184, 152, 20), "Stack Use", font=ubuntu16bold)
-    label_5 = Label(surface, (164, 184, 152, 20), "Frequency", font=ubuntu16bold)
-    freq_display = Label(
-        surface,
-        (164, 204, 76, 35),
-        machine.freq() // 1000000,
-        color=grey_7,
-        font=roboto32boldnumbers,
+    surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+    labels = surface.text(
+        "DRAWING",
+        [(4, 4), (4, 64), (4, 124), (4, 184), (164, 184)],
+        "#aaa",
+        ["Temperature", "Memory Pressure", "Free Memory", "Stack Use", "Frequency"],
+        font=TempeFont(ubuntu16bold),
     )
-    freq_units = Label(
-        surface,
-        (252, 204, 64, 35),
+    freq_display = surface.text(
+        "DRAWING",
+        (240, 204),
+        grey_7,
+        str(freq() // 1000000),
+        (RIGHT, TOP),
+        font=large_numbers,
+        clip=(164, 204, 76, 35),
+    )
+    freq_units = surface.text(
+        "DRAWING",
+        (252, 204),
+        grey_7,
         "MHz",
-        color=grey_7,
-        font=roboto24boldnumbers,
+        font=small_numbers,
+        clip=(252, 204, 64, 35),
     )
-    background.draw()
-    label_1.draw()
-    label_2.draw()
-    label_3.draw()
-    label_4.draw()
-    label_5.draw()
-    freq_display.draw()
-    freq_units.draw()
-    surface.damage((0, 0, w, h))
 
     temp_source = PollADC(ADC.CORE_TEMP, 1)
     temperature = Value(25)
@@ -378,13 +360,13 @@ async def main():
     allocated_memory = Value(0)
     stack_use = Value(0)
 
-    update_temperature = temp_source | u16_to_celcius() | EWMA(0.05) | temperature
+    update_temperature = temp_source | u16_to_celcius() | temperature
     update_free_memory = check_free(5) | free_memory
     update_allocated_memory = check_allocated(5) | allocated_memory
     update_stack_use = check_stack(5) | stack_use
 
     task1 = asyncio.create_task(display_temperature(surface, temperature))
-    task2 = asyncio.create_task(plot_spot_temperature(surface))
+    #task2 = asyncio.create_task(plot_spot_temperature(surface))
     task3 = asyncio.create_task(plot_average_temperature(surface, temperature))
     task4 = asyncio.create_task(refresh(surface, display))
     task5 = asyncio.create_task(display_free(surface, free_memory))
@@ -398,7 +380,7 @@ async def main():
         update_allocated_memory.create_task(),
         update_stack_use.create_task(),
         task1,
-        task2,
+        #task2,
         task3,
         task4,
         task5,
@@ -406,7 +388,7 @@ async def main():
         task7,
         task8,
         task9,
-        return_exceptions=True,
+        #return_exceptions=True,
     )
 
 
