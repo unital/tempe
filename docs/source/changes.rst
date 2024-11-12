@@ -39,7 +39,7 @@ Thanks
 
 The following people contributed to this release:
 
-    JoGeDuBo, Corran Webster
+JoGeDuBo, Corran Webster
 
 Version 0.2
 -----------
