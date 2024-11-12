@@ -354,6 +354,16 @@ class ST7789:
         self.write_to_memory(b"")
         self.send_iterator(1, (row_bytes for _ in range(h)))
 
+    async def init(self):
+        await self.soft_reset()
+        self.tearing_effect_on(0)
+        self.set_color_mode(0x05)
+        self.set_porch_control(0x0C, 0x0C, 0x00, 0x33, 0x33)
+        self.set_lcm_control(0x2C)
+        self.set_vdv_vrh_enable(0x01)
+        self.set_vrh(0x12)
+        self.set_vdv(0x20)
+
     def blit(self, buf, x, y, w, h, stride=None):
         self._blit565(buf, x, y, w, h, stride)
 

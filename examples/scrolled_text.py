@@ -101,6 +101,8 @@ async def init_surface(surface):
 
 async def init_display():
     from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
+    # or for Waveshare Pico-ResTouch-LCD-28:
+    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
 
     display = Display(size=(320, 240))
     display.backlight_pin(1)

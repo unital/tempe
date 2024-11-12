@@ -47,16 +47,10 @@ class PimoroniDisplay(ST7789_SPI):
         super().__init__(spi, cs_pin, dc_pin, size, reset_pin)
 
     async def init(self, rotation=0):
+        await super().init()
+
         # Adapted from PicoGraphics code
         # See https://github.com/pimoroni/pimoroni-pico/blob/24971349fcb3f92269c7f469b6c716e568941874/drivers/st7789/st7789.cpp#L49-L118
-        await self.soft_reset()
-        self.tearing_effect_on(0)
-        self.set_color_mode(0x05)
-        self.set_porch_control(0x0C, 0x0C, 0x00, 0x33, 0x33)
-        self.set_lcm_control(0x2C)
-        self.set_vdv_vrh_enable(0x01)
-        self.set_vrh(0x12)
-        self.set_vdv(0x20)
         self.set_power_control_1(0xA4, 0xA1)
         self.set_frame_rate_control(0x0F)  # turn it way down ~39 fps
 
