@@ -1,11 +1,11 @@
 {
     "urls": [
-        ["tempe_displays/__init__.py", "github:unital/tempe/src/tempe_displays/__init__.py"],
-        ["tempe_displays/st7789/__init__.py", "github:unital/tempe/src/tempe_displays/st7789/__init__.py"],
-        ["tempe_displays/st7789/base.py", "github:unital/tempe/src/tempe_displays/st7789/base.py"],
-        ["tempe_displays/st7789/pimoroni.py", "github:unital/tempe/src/tempe_displays/st7789/pimoroni.py"],
-        ["tempe_displays/st7789/spi.py", "github:unital/tempe/src/tempe_displays/st7789/spi.py"]
-        ["tempe_displays/st7789/waveshare.py", "github:unital/tempe/src/tempe_displays/st7789/waveshare.py"],
+        ["tempe_displays/__init__.py", "github:unital/tempe/releases/0.3/src/tempe_displays/__init__.py"],
+        ["tempe_displays/st7789/__init__.py", "github:unital/tempe/releases/0.3/src/tempe_displays/st7789/__init__.py"],
+        ["tempe_displays/st7789/base.py", "github:unital/tempe/releases/0.3/src/tempe_displays/st7789/base.py"],
+        ["tempe_displays/st7789/pimoroni.py", "github:unital/tempe/releases/0.3/src/tempe_displays/st7789/pimoroni.py"],
+        ["tempe_displays/st7789/spi.py", "github:unital/tempe/releases/0.3/src/tempe_displays/st7789/spi.py"],
+        ["tempe_displays/st7789/waveshare.py", "github:unital/tempe/releases/0.3/src/tempe_displays/st7789/waveshare.py"]
     ],
-    "version": "0.3.dev"
+    "version": "0.3"
 }

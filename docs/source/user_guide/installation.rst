@@ -24,15 +24,15 @@ Released versions are found at ``github:unital/tempe/releases/<version>/``:
 
 ..  code-block:: python-console
 
-    >>> mip.install("github:unital/tempe/releases/0.2/src/tempe/package.json")
-    >>> mip.install("github:unital/tempe/releases/0.2/src/tempe_displays/package.json")
+    >>> mip.install("github:unital/tempe/releases/0.3/src/tempe/package.json")
+    >>> mip.install("github:unital/tempe/releases/0.3/src/tempe_displays/package.json")
 
 or using :py:mod:`mpremote`:
 
 ..  code-block:: console
 
-    mpremote mip install github:unital/tempe/releases/0.2/src/tempe/package.json
-    mpremote mip install github:unital/tempe/releases/0.2/src/tempe_displays/package.json
+    mpremote mip install github:unital/tempe/releases/0.3/src/tempe/package.json
+    mpremote mip install github:unital/tempe/releases/0.3/src/tempe_displays/package.json
 
 Unstable
 ~~~~~~~~
