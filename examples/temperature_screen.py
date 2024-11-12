@@ -7,29 +7,30 @@
 This is designed to work with a Raspberry Pi Pico.
 
 Note: this uses some experimental features (such as Plot object types) that
-will likely have a changed API in the future.  It could also do with some
-clean-up of duplicated code.
+will likely have a changed API in the future and are not included in the mip
+distribution.  You will need to install from source to use this example.
+
+It could also do with some clean-up of duplicated code.
 """
 
 
 import asyncio
 import gc
-from machine import SPI, Pin, ADC, RTC, freq
+from machine import ADC, freq
 import micropython
 import time
 
-from ultimo.pipelines import Dedup, EWMA, pipe
+from ultimo.pipelines import Dedup, pipe
 from ultimo.poll import poll
 from ultimo.value import Value
 from ultimo_machine.gpio import PollADC
-from ultimo_machine.time import PollRTC
 
-from tempe.colors import grey_7, grey_a, grey_d, grey_e, grey_f
+from tempe.colors import grey_7, grey_d
 from tempe.font import TempeFont
 from tempe.fonts import ubuntu16bold
 from tempe.markers import Marker
 from tempe.surface import Surface
-from tempe.component import Component, Label, LinePlot, ScatterPlot, BarPlot
+from tempe.component import LinePlot, ScatterPlot, BarPlot
 from tempe.text import LEFT, RIGHT, TOP
 from tempe.colormaps.plasma import plasma
 from tempe.colormaps.viridis import viridis

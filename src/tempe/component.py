@@ -11,13 +11,13 @@ produce a single unit in a UI, with support for styling.
 
    This is experimental, and my be moved into its own library in the
    future.  Currently the functionality in this one module is far too
-   big.  This is not included in the mpy distribution.
+   big.
 """
 
 from array import array
 
 from .colors import grey_1, grey_2, grey_e, grey_f
-from .geometry import RowGeometry, ColumnGeometry
+from .geometry import RowGeometry, ColumnGeometry, StripGeometry
 from .data_view import DataView, Range
 from .markers import Marker
 
@@ -70,7 +70,7 @@ class Component:
 
     def draw(self):
         if self.style["background_color"] is not None:
-            self.shapes["background"] = self.surface.rects(
+            self.shapes["background"] = self.surface.rectangles(
                 "BACKGROUND",
                 RowGeometry.from_lists([self.bounds]),
                 [self.style["background_color"]],
@@ -205,7 +205,7 @@ class LinePlot(Component):
         vertices = self.map_xy()
         self.shapes["lines"] = self.surface.lines(
             "DRAWING",
-            LineStrip(vertices),
+            StripGeometry(vertices),
             self.colors,
             clip=self.bounds,
         )
@@ -388,7 +388,7 @@ class BarPlot(Component):
     def draw(self):
         super().draw()
         geometry = self.map_xy()
-        self.shapes["rects"] = self.surface.rects(
+        self.shapes["rects"] = self.surface.rectangles(
             "DRAWING",
             ColumnGeometry(geometry),
             self.colors,
