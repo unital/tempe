@@ -29,7 +29,7 @@ Additional improvements include:
   geometry.
 - a new Window Shape that holds a subsurface that makes scrolling groups of
   Shapes easier.
-- support for Waveshare Pico-ResTouch-LCD 2.8 displays, thansk to @JoGeDuBo.
+- support for Waveshare Pico-ResTouch-LCD 2.8 displays, thanks to @JoGeDuBo.
 - replace Roboto fonts with Ubuntu fonts, which render better at small sizes.
 - additional examples and various small fixes.
 
