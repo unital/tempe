@@ -9,7 +9,7 @@ import framebuf
 from .data_view import Repeat
 from .geometry import Geometry, RowGeometry
 from .raster import Raster
-from .shapes import Circles, Ellipses, Polygons, Rectangles, Lines, VLines, HLines
+from .shapes import Circles, Ellipses, Polygons, RoundedRectangles, Rectangles, Lines, VLines, HLines
 from .util import contains
 
 
@@ -110,6 +110,13 @@ class Surface:
         geometry = self._check_geometry(geometry, 4)
         colors = self._check_colors(colors)
         shape = Rectangles(geometry, colors, fill=fill, clip=clip)
+        self.add_shape(layer, shape)
+        return shape
+
+    def rounded_rectangles(self, layer, geometry, colors, radius=4, fill=True, clip=None):
+        geometry = self._check_geometry(geometry, 4)
+        colors = self._check_colors(colors)
+        shape = RoundedRectangles(geometry, colors, radius=radius, fill=fill, clip=clip)
         self.add_shape(layer, shape)
         return shape
 

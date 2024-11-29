@@ -267,6 +267,71 @@ class Rectangles(FillableGeometry):
         return (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
+class RoundedRectangles(Rectangles):
+    """Render multiple rounded rectangles.
+
+    Geometry should produce x, y, w, h arrays.
+    """
+
+    def __init__(self, geometry, colors, *, radius=4, fill=True, surface=None, clip=None):
+        super().__init__(geometry, colors, fill=fill, surface=surface, clip=clip)
+        self.radius = radius
+
+    def draw(self, buffer, x=0, y=0):
+        fill = self.fill
+        for rect, color in self:
+            px = rect[0] - x
+            py = rect[1] - y
+            w = rect[2]
+            h = rect[3]
+            if w < 0:
+                px += w
+                w = -w
+            if h < 0:
+                py += h
+                h = -h
+            r = min(self.radius, w // 2, h // 2)
+            # standard
+            if fill:
+                buffer.rect(px + r, py, w - 2*r, h + 1, color, fill)
+                buffer.rect(px, py + r, r, h - 2*r, color, fill)
+                buffer.rect(px + w - r, py + r, r + 1, h - 2*r, color, fill)
+            else:
+                buffer.hline(px + r, py, w - 2*r, color)
+                buffer.hline(px + r, py + h, w - 2*r, color)
+                buffer.vline(px, py + r, h - 2*r, color)
+                buffer.vline(px + w, py + r, h - 2*r, color)
+            buffer.ellipse(px + w - r, py + r, r, r, color, fill, 1)
+            buffer.ellipse(px + w - r, py + h - r, r, r, color, fill, 8)
+            buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
+            buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
+            #     else:
+            #         # left and right ellipse
+            #         if fill:
+            #             buffer.rect(px + r, py, w - 2*r, h, color, fill)
+            #         else:
+            #             buffer.hline(px + r, py, w - 2*r, color)
+            #             buffer.hline(px + r, py + h, w - 2*r, color)
+            #         ry = h // 2
+            #         buffer.ellipse(px + r, py + ry, r, ry, color, fill, 6)
+            #         buffer.ellipse(px + w - r, py + ry, r, ry, color, fill, 9)
+            # elif h > 2 * r:
+            #     # top and bottom ellipse
+            #     if fill:
+            #         buffer.rect(px, py + r, w + 1, h - 2 * r, color, fill)
+            #     else:
+            #         buffer.vline(px, py + r, h - 2*r, color)
+            #         buffer.vline(px + w, py + r, h - 2*r, color)
+            #     rx = w // 2
+            #     buffer.ellipse(px + rx, py + h - r, rx, r, color, fill, 12)
+            #     buffer.ellipse(px + rx, py + r, rx, r, color, fill, 3)
+            # else:
+            #     # draw an ellipse
+            #     rx = w // 2
+            #     ry = h // 2
+            #     buffer.ellipse(px + rx, py + ry, rx, ry, color, fill)
+
+
 class Circles(FillableGeometry):
     """Render multiple circles.
 

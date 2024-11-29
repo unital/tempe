@@ -277,6 +277,24 @@ class Rectangles(FillableGeometry[rectangle]):
     ): ...
     def __iter__(self) -> tuple[rectangle, int]: ...
 
+class RoundedRectangles(Rectangles):
+    """Render multiple rounded rectangles.
+
+    Geometry should produce x, y, w, h arrays.
+    """
+
+    def __init__(
+        self,
+        geometry: Iterable[rectangle],
+        colors: Iterable[int],
+        *,
+        radius: int = 4,
+        fill: bool = True,
+        surface: "tempe.surface.Surface | None" = None,
+        clip: rectangle | None = None,
+    ): ...
+    def __iter__(self) -> tuple[rectangle, int]: ...
+
 class Circles(FillableGeometry[point_length]):
     """Render multiple circles.
 
@@ -320,6 +338,7 @@ __all__ = [
     "VLines",
     "Polygons",
     "Rectangles",
+    "RoundedRectangles",
     "Circles",
     "Ellipses",
 ]
