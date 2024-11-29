@@ -291,7 +291,6 @@ class RoundedRectangles(Rectangles):
                 py += h
                 h = -h
             r = min(self.radius, w // 2, h // 2)
-            # standard
             if fill:
                 buffer.rect(px + r, py, w - 2*r, h + 1, color, fill)
                 buffer.rect(px, py + r, r, h - 2*r, color, fill)
@@ -305,31 +304,6 @@ class RoundedRectangles(Rectangles):
             buffer.ellipse(px + w - r, py + h - r, r, r, color, fill, 8)
             buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
             buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
-            #     else:
-            #         # left and right ellipse
-            #         if fill:
-            #             buffer.rect(px + r, py, w - 2*r, h, color, fill)
-            #         else:
-            #             buffer.hline(px + r, py, w - 2*r, color)
-            #             buffer.hline(px + r, py + h, w - 2*r, color)
-            #         ry = h // 2
-            #         buffer.ellipse(px + r, py + ry, r, ry, color, fill, 6)
-            #         buffer.ellipse(px + w - r, py + ry, r, ry, color, fill, 9)
-            # elif h > 2 * r:
-            #     # top and bottom ellipse
-            #     if fill:
-            #         buffer.rect(px, py + r, w + 1, h - 2 * r, color, fill)
-            #     else:
-            #         buffer.vline(px, py + r, h - 2*r, color)
-            #         buffer.vline(px + w, py + r, h - 2*r, color)
-            #     rx = w // 2
-            #     buffer.ellipse(px + rx, py + h - r, rx, r, color, fill, 12)
-            #     buffer.ellipse(px + rx, py + r, rx, r, color, fill, 3)
-            # else:
-            #     # draw an ellipse
-            #     rx = w // 2
-            #     ry = h // 2
-            #     buffer.ellipse(px + rx, py + ry, rx, ry, color, fill)
 
 
 class Circles(FillableGeometry):
