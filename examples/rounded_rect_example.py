@@ -5,22 +5,13 @@
 """Example showing support for rounded rectangles."""
 
 import asyncio
-from array import array
-import framebuf
-import random
-import math
 
-from tempe.bitmaps import Bitmaps, ColoredBitmaps
-from tempe.colormaps.viridis import viridis
 from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat, Range, Interpolated
-from tempe.geometry import RowGeometry, ColumnGeometry
+from tempe.geometry import ColumnGeometry
 from tempe.surface import Surface
 from tempe.shapes import Rectangles, RoundedRectangles
-from tempe.lines import WideLines, WidePolyLines
 from tempe.display import FileDisplay
-
-random.seed(0)
 
 surface = Surface()
 
