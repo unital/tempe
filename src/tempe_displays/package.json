@@ -7,5 +7,5 @@
         ["tempe_displays/st7789/spi.py", "github:unital/tempe/src/tempe_displays/st7789/spi.py"],
         ["tempe_displays/st7789/waveshare.py", "github:unital/tempe/src/tempe_displays/st7789/waveshare.py"]
     ],
-    "version": "0.3"
+    "version": "0.4.0.dev"
 }

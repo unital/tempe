@@ -13,7 +13,7 @@
 project = "Tempe"
 copyright = "2024, Unital Software"
 author = "Unital Software"
-release = "0.3"
+release = "0.4.0.dev"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
