@@ -168,6 +168,35 @@ class Surface:
             A clipping rectangle for the rectangles.
         """
 
+    def rounded_rectangles(
+        self,
+        layer: Any,
+        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        colors: Iterable[int] | int | str,
+        radius: int = 4,
+        fill: bool = True,
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> Rectangles:
+        """Create a new RoundedRectangles object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the RoundedRectangles object is added to.
+        geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+            The geometry to use, or if a tuple of 4 ints, a single rectangle.
+        colors : Iterable[int] | int | str
+            The colors of each rectangle, or a color to use for all rectangles.
+        radius : int
+            The default corner radius.  The actual radius used for a particular
+            rectangle is the minimum of the default radius, half the width, and
+            half the height.
+        fill : bool
+            Whether to fill the polygon or draw a one-pixel-wide outline.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the rectangles.
+        """
+
     def circles(
         self,
         layer: Any,
