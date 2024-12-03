@@ -39,7 +39,7 @@ class TestCount(unittest.TestCase):
         self.assertEqual(next(count_iter), 2)
 
     def test_count_default_getiten(self):
-        """Test count getitem works as expected."""
+        """Test count default getitem works as expected."""
 
         count = Count()
 
