@@ -19,7 +19,7 @@ class TestCount(unittest.TestCase):
         self.assertEqual(next(count_iter), 15)
         self.assertEqual(next(count_iter), 20)
 
-    def test_count_getiten(self):
+    def test_count_getitem(self):
         """Test count getitem works as expected."""
 
         count = Count(10, 5)
@@ -38,7 +38,7 @@ class TestCount(unittest.TestCase):
         self.assertEqual(next(count_iter), 1)
         self.assertEqual(next(count_iter), 2)
 
-    def test_count_default_getiten(self):
+    def test_count_default_getitem(self):
         """Test count default getitem works as expected."""
 
         count = Count()
