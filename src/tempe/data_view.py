@@ -270,7 +270,7 @@ class Count(DataView):
         i = self.start
         while True:
             yield i
-            i += 1
+            i += self.step
 
     def __len__(self):
         return None
