@@ -16,7 +16,7 @@ jobs:
       with:
         python-version: '3.11'
     - name: Install dependencies and local packages
-      run: python -m pip install sphinx pydata-sphinx-theme sphinx-autoapi sphinx-design
+      run: python -m pip install sphinx pydata-sphinx-theme "sphinx-autoapi != 3.4.0" sphinx-design
     - name: Build HTML documentation with Sphinx
       run: |
         make html
