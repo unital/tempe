@@ -278,8 +278,8 @@ class Count(DataView):
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [
-                self.start + self.step * index
-                for index in range(slice.start, slice.stop, slice, step)
+                self.start + self.step * i
+                for i in range(index.start, index.stop, index.step)
             ]
         else:
             return self.start + self.step * index
@@ -305,11 +305,13 @@ class Range(DataView):
     def __getitem__(self, index):
         if isinstance(index, slice):
             return [
-                self.start + self.step * self.index
-                for index in range(slice.start, slice.stop, slice, step)
+                self.start + self.step * i
+                for i in range(index.start, index.stop, index.step)
             ]
-        else:
-            return self.start + self.step * self.index
+        elif index < 0:
+            index = len(self) + index
+
+        return self.start + self.step * index
 
 
 class Slice(DataView):
