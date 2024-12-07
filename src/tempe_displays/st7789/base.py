@@ -100,12 +100,12 @@ MADCTL_RGB = const(0x00)
 class ST7789:
     """Base class for ST7789-based displays"""
 
-    reset_pin: Pin
+    reset_pin: Pin | None
 
     def __init__(self, size, reset_pin=None):
         self.size = size
         if isinstance(reset_pin, int):
-            reset_pin = Pin(reset_pin, Pin.OUT)
+            reset_pin = Pin(reset_pin, Pin.OUT, value=True)
         self.reset_pin = reset_pin
         self.x_offset = 0
         self.y_offset = 0
@@ -129,12 +129,10 @@ class ST7789:
     async def reset(self):
         """Perform a hard reset of the screen, if available."""
         if self.reset_pin is not None:
-            self.reset_pin(True)
-            asyncio.sleep(0.500)
             self.reset_pin(False)
-            asyncio.sleep(0.500)
+            await asyncio.sleep(0.500)
             self.reset_pin(True)
-            asyncio.sleep(0.500)
+            await asyncio.sleep(0.500)
 
     async def soft_reset(self):
         """Perform a soft reset of the screen."""

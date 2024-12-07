@@ -26,7 +26,7 @@ class PicoResTouchDisplay(ST7789_SPI):
     ):
         if spi is None:
             spi = SPI(
-                0,
+                1,
                 baudrate=62_500_000,
                 phase=1,
                 polarity=1,
