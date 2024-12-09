@@ -40,22 +40,22 @@ class Markers(ColoredGeometry):
             size = geometry[2]
             if px + size < 0 or px - size > w or py + size < 0 or py - size > h:
                 continue
-            if size < 2 or marker == Marker.PIXEL:
+            if size < 1 or marker == Marker.PIXEL:
                 buffer.pixel(px, py, color)
             elif marker == Marker.CIRCLE:
-                buffer.ellipse(px, py, size // 2, size // 2, color, True)
+                buffer.ellipse(px, py, size, size, color, True)
             elif marker == Marker.SQUARE:
-                buffer.rect(px - size // 2, py - size // 2, size, size, color, True)
+                buffer.rect(px - size, py - size, 2*size+1, 2*size+1, color, True)
             elif marker == Marker.HLINE:
-                buffer.hline(px - size // 2, py, size, color)
+                buffer.hline(px - size, py, 2*size+1, color)
             elif marker == Marker.VLINE:
-                buffer.vline(px, py - size // 2, size, color)
+                buffer.vline(px, py - size, 2*size+1, color)
             elif marker == Marker.PLUS:
-                size = 2 * (size // 2) + 1  # odd numper of pixels
-                buffer.hline(px - size // 2, py, size, color)
-                buffer.vline(px, py - size // 2, size, color)
+                d = 2 * size + 1  # odd numper of pixels
+                buffer.hline(px - size, py, d, color)
+                buffer.vline(px, py - size, d, color)
             elif marker == Marker.CROSS:
-                d = (size * 17 // 48) + 1  # very rough approximation of 1/(2*sqrt(2))
+                d = (size * 17 // 24) + 1  # very rough approximation of r/(sqrt(2)) + 1
                 buffer.line(px - d, py - d, px + d, py + d, color)
                 buffer.line(px - d, py + d, px + d, py - d, color)
             elif isinstance(marker, str):

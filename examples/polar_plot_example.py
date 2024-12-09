@@ -10,9 +10,8 @@ from math import sqrt, log
 
 from tempe import colors
 from tempe.colormaps.viridis import viridis
-from tempe.data_view import Range, Repeat
-from tempe.geometry import ColumnGeometry, RowGeometry, PointsToLines
-from tempe.markers import Marker
+from tempe.data_view import Repeat
+from tempe.geometry import ColumnGeometry, PointsToLines
 from tempe.polar_geometry import polar_points, polar_r_lines
 from tempe.surface import Surface
 from tempe.text import LEFT, CENTER, RIGHT, TOP, BOTTOM

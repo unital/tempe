@@ -186,7 +186,7 @@ markers = Markers(
         [
             Range(160, 320, 16),
             Repeat(30),
-            Range(5, 16, 1),
+            Range(1, 13, 1),
         ]
     ),
     Interpolated(viridis, 10),

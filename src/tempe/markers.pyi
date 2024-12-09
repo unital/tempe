@@ -27,6 +27,8 @@ class Marker:
 class Markers(ColoredGeometry[point_length]):
     """Display sized, colored markers at points.
 
+    Markers expect a geometry of the form (x, y, radius).
+
     Parameters
     ----------
     geometry : Iterable[geom] | None
@@ -72,6 +74,8 @@ class Markers(ColoredGeometry[point_length]):
 
 class Points(ColoredGeometry[point]):
     """Display colored markers at points.
+
+    Points expect a geometry of the form (x, y)
 
     Parameters
     ----------
