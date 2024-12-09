@@ -10,7 +10,6 @@ import gc
 from tempe import colors
 from tempe.data_view import Repeat
 from tempe.geometry import ColumnGeometry, PointsToLines
-from tempe.markers import Marker
 from tempe.surface import Surface
 from tempe.text import CENTER, TOP, RIGHT
 

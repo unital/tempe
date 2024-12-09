@@ -136,7 +136,7 @@ markers = Markers(
                     ]
                 ),
             ),
-            ColumnGeometry([Repeat(24)]),
+            ColumnGeometry([Repeat(12)]),
         ]
     ),
     Repeat(grey_3),

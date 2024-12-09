@@ -93,7 +93,7 @@ class AreaScale:
         low_screen = self.low_screen
         scale = self.scale
         for i, value in enumerate(data):
-            screen[i] = int(sqrt(low_screen + scale * (value - low_data)))
+            screen[i] = int(sqrt(low_screen + scale * (value - low_data)) // 2)
         return screen
 
 
