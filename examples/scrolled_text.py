@@ -99,17 +99,6 @@ async def init_surface(surface):
     return scroller
 
 
-async def init_display():
-    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
-    # or for Waveshare Pico-ResTouch-LCD-28:
-    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
-
-    display = Display(size=(320, 240))
-    display.backlight_pin(1)
-    await display.init()
-    return display
-
-
 async def refresh_display(surface, display, working_buffer):
     import time
 
@@ -131,6 +120,7 @@ async def scroll(scroller):
 
 
 async def main(working_buffer):
+    from tempe_config import init_display
 
     # initialize objects
     surface = Surface()
@@ -146,5 +136,13 @@ async def main(working_buffer):
     )
 
 
-if __name__ == "__main__":
-    asyncio.run(main(WORKING_BUFFER))
+if __name__ == '__main__':
+    try:
+        asyncio.run(main(WORKING_BUFFER))
+    except ImportError:
+        print(
+            "Could not find tempe_config.init_display.\n\n"
+            "To run examples, you must create a top-level tempe_config module containing\n"
+            "an async init_display function that returns a display.\n\n"
+            "See https://unital.github.io/tempe more information.\n\n"
+        )

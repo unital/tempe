@@ -70,7 +70,7 @@ class Surface:
     """
 
     def __init__(self): ...
-    def refresh(self, display: Display, working_buffer: array[int]) -> None:
+    def refresh(self, display: Display, working_buffer: bytearray) -> None:
         """Refresh the surface's appearance in the display.
 
         Calling this updates all damaged regions on the display device.
@@ -83,9 +83,9 @@ class Surface:
         ----------
         display : Display
             The actual physical display that the surface will be drawn on.
-        working_buffer : array.array[int]
-            An empty array of unsigned 16-bit ints (ie. ``array('H', ...)``)
-            that the Surface will use as memory for temporary drawing buffers.
+        working_buffer : bytearray
+            An empty bytearray that the Surface will use as memory for temporary
+            drawing buffers.
         """
 
     def add_shape(self, layer: Any, shape: Shape) -> None:

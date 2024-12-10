@@ -56,7 +56,7 @@ class PicoResTouchDisplay(ST7789_SPI):
         self.set_negative_gamma(
             b"\xD0\x08\x10\x08\x06\x06\x39\x44\x51\x0B\x16\x14\x2F\x31"
         )
-        if self.size == (240, 360):
+        if self.size == (240, 320):
             # portrait
             rotation = (rotation + 90) % 360
         if rotation in {90, 270}:

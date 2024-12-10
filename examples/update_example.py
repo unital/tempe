@@ -12,8 +12,6 @@ from tempe.font import TempeFont
 from tempe.surface import Surface
 from tempe.text import TOP, RIGHT
 
-from example_devices.bme280 import BME280
-
 
 # a buffer one half the size of the screen
 WORKING_BUFFER = bytearray(2 * 240 * 161)
@@ -47,17 +45,6 @@ async def init_surface(surface):
     return time_field, temp_field
 
 
-async def init_display():
-    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
-    # or for Waveshare Pico-ResTouch-LCD-28:
-    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
-
-    display = Display(size=(240, 320))
-    display.backlight_pin(1)
-    await display.init(270)
-    return display
-
-
 async def update_time(rtc, time_field):
     while True:
         h, m, s = rtc.datetime()[4:7]
@@ -78,15 +65,6 @@ async def update_temperature(adc, text_field):
             text_field.update(texts=[text])
         await asyncio.sleep(1)
 
-async def update_temperature_bme(bme, text_field):
-    while True:
-        temp = bme.read_compensated_data()[0] / 100
-        text = f"{temp:.2f}°C"
-        # only update when needed
-        if text != text_field.texts[0]:
-            text_field.update(texts=[text])
-        await asyncio.sleep(1)
-
 
 async def refresh_display(surface, display, working_buffer):
     import time
@@ -99,6 +77,7 @@ async def refresh_display(surface, display, working_buffer):
 
 
 async def main(working_buffer):
+    from tempe_config import init_display
 
     # initialize objects
     surface = Surface()
@@ -106,7 +85,6 @@ async def main(working_buffer):
     rtc = RTC()
 
     i2c = I2C(0, scl=Pin(5), sda=Pin(4))
-    bme = BME280(i2c=i2c)
 
     display, fields = await asyncio.gather(
         init_display(),
@@ -118,10 +96,17 @@ async def main(working_buffer):
     await asyncio.gather(
         refresh_display(surface, display, working_buffer),
         update_time(rtc, time_field),
-        #update_temperature(temp_adc, temp_field),
-        update_temperature_bme(bme, temp_field),
+        update_temperature(temp_adc, temp_field),
     )
 
 
-if __name__ == "__main__":
-    asyncio.run(main(WORKING_BUFFER))
+if __name__ == '__main__':
+    try:
+        asyncio.run(main(WORKING_BUFFER))
+    except ImportError:
+        print(
+            "Could not find tempe_config.init_display.\n\n"
+            "To run examples, you must create a top-level tempe_config module containing\n"
+            "an async init_display function that returns a display.\n\n"
+            "See https://unital.github.io/tempe more information.\n\n"
+        )

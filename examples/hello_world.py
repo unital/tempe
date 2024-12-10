@@ -4,11 +4,9 @@
 
 """Example showing basic display of text."""
 
-
 from tempe.surface import Surface
 from tempe.text import Text
 from tempe.shapes import Rectangles
-from tempe.display import FileDisplay
 from tempe.font import TempeFont
 from tempe.fonts import ubuntu16bold
 
@@ -29,10 +27,26 @@ hello_tempe = Text(
 )
 surface.add_shape("DRAWING", hello_tempe)
 
-# set up the display object
-display = FileDisplay("hello_world.rgb565", (320, 240))
+if __name__ == '__main__':
+    try:
+        import asyncio
+        from tempe_config import init_display
 
-# refresh the display
-with display:
-    display.clear()
-    surface.refresh(display, working_buffer)
+        display = asyncio.run(init_display())
+        surface.refresh(display, working_buffer)
+
+    except ImportError:
+        print(
+            "Could not find tempe_config.init_display.\n\n"
+            "To run examples, you must create a top-level tempe_config module containing\n"
+            "an async init_display function that returns a display.\n\n"
+            "See https://unital.github.io/tempe more information.\n\n"
+            "Defaulting to file-based display.\n"
+        )
+
+        from tempe.display import FileDisplay
+
+        display = FileDisplay("hello_world.rgb565", (320, 240))
+        with display:
+            display.clear()
+            surface.refresh(display, working_buffer)

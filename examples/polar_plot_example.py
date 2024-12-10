@@ -5,6 +5,7 @@
 """Example showing how to build a polar plot from Tempe Shapes."""
 
 from array import array
+import asyncio
 import gc
 from math import sqrt, log
 
@@ -201,43 +202,33 @@ surface.text(
 )
 
 
-async def init_display():
-    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
-    # or for Waveshare Pico-ResTouch-LCD-28:
-    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
-
-    display = Display(size=(240, 320))
-    display.backlight_pin(1)
-    await display.init()
-    return display
-
-
 def main(surface, working_buffer):
-    import asyncio
+    import time
+    from tempe_config import init_display
 
     # set up the display object
     display = asyncio.run(init_display())
-
-    # refresh the display
-    display.clear()
-    import time
 
     start = time.ticks_us()
     surface.refresh(display, working_buffer)
     print(time.ticks_diff(time.ticks_us(), start))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    try:
+        main(surface, working_buffer)
+    except ImportError:
+        print(
+            "Could not find tempe_config.init_display.\n\n"
+            "To run examples, you must create a top-level tempe_config module containing\n"
+            "an async init_display function that returns a display.\n\n"
+            "See https://unital.github.io/tempe more information.\n\n"
+            "Defaulting to file-based display.\n"
+        )
 
-    # if we have an actual screen, use it
-    main(surface, working_buffer)
+        from tempe.display import FileDisplay
 
-elif __name__ != "__test__":
-    from tempe.display import FileDisplay
-
-    # set up the display object
-    display = FileDisplay("polar_plot.rgb565", (320, 240))
-    # refresh the display
-    with display:
-        display.clear()
-        surface.refresh(display, working_buffer)
+        display = FileDisplay("polar_plot.rgb565", (320, 240))
+        with display:
+            display.clear()
+            surface.refresh(display, working_buffer)

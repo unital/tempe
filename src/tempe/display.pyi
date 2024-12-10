@@ -17,6 +17,8 @@ from typing import Self
 class Display:
     """Abstract base class for Displays"""
 
+    size: tuple[int, int]
+
     def blit(self, buffer: array, x: int, y: int, w: int, h: int):
         """Render the buffer to the given rectangle of the Display.
 
@@ -38,6 +40,7 @@ class FileDisplay(Display):
     underlying file object automatically.
     """
 
+    def clear(self) -> None: ...
     def __init__(self, name: str, size: tuple[int, int] = (320, 240)): ...
     def __enter__(self) -> Self: ...
     def __exit__(self, *args) -> bool: ...
