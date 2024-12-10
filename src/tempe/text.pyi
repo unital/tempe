@@ -7,6 +7,7 @@ from typing import Any, Literal, TypeAlias
 import framebuf
 
 import tempe
+from .data_view import Repeat
 from .geometry import Geometry
 from .font import AbstractFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
@@ -28,11 +29,11 @@ class Text(ColoredGeometry[point]):
         geometry: Iterable[point],
         colors: Iterable[int],
         texts: Iterable[str],
-        alignment: Iterable[tuple[HALIGN, VALIGN]],
+        alignment: Iterable[tuple[HALIGN, VALIGN]] = Repeat((LEFT, TOP)),
         *,
         bold: bool = False,
         font: AbstractFont | None = None,
-        letter_spacing: int = 0,
+        line_spacing: int = 0,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...

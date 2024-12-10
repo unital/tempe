@@ -327,6 +327,8 @@ def check_stack():
 
 
 async def main():
+    from tempe_config import init_display
+
     display = await init_display()
     surface = Surface()
     surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
