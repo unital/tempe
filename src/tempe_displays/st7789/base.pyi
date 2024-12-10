@@ -6,6 +6,7 @@
 
 from collections.abc import Iterable, Iterator, Sequence
 from machine import Pin
+from micropython import const
 import asyncio
 from struct import pack
 from typing import Any
@@ -127,7 +128,7 @@ class ST7789:
 
     def write_adaptive_minimum_brightness(self, parameter: int) -> None: ...
 
-    def set_ram_control(self, parameter_1: int, parameter_2: int) -> None:
+    def set_ram_control(self, parameter_1: int, parameter_2: int) -> None: ...
 
     def set_rgb_control(self, parameter_1: int, parameter_2: int, parameter_3: int) -> None: ...
 
@@ -141,7 +142,7 @@ class ST7789:
 
     def set_vrh(self, parameter_1: int) -> None: ...
 
-    def set_vdv(self, parameter_1: int) -> None:
+    def set_vdv(self, parameter_1: int) -> None: ...
 
     def set_frame_control_1(self, parameter_1: int, parameter_2: int, parameter_3: int) -> None: ...
 
