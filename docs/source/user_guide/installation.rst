@@ -87,16 +87,6 @@ Eg. for a Raspberry Pi Pico, you would do:
 
     python -m ci.deploy_to_device -march armv6m
 
-Running the Examples
---------------------
-
-The example code works with a Raspberry Pi Pico and its internal hardware,
-plus a ST7789-based display that communicates via SPI; in particular development
-has been done against various Pimoroni screens (Pico Packs, Breakout Garden,
-and Pico Explorer should work).
-
-Most examples can be run from inside an IDE like Thonny.
-
 Writing Code Using Tempe
 -------------------------
 
