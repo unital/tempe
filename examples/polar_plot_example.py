@@ -7,7 +7,7 @@
 from array import array
 import asyncio
 import gc
-from math import sqrt, log
+import time
 
 from tempe import colors
 from tempe.colormaps.viridis import viridis
@@ -18,11 +18,16 @@ from tempe.surface import Surface
 from tempe.text import LEFT, CENTER, RIGHT, TOP, BOTTOM
 
 
-surface = Surface()
+# maximize available memory before allocating buffer
+gc.collect()
 
-# a buffer one third the size of the screen
+# A buffer one third the size of a 320x240 screen
+# NOTE: If you get MemoryErrors, make this smaller
 working_buffer = bytearray(2 * 320 * 81)
 
+
+# create the surface
+surface = Surface()
 
 # fill the background with off-black pixels
 surface.rectangles("BACKGROUND", [(0, 0, 320, 240)], [colors.grey_1])
@@ -202,33 +207,33 @@ surface.text(
 )
 
 
-def main(surface, working_buffer):
-    import time
-    from tempe_config import init_display
+def main(display=None):
+    """Render the surface and return the display object."""
+    if display is None:
+        try:
+            from tempe_config import init_display
 
-    # set up the display object
-    display = asyncio.run(init_display())
+            display = asyncio.run(init_display())
+        except ImportError:
+            print(
+                "Could not find tempe_config.init_display.\n\n"
+                "To run examples, you must create a top-level tempe_config module containing\n"
+                "an async init_display function that returns a display.\n\n"
+                "See https://unital.github.io/tempe more information.\n\n"
+                "Defaulting to file-based display.\n"
+            )
+            from tempe.display import FileDisplay
+
+            display = FileDisplay("polar_plot.rgb565", (320, 240))
+            with display:
+                display.clear()
+                surface.refresh(display, working_buffer)
 
     start = time.ticks_us()
     surface.refresh(display, working_buffer)
     print(time.ticks_diff(time.ticks_us(), start))
+    return display
 
 
 if __name__ == '__main__':
-    try:
-        main(surface, working_buffer)
-    except ImportError:
-        print(
-            "Could not find tempe_config.init_display.\n\n"
-            "To run examples, you must create a top-level tempe_config module containing\n"
-            "an async init_display function that returns a display.\n\n"
-            "See https://unital.github.io/tempe more information.\n\n"
-            "Defaulting to file-based display.\n"
-        )
-
-        from tempe.display import FileDisplay
-
-        display = FileDisplay("polar_plot.rgb565", (320, 240))
-        with display:
-            display.clear()
-            surface.refresh(display, working_buffer)
+    display = main()

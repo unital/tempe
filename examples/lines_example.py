@@ -6,11 +6,10 @@
 
 import asyncio
 from array import array
-import framebuf
 import random
-import math
+import time
+import gc
 
-from tempe.bitmaps import Bitmaps, ColoredBitmaps
 from tempe.colormaps.viridis import viridis
 from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat, Range, Interpolated
@@ -18,14 +17,19 @@ from tempe.geometry import RowGeometry, ColumnGeometry
 from tempe.surface import Surface
 from tempe.shapes import Rectangles
 from tempe.lines import WideLines, WidePolyLines
-from tempe.display import FileDisplay
 
 random.seed(0)
 
-surface = Surface()
+# maximize available memory before allocating buffer
+gc.collect()
 
-# a buffer one half the size of the screen
+# A buffer one half the size of a 320x240 screen
+# NOTE: If you get MemoryErrors, make this smaller
 working_buffer = bytearray(2 * 320 * 121)
+
+
+# create the surface
+surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
@@ -89,33 +93,33 @@ polylines = WidePolyLines(
 surface.add_shape("DRAWING", polylines)
 
 
-def main(surface, working_buffer):
-    import time
-    from tempe_config import init_display
+def main(display=None):
+    """Render the surface and return the display object."""
+    if display is None:
+        try:
+            from tempe_config import init_display
 
-    # set up the display object
-    display = asyncio.run(init_display())
+            display = asyncio.run(init_display())
+        except ImportError:
+            print(
+                "Could not find tempe_config.init_display.\n\n"
+                "To run examples, you must create a top-level tempe_config module containing\n"
+                "an async init_display function that returns a display.\n\n"
+                "See https://unital.github.io/tempe more information.\n\n"
+                "Defaulting to file-based display.\n"
+            )
+            from tempe.display import FileDisplay
+
+            display = FileDisplay("lines.rgb565", (320, 240))
+            with display:
+                display.clear()
+                surface.refresh(display, working_buffer)
 
     start = time.ticks_us()
     surface.refresh(display, working_buffer)
     print(time.ticks_diff(time.ticks_us(), start))
+    return display
 
 
 if __name__ == '__main__':
-    try:
-        main(surface, working_buffer)
-    except ImportError:
-        print(
-            "Could not find tempe_config.init_display.\n\n"
-            "To run examples, you must create a top-level tempe_config module containing\n"
-            "an async init_display function that returns a display.\n\n"
-            "See https://unital.github.io/tempe more information.\n\n"
-            "Defaulting to file-based display.\n"
-        )
-
-        from tempe.display import FileDisplay
-
-        display = FileDisplay("lines.rgb565", (320, 240))
-        with display:
-            display.clear()
-            surface.refresh(display, working_buffer)
+    display = main()

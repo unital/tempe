@@ -47,6 +47,8 @@ class Surface:
             w = min(x_r + w_r, w_d) - x
             y = max(y_r, 0)
             h = min(y_r + h_r, h_d) - y
+            if w == 0 or h == 0:
+                continue
 
             # handle buffer too small
             buffer_rows = (len(working_buffer) // (w * self.pixel_size)) - 1
@@ -68,7 +70,9 @@ class Surface:
                 x = max(x_r, 0)
                 w = min(x_r + w_r, w_d) - x
                 y = max(y_r, 0)
-                y = min(y_r + h_r, h_d) - y
+                h = min(y_r + h_r, h_d) - y
+                if w == 0 or h == 0:
+                    continue
 
                 # handle buffer too small
                 buffer_rows = (len(working_buffer) // (w * self.pixel_size)) - 1
@@ -83,6 +87,9 @@ class Surface:
 
     def damage(self, rect):
         """Mark a rectangle as needing to be refreshed."""
+        if rect[2] == 0 or rect[3] == 0:
+            # degenerate rectangle, no damage
+            return
         if not any(contains(rect, rect2) for rect2 in self._damage):
             self._damage = [
                 rect2 for rect2 in self._damage if not contains(rect2, rect)

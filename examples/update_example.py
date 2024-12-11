@@ -5,42 +5,46 @@
 """Example showing asyncio updating of a surface."""
 
 import asyncio
-from machine import ADC, RTC, I2C, Pin
+from machine import ADC, RTC
+import gc
 
 from tempe import colors
 from tempe.font import TempeFont
 from tempe.surface import Surface
-from tempe.text import TOP, RIGHT
+from tempe.text import BOTTOM, CENTER, TOP
+
+# maximize available memory before allocating buffer
+gc.collect()
+
+# A buffer one half the size of a 320x240 screen
+# NOTE: If you get MemoryErrors, make this smaller
+working_buffer = bytearray(2 * 320 * 121)
 
 
-# a buffer one half the size of the screen
-WORKING_BUFFER = bytearray(2 * 240 * 161)
-
-
-async def init_surface(surface):
-    # fill the background with off-white pixels
-    surface.rectangles("BACKGROUND", (0, 0, 240, 320), "#fff")
-
-    # prepare the text fields
+def init_surface(surface, size):
     from example_fonts import roboto32boldnumbers
 
+    # fill the background with off-white pixels
+    surface.rectangles("BACKGROUND", (0, 0) + size, "#fff")
+
+    center = (size[0] // 2, size[1] // 2)
+
+    # prepare the text fields
     time_field = surface.text(
         "DRAWING",
-        (230, 10),
+        center,
         "#aaa",
         "",
-        (RIGHT, TOP),
+        (CENTER, BOTTOM),
         font=TempeFont(roboto32boldnumbers),
-        clip=(10, 10, 229, 40),
     )
     temp_field = surface.text(
         "DRAWING",
-        (230, 50),
+        center,
         colors.grey_a,
         "",
-        (RIGHT, TOP),
+        (CENTER, TOP),
         font=TempeFont(roboto32boldnumbers),
-        clip=(10, 50, 229, 40),
     )
     return time_field, temp_field
 
@@ -76,21 +80,28 @@ async def refresh_display(surface, display, working_buffer):
         print(time.ticks_diff(time.ticks_us(), start))
 
 
-async def main(working_buffer):
-    from tempe_config import init_display
+async def run(display=None):
+    """Initialize the devices and update when values change."""
+    if display is None:
+        try:
+            from tempe_config import init_display
 
-    # initialize objects
+            display = await init_display()
+        except ImportError:
+            print(
+                "Could not find tempe_config.init_display.\n\n"
+                "To run examples, you must create a top-level tempe_config module containing\n"
+                "an async init_display function that returns a display.\n\n"
+                "See https://unital.github.io/tempe more information.\n\n"
+            )
+            raise
+
     surface = Surface()
+    time_field, temp_field = init_surface(surface, display.size)
+
+    # Note: this assumes a Raspberry Pi Pico
     temp_adc = ADC(ADC.CORE_TEMP)
     rtc = RTC()
-
-    i2c = I2C(0, scl=Pin(5), sda=Pin(4))
-
-    display, fields = await asyncio.gather(
-        init_display(),
-        init_surface(surface),
-    )
-    time_field, temp_field = fields
 
     # poll the temperature and update the display forever
     await asyncio.gather(
@@ -100,13 +111,10 @@ async def main(working_buffer):
     )
 
 
+def main(display=None):
+    """Run the application asyncronously."""
+    return asyncio.run(run(display))
+
+
 if __name__ == '__main__':
-    try:
-        asyncio.run(main(WORKING_BUFFER))
-    except ImportError:
-        print(
-            "Could not find tempe_config.init_display.\n\n"
-            "To run examples, you must create a top-level tempe_config module containing\n"
-            "an async init_display function that returns a display.\n\n"
-            "See https://unital.github.io/tempe more information.\n\n"
-        )
+    display = main()

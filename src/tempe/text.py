@@ -118,15 +118,15 @@ class Text(ColoredGeometry):
         if texts is not None or alignments is not None:
             if self.clip is None:
                 # invalidate old text bounds
-                if self._get_bounds is None:
-                    self._get_bounds = self._get_bounds()
-                self.surface.damage(self._get_bounds)
+                if self._bounds is None:
+                    self._bounds = self._get_bounds()
+                self.surface.damage(self._bounds)
             if texts is not None:
                 self.texts = texts
             if alignments is not None:
                 self.alignments = alignments
             # bounds are no longer valid
-            self._get_bounds = None
+            self._bounds = None
         super().update(geometry=geometry, colors=colors)
 
     def _get_bounds(self):
@@ -137,6 +137,8 @@ class Text(ColoredGeometry):
         if self.font is None:
             line_height = 8 + self.line_spacing
             for geometry, text, alignments in zip(self.geometry, self.texts, self.alignments):
+                if not text:
+                    continue
                 width = 8 * max(len(line) for line in text.splitlines())
                 height = line_height * len(text.splitlines()) - self.line_spacing
                 halign, valign = alignments
@@ -161,6 +163,8 @@ class Text(ColoredGeometry):
         else:
             line_height = self.font.height + self.line_spacing
             for geometry, text, alignments in zip(self.geometry, self.texts, self.alignments):
+                if not text:
+                    continue
                 width = max(self.font.measure(line)[2] for line in text.splitlines())
                 height = line_height * len(text.splitlines()) - self.line_spacing
                 halign, valign = alignments
@@ -182,5 +186,6 @@ class Text(ColoredGeometry):
                 else:
                     max_y = max(max_y, geometry[1] + height)
                     min_y = min(min_y, geometry[1])
-
+        if max_x < min_x or max_y < min_y:
+            return (0, 0, 0, 0)
         return (min_x, min_y, max_x - min_x, max_y - min_y)
