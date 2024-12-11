@@ -40,8 +40,14 @@ class Surface:
 
     def refresh(self, display, working_buffer):
         """Refresh the surface on the display."""
+        w_d, h_d = display.size
         for rect in self._damage:
-            x, y, w, h = rect
+            x_r, y_r, w_r, h_r = rect
+            x = max(x_r, 0)
+            w = min(x_r + w_r, w_d) - x
+            y = max(y_r, 0)
+            h = min(y_r + h_r, h_d) - y
+
             # handle buffer too small
             buffer_rows = (len(working_buffer) // (w * self.pixel_size)) - 1
             for start_row in range(0, h, buffer_rows):
@@ -54,10 +60,16 @@ class Surface:
 
     async def arefresh(self, display, working_buffer):
         """Refresh the surface on the display."""
+        w_d, h_d = display.size
         while True:
             while self._damage:
                 rect = self._damage.pop(0)
-                x, y, w, h = rect
+                x_r, y_r, w_r, h_r = rect
+                x = max(x_r, 0)
+                w = min(x_r + w_r, w_d) - x
+                y = max(y_r, 0)
+                y = min(y_r + h_r, h_d) - y
+
                 # handle buffer too small
                 buffer_rows = (len(working_buffer) // (w * self.pixel_size)) - 1
                 for start_row in range(0, h, buffer_rows):
