@@ -397,7 +397,7 @@ async def run(display=None):
 
 
 def main(display=None):
-    """Run the application asyncronously."""
+    """Run the application asynchronously."""
     return asyncio.run(run(display))
 
 if __name__ == '__main__':
