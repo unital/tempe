@@ -6,6 +6,8 @@
 class Display:
     """Abstract base class for Displays"""
 
+    size: tuple[int, int]
+
     def blit(self, buffer, x, y, w, h):
         raise NotImplementedError
 
@@ -20,6 +22,8 @@ class FileDisplay(Display):
         self._io = None
 
     def clear(self):
+        if self._io is None:
+            raise RuntimeError("File is not open")
         self._io.seek(0)
         row = b"\x00" * (self.pixel_size * self.size[0])
         for i in range(self.size[1]):
@@ -45,6 +49,9 @@ class FileDisplay(Display):
             except OSError:
                 self._io = open(self.name, "wb")
 
-    def __exit__(self, *args):
-        self._io.close()
-        self._io = None
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._io is not None:
+            self._io.close()
+            self._io = None
+        if exc_type == OSError and exc_value.errno == 28:
+            print("File storage full.\n")

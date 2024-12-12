@@ -18,23 +18,23 @@ class TestExamples(unittest.TestCase):
             ("examples/polar_example.py", "tests/tempe/polar.rgb565"),
             ("examples/lines_example.py", "tests/tempe/lines.rgb565"),
             ("examples/rounded_rect_example.py", "tests/tempe/rounded_rect.rgb565"),
-            ("examples/shapes_examples.py", "tests/tempe/shapes.rgb565"),
+            ("examples/shapes_example.py", "tests/tempe/shapes.rgb565"),
             ("examples/line_plot_example.py", "tests/tempe/line_plot.rgb565"),
             ("examples/scatter_plot_example.py", "tests/tempe/scatter_plot.rgb565"),
             ("examples/polar_plot_example.py", "tests/tempe/polar_plot.rgb565"),
+            ("examples/hello_world.py", "tests/tempe/hello_world.rgb565"),
         ]
         for file, result in examples:
             print(file, result)
-            self.subTest(example=file)
+            with self.subTest(example=file):
+                gc.collect()
+                code = open(file, "r").read()
+                locals = {"__name__": "__test__"}
+                exec(code, locals)
 
-            gc.collect()
-            code = open(file, "r").read()
-            locals = {"__name__": "__test__"}
-            exec(code, locals)
+                output = self.display_output(locals["surface"])
 
-            output = self.display_output(locals["surface"])
-
-            self.assert_files_equal(output, result)
+                self.assert_files_equal(output, result)
 
     def display_output(self, surface, name="example.rgb565"):
         display = FileDisplay(name, (320, 240))

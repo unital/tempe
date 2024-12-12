@@ -5,8 +5,10 @@
 """Example showing how to create a scatter plot from Tempe Shapes."""
 
 from array import array
+import asyncio
 import gc
 from math import sqrt, log
+import time
 
 from tempe import colors
 from tempe.colormaps.twilight import twilight
@@ -18,11 +20,16 @@ from tempe.surface import Surface
 from tempe.text import TOP, BOTTOM, CENTER, RIGHT
 
 
-surface = Surface()
+# maximize available memory before allocating buffer
+gc.collect()
 
-# a buffer one half the size of the screen
+# A buffer one half the size of a 320x240 screen
+# NOTE: If you get MemoryErrors, make this smaller
 working_buffer = bytearray(2 * 320 * 121)
 
+
+# create the surface
+surface = Surface()
 
 # fill the background with off-white pixels
 surface.rectangles("BACKGROUND", [(0, 0, 320, 240)], [colors.grey_f])
@@ -288,12 +295,12 @@ surface.markers(
 # Plot Decoration:
 
 # fill the plot with white pixels
-surface.rectangles("BACKGROUND", [(x, y, w, h)], [colors.white])
+surface.rectangles("BACKGROUND", (x, y, w, h), colors.white)
 # border the plot
-# surface.rects('BACKGROUND', [(x, y, w, h)], [colors.grey_d], fill=False)
+# surface.rects('BACKGROUND', (x, y, w, h), colors.grey_d, fill=False)
 # draw axes
-surface.hlines("UNDERLAY", [(x, y1, w)], [colors.grey_c])
-surface.vlines("UNDERLAY", [(x, y, h)], [colors.grey_c])
+surface.hlines("UNDERLAY", (x, y1, w), colors.grey_c)
+surface.vlines("UNDERLAY", (x, y, h), colors.grey_c)
 
 
 # Temperature axis: tick marks, grid lines, labels
@@ -348,64 +355,54 @@ from tempe.font import TempeFont
 
 surface.text(
     "DRAWING",
-    [[4, 0]],
-    [colors.grey_a],
-    ["Temperature (°C) vs. Air Quality (ppb)"],
+    (4, 0),
+    colors.grey_a,
+    "Temperature (°C) vs. Air Quality (ppb)",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
-    [[x1 + 20, y - 20]],
-    [colors.grey_a],
-    ["20-22/8/24"],
+    (x1 + 20, y - 20),
+    colors.grey_a,
+    "20-22/8/24",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
     "DRAWING",
-    [[x1 + 20, cy + 50]],
-    [colors.grey_a],
-    ["Humidity"],
+    (x1 + 20, cy + 50),
+    colors.grey_a,
+    "Humidity",
     font=TempeFont(ubuntu16bold),
 )
 
 
-async def init_display():
-    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
-    # or for Waveshare Pico-ResTouch-LCD-28:
-    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
+def main(display=None):
+    """Render the surface and return the display object."""
+    if display is None:
+        try:
+            from tempe_config import init_display
 
-    display = Display(size=(240, 320))
-    display.backlight_pin(1)
-    await display.init()
-    return display
+            display = asyncio.run(init_display())
+        except ImportError:
+            print(
+                "Could not find tempe_config.init_display.\n\n"
+                "To run examples, you must create a top-level tempe_config module containing\n"
+                "an async init_display function that returns a display.\n\n"
+                "See https://unital.github.io/tempe more information.\n\n"
+                "Defaulting to file-based display.\n"
+            )
+            from tempe.display import FileDisplay
 
-
-def main(surface, working_buffer):
-    import asyncio
-
-    # set up the display object
-    display = asyncio.run(init_display())
-
-    # refresh the display
-    display.clear()
-    import time
+            display = FileDisplay("scatter_plot.rgb565", (320, 240))
+            with display:
+                display.clear()
+                surface.refresh(display, working_buffer)
 
     start = time.ticks_us()
     surface.refresh(display, working_buffer)
     print(time.ticks_diff(time.ticks_us(), start))
+    return display
 
 
-if __name__ == "__main__":
-
-    # if we have an actual screen, use it
-    main(surface, working_buffer)
-
-elif __name__ != "__test__":
-    from tempe.display import FileDisplay
-
-    # set up the display object
-    display = FileDisplay("scatter_plot.rgb565", (320, 240))
-    # refresh the display
-    with display:
-        display.clear()
-        surface.refresh(display, working_buffer)
+if __name__ == '__main__':
+    display = main()

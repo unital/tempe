@@ -5,6 +5,7 @@
 """Example showing scrolling text up/down with buttons."""
 
 import asyncio
+import gc
 from machine import Signal, Pin
 
 from tempe.font import TempeFont
@@ -15,8 +16,13 @@ from tempe.window import Window
 from example_fonts import ubuntu12italic
 
 
-# a buffer one half the size of the screen
-WORKING_BUFFER = bytearray(2 * 240 * 241)
+# maximize available memory before allocating buffer
+gc.collect()
+
+# A buffer one half the size of a 320x240 screen
+# NOTE: If you get MemoryErrors, make this smaller
+working_buffer = bytearray(2 * 320 * 121)
+
 
 # Buttons
 up = Signal(15, Pin.IN, Pin.PULL_UP, invert=True)
@@ -99,17 +105,6 @@ async def init_surface(surface):
     return scroller
 
 
-async def init_display():
-    from tempe_displays.st7789.pimoroni import PimoroniDisplay as Display
-    # or for Waveshare Pico-ResTouch-LCD-28:
-    #     from tempe_displays.st7789.waveshare import PicoResTouchDisplay as Display
-
-    display = Display(size=(320, 240))
-    display.backlight_pin(1)
-    await display.init()
-    return display
-
-
 async def refresh_display(surface, display, working_buffer):
     import time
 
@@ -130,21 +125,46 @@ async def scroll(scroller):
                 await asyncio.sleep(0.1)
 
 
-async def main(working_buffer):
+async def run(display=None):
+    """Initialize the devices and update when values change."""
 
     # initialize objects
-    surface = Surface()
-    display, scroller = await asyncio.gather(
-        init_display(),
-        init_surface(surface),
-    )
+    tasks = []
+    if display is None:
+        try:
+            from tempe_config import init_display
 
-    # poll the temperature and update the display forever
+            tasks.append(init_display())
+        except ImportError:
+            print(
+                "Could not find tempe_config.init_display.\n\n"
+                "To run examples, you must create a top-level tempe_config module containing\n"
+                "an async init_display function that returns a display.\n\n"
+                "See https://unital.github.io/tempe more information.\n\n"
+            )
+            raise
+
+    surface = Surface()
+    tasks.append(init_surface(surface))
+
+    # asynchronously initialize
+    results = await asyncio.gather(*tasks)
+    if display is None:
+        display = results[0]
+    scroller = results[-1]
+
+    # poll scroll buttons and update display forever
     await asyncio.gather(
         refresh_display(surface, display, working_buffer),
         scroll(scroller),
     )
 
 
-if __name__ == "__main__":
-    asyncio.run(main(WORKING_BUFFER))
+def main(display=None):
+    """Render the surface and return the display object."""
+    asyncio.run(run(display))
+    return display
+
+
+if __name__ == '__main__':
+    display = main()

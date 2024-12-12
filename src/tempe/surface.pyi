@@ -70,7 +70,7 @@ class Surface:
     """
 
     def __init__(self): ...
-    def refresh(self, display: Display, working_buffer: array[int]) -> None:
+    def refresh(self, display: Display, working_buffer: bytearray) -> None:
         """Refresh the surface's appearance in the display.
 
         Calling this updates all damaged regions on the display device.
@@ -83,9 +83,9 @@ class Surface:
         ----------
         display : Display
             The actual physical display that the surface will be drawn on.
-        working_buffer : array.array[int]
-            An empty array of unsigned 16-bit ints (ie. ``array('H', ...)``)
-            that the Surface will use as memory for temporary drawing buffers.
+        working_buffer : bytearray
+            An empty bytearray that the Surface will use as memory for temporary
+            drawing buffers.
         """
 
     def add_shape(self, layer: Any, shape: Shape) -> None:
@@ -270,7 +270,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int,
+        colors: Iterable[int] | int | str,
         clip: tuple[int, int, int, int] | None = None,
     ) -> VLines:
         """Create a new VLines object and add it to the layer.
@@ -291,7 +291,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int,
+        colors: Iterable[int] | int | str,
         clip: tuple[int, int, int, int] | None = None,
     ) -> HLines:
         """Create a new HLines object and add it to the layer.
@@ -312,7 +312,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int]] | tuple[int, int],
-        colors: Iterable[int] | int,
+        colors: Iterable[int] | int | str,
         markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Points:
@@ -336,7 +336,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int,
+        colors: Iterable[int] | int | str,
         markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Markers:
@@ -362,7 +362,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int]] | tuple[int, int],
-        colors: Iterable[int] | int,
+        colors: Iterable[int] | int | str,
         text: Iterable[str] | str,
         alignments: Iterable[tuple[HALIGN, VALIGN]] | tuple[HALIGN, VALIGN] = (LEFT, TOP),
         font: AbstractFont | None = None,
@@ -399,7 +399,7 @@ class Surface:
         layer: Any,
         geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
         bitmaps: Iterable[framebuf.FrameBuffer] | framebuf.Framebuffer,
-        colors: Iterable[int] | int | None,
+        colors: Iterable[int] | int | str | None,
         key: int = -1,
         palette: array | None = None,
         clip: tuple[int, int, int, int] | None = None,

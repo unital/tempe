@@ -10,5 +10,6 @@ Tempe User Guide
 
     introduction.rst
     installation.rst
+    examples.rst
     tutorial.rst
     displays.rst

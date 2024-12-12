@@ -26,6 +26,7 @@ from ultimo.value import Value
 from ultimo_machine.gpio import PollADC
 
 from tempe.colors import grey_7, grey_d
+from tempe.geometry import RowGeometry
 from tempe.font import TempeFont
 from tempe.fonts import ubuntu16bold
 from tempe.markers import Marker
@@ -326,13 +327,16 @@ def check_stack():
     return micropython.stack_use()
 
 
-async def main():
-    display = await init_display()
+async def run(display=None):
+    if display is None:
+        from tempe_config import init_display
+        display = await init_display()
+
     surface = Surface()
     surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
     labels = surface.text(
         "DRAWING",
-        [(4, 4), (4, 64), (4, 124), (4, 184), (164, 184)],
+        RowGeometry.from_lists([(4, 4), (4, 64), (4, 124), (4, 184), (164, 184)]),
         "#aaa",
         ["Temperature", "Memory Pressure", "Free Memory", "Stack Use", "Frequency"],
         font=TempeFont(ubuntu16bold),
@@ -389,9 +393,12 @@ async def main():
         task7,
         task8,
         task9,
-        #return_exceptions=True,
     )
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+def main(display=None):
+    """Run the application asynchronously."""
+    return asyncio.run(run(display))
+
+if __name__ == '__main__':
+    display = main()
