@@ -1,12 +1,17 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
+"""Example showing asyncio updating a clock face drawn with polar coordinates."""
+
 import asyncio
-from machine import ADC, RTC
+from machine import RTC
 import gc
 
 from tempe import colors
 from tempe.geometry import ColumnGeometry, RowGeometry
 from tempe.data_view import Repeat
 from tempe.font import TempeFont
-from tempe.fonts import ubuntu16
 from tempe.polar_geometry import polar_r_lines, polar_points, polar_point_arrays
 from tempe.surface import Surface
 from tempe.text import CENTER
