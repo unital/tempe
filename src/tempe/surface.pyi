@@ -30,6 +30,7 @@ from .raster import Raster
 from .shapes import (
     Shape,
     Polygons,
+    PolyLines,
     Rectangles,
     Circles,
     Ellipses,
@@ -142,6 +143,26 @@ class Surface:
             Whether to fill the polygon or draw a one-pixel-wide outline.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the polygons.
+        """
+
+    def poly_lines(
+        self,
+        layer: Any,
+        geometry: Geometry[array] | Sequence[int],
+        clip: tuple[int, int, int, int] | None = None,
+    ) -> PolyLines:
+        """Create a new PolyLines object and add it to the layer.
+
+        Parameters
+        ----------
+        layer : Any
+            The layer that the PolyLines object is added to.
+        geometry : Geometry[array] | Sequence[int]
+            The geometry to use, or if a sequence of ints, a single polyline.
+        colors : Iterable[int] | int | str
+            The colors of each polyline, or a color to use for all polylines.
+        clip :  tuple[int, int, int, int] | None
+            A clipping rectangle for the polylines.
         """
 
     def rectangles(
