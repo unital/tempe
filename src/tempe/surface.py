@@ -9,7 +9,7 @@ import framebuf
 from .data_view import Repeat
 from .geometry import Geometry, RowGeometry
 from .raster import Raster
-from .shapes import Circles, Ellipses, Polygons, RoundedRectangles, Rectangles, Lines, VLines, HLines
+from .shapes import Circles, Ellipses, Polygons, PolyLines, RoundedRectangles, Rectangles, Lines, VLines, HLines
 from .util import contains
 
 
@@ -122,6 +122,13 @@ class Surface:
         geometry = self._check_geometry(geometry, None)
         colors = self._check_colors(colors)
         shape = Polygons(geometry, colors, fill=fill, clip=clip)
+        self.add_shape(layer, shape)
+        return shape
+
+    def poly_lines(self, layer, geometry, colors, clip=None):
+        geometry = self._check_geometry(geometry, None)
+        colors = self._check_colors(colors)
+        shape = PolyLines(geometry, colors, clip=clip)
         self.add_shape(layer, shape)
         return shape
 

@@ -260,6 +260,14 @@ class Polygons(FillableGeometry[point_array]):
 
     def __iter__(self) -> tuple[point_array, int]: ...
 
+class PolyLines(ColoredGeometry[point_array]):
+    """Render multiple polylines.
+
+    Geometry should produce vertex arrays of the form [x0, y0, x1, y1, ...].
+    """
+
+    def __iter__(self) -> tuple[point_array, int]: ...
+
 class Rectangles(FillableGeometry[rectangle]):
     """Render multiple rectangles.
 
