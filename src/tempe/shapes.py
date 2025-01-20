@@ -290,6 +290,9 @@ class RoundedRectangles(Rectangles):
             if h < 0:
                 py += h
                 h = -h
+            # keep pixels within original bounds
+            w -= 1
+            h -= 1
             r = min(self.radius, w // 2, h // 2)
             if fill:
                 buffer.rect(px + r, py, w - 2*r, h + 1, color, fill)
@@ -300,10 +303,22 @@ class RoundedRectangles(Rectangles):
                 buffer.hline(px + r, py + h, w - 2*r, color)
                 buffer.vline(px, py + r, h - 2*r, color)
                 buffer.vline(px + w, py + r, h - 2*r, color)
-            buffer.ellipse(px + w - r, py + r, r, r, color, fill, 1)
-            buffer.ellipse(px + w - r, py + h - r, r, r, color, fill, 8)
-            buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
-            buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
+            if r == 0:
+                # Avoid https://github.com/micropython/micropython/issues/16053
+                buffer.pixel(px, py, color)
+                buffer.pixel(px, py + h, color)
+                buffer.pixel(px + w, py, color)
+                buffer.pixel(px + w, py + h, color)
+            else:
+                buffer.ellipse(px + w - r, py + r, r, r, color, fill, 1)
+                buffer.ellipse(px + w - r, py + h - r, r, r, color, fill, 8)
+                buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
+                buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
+
+    def update(self, geometry=None, colors=None, radius=None):
+        if radius is not None:
+            self.radius = radius
+        super().update(geometry=geometry, colors=colors)
 
 
 class Circles(FillableGeometry):
