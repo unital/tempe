@@ -38,7 +38,7 @@ You also need to provide a writable chunk of memory (such as a
 :py:class:`bytearray`) that Tempe can use to render raster images into before
 copying them to the display.  The larger this chunk of memory is the better,
 but it can (and probably *should*) be allocated once at the start of the
-application and re-used repeatedly for drawing operations.
+application and reused repeatedly for drawing operations.
 
 Actual drawing is performed by calling |refresh| with the display and
 the buffer::
@@ -685,7 +685,7 @@ in size, but this could be avoided with clever use of :py:class:`memoryview`
 objects.
 
 But there is a better way of doing this.  The |PointsToLines| class can be
-used to iterate through a point, re-using previous values.  So if we instead
+used to iterate through a point, reusing previous values.  So if we instead
 do::
 
     points = ColumnGeometry([xs, ys])

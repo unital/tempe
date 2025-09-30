@@ -15,11 +15,11 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
 LEFT: Literal[0] = 0
 RIGHT: Literal[1] = 1
 CENTER: Literal[2] = 2
-TOP: Literal[0] = 0
-BOTTOM: Literal[1] = 1
+TOP: Literal[0] = 3
+BOTTOM: Literal[1] = 4
 
-HALIGN: TypeAlias = Literal[0, 1, 2]
-VALIGN: TypeAlias = Literal[0, 1, 2]
+type HALIGN = Literal[0, 1, 2]
+type VALIGN = Literal[2, 3, 4]
 
 class Text(ColoredGeometry[point]):
     """Draw coloured strings at points with alignment."""
