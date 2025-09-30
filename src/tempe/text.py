@@ -12,8 +12,8 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565
 LEFT = 0
 RIGHT = 1
 CENTER = 2
-TOP = 0
-BOTTOM = 1
+TOP = 3
+BOTTOM = 4
 
 class Text(ColoredGeometry):
     def __init__(
