@@ -78,6 +78,7 @@ class Text(ColoredGeometry):
             line_height = self.font.height + self.line_spacing
             palette_buf = array("H", [BLIT_KEY_RGB565, 0xFFFF])
             palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
+            char_buf = [None, None, None, framebuf.MONO_HLSB]
             for geometry, color, text, alignments in self:
                 palette_buf[1] = color
                 py = geometry[1] - y
@@ -101,14 +102,12 @@ class Text(ColoredGeometry):
                         lx = px - line_width // 2
                     if lx + line_width >= 0 and py + line_height >= 0:
                         for char, width in zip(line, widths):
+                            char_buf[1] = width
                             if lx > w:
                                 break
                             if lx + width >= 0:
-                                buf, height, _ = self.font.bitmap(char)
-                                fbuf = framebuf.FrameBuffer(
-                                    buf, width, height, framebuf.MONO_HLSB
-                                )
-                                buffer.blit(fbuf, lx, py, BLIT_KEY_RGB565, palette)
+                                char_buf[0], char_buf[2], _ = self.font.bitmap(char)
+                                buffer.blit(char_buf, lx, py, BLIT_KEY_RGB565, palette)
                             lx += width
                     py += line_height
                     if py > h:
