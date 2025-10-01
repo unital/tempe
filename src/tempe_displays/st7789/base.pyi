@@ -9,7 +9,7 @@ from machine import Pin
 from micropython import const
 import asyncio
 from struct import pack
-from typing import Any
+from typing import Literal
 
 # COLMOD Flags
 COLMOD_65K = const(0x05)
@@ -170,6 +170,6 @@ class ST7789:
 
     def fill(self, x: int, y: int, w: int, h: int, color=b"\xff\xff") -> None: ...
 
-    async def init(self, **kwargs: Any) -> None: ...
+    async def init(self, rotation: Literal[0, 90, 180, 270] = 0) -> None: ...
 
     def blit(self, buf: Sequence[int], x: int, y: int, w: int, h: int, stride: int | None = None) -> None: ...
