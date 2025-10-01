@@ -13,7 +13,13 @@ from .shapes import Circles, Ellipses, Polygons, PolyLines, RoundedRectangles, R
 from .util import contains
 
 
-LAYERS = const(("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY"))
+BACKGROUND = const("BACKGROUND")
+UNDERLAY = const("UNDERLAY")
+IMAGE = const("IMAGE")
+DRAWING = const("DRAWING")
+OVERLAY = const("OVERLAY")
+
+LAYERS = const((BACKGROUND, UNDERLAY, IMAGE, DRAWING, OVERLAY))
 
 
 class Surface:

@@ -14,7 +14,7 @@ from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat
 from tempe.geometry import ColumnGeometry, PointsToLines
 from tempe.polar_geometry import polar_points, polar_r_lines
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, UNDERLAY, DRAWING, OVERLAY
 from tempe.text import LEFT, CENTER, RIGHT, TOP, BOTTOM
 
 
@@ -30,7 +30,7 @@ working_buffer = bytearray(2 * 320 * 81)
 surface = Surface()
 
 # fill the background with off-black pixels
-surface.rectangles("BACKGROUND", [(0, 0, 320, 240)], [colors.grey_1])
+surface.rectangles(BACKGROUND, [(0, 0, 320, 240)], [colors.grey_1])
 
 
 class LinearScale:
@@ -115,7 +115,7 @@ gc.collect()
 
 # draw the plot
 surface.lines(
-    "DRAWING",
+    DRAWING,
     quality_lines,
     line_colors,
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
@@ -131,13 +131,13 @@ time_label_ys = [cy - max_r - 4, cy, cy + max_r + 4, cy]
 
 
 surface.circles(
-    "BACKGROUND",
+    BACKGROUND,
     (cx, cy, max_r),
     colors.black,
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
 )
 surface.circles(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry(
         [
             Repeat(cx),
@@ -150,7 +150,7 @@ surface.circles(
     clip=(cx - max_r, cy - max_r, 2 * max_r + 1, 2 * max_r + 1),
 )
 surface.lines(
-    "UNDERLAY",
+    UNDERLAY,
     polar_r_lines(
         cx,
         cy,
@@ -170,7 +170,7 @@ quality_label_geometry = polar_points(
     cx, cy, ColumnGeometry([quality_label_rs, Repeat(270)])
 )
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     quality_label_geometry,
     colors.grey_7,
     [f"{value:d}" for value in quality_label_values],
@@ -178,7 +178,7 @@ surface.text(
 )
 time_label_geometry = ColumnGeometry([time_label_xs, time_label_ys])
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     time_label_geometry,
     colors.grey_7,
     time_label_strings,
@@ -192,14 +192,14 @@ from tempe.fonts import ubuntu16bold, ubuntu16
 from tempe.font import TempeFont
 
 surface.text(
-    "DRAWING",
+    DRAWING,
     (4, 0),
     colors.grey_a,
     "Air Quality (ppb)",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
-    "DRAWING",
+    DRAWING,
     (4, 20),
     colors.grey_8,
     "20/8/24--\n22/8/24",

@@ -8,7 +8,7 @@ import time
 import asyncio
 import gc
 
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.text import Text
 from tempe.shapes import Rectangles
 from tempe.font import TempeFont
@@ -28,14 +28,14 @@ surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
-surface.add_shape("BACKGROUND", background)
+surface.add_shape(BACKGROUND, background)
 
 # draw some black text in the main drawing layer
 font = TempeFont(ubuntu16bold)
 hello_tempe = Text(
     [(10, 10)], [0x0000], ["Hello Tempe!"], font=font, clip=(0, 0, 120, 60)
 )
-surface.add_shape("DRAWING", hello_tempe)
+surface.add_shape(DRAWING, hello_tempe)
 
 
 def main(display=None):

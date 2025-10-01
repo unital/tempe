@@ -14,7 +14,7 @@ from tempe.colormaps.viridis import viridis
 from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat, Range, Interpolated
 from tempe.geometry import RowGeometry, ColumnGeometry
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.shapes import Rectangles
 from tempe.lines import WideLines, WidePolyLines
 
@@ -33,7 +33,7 @@ surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
-surface.add_shape("BACKGROUND", background)
+surface.add_shape(BACKGROUND, background)
 
 
 # draw some lines
@@ -44,7 +44,7 @@ lines = WideLines(
     Interpolated(viridis, 10),
     clip=(0, 0, 160, 120),
 )
-surface.add_shape("DRAWING", lines)
+surface.add_shape(DRAWING, lines)
 
 
 # draw some lines in the opposite direction
@@ -62,7 +62,7 @@ lines = WideLines(
     clip=(160, 0, 160, 120),
     round=False,
 )
-surface.add_shape("DRAWING", lines)
+surface.add_shape(DRAWING, lines)
 
 # draw some polylines
 polylines = WidePolyLines(
@@ -90,7 +90,7 @@ polylines = WidePolyLines(
     Interpolated(viridis, 10),
     clip=(0, 120, 320, 120),
 )
-surface.add_shape("DRAWING", polylines)
+surface.add_shape(DRAWING, polylines)
 
 
 def main(display=None):
