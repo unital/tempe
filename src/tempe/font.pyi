@@ -7,9 +7,10 @@
 from array import array
 import framebuf
 from types import ModuleType
-from typing import Type, TypeAlias
+from typing import Protocol, runtime_checkable
 
-class AbstractFont:
+@runtime_checkable
+class AbstractFont(Protocol):
     """ABC for fonts.
 
     Note: this API will likely evolve, particularly if support for vector
