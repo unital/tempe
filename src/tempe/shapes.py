@@ -30,8 +30,9 @@ class Shape:
         if self.clip is None:
             if self._bounds is None:
                 self._bounds = self._get_bounds()
-            self.surface.damage(self._bounds)
-        else:
+            if self.surface:
+                self.surface.damage(self._bounds)
+        elif self.surface:
             self.surface.damage(self.clip)
 
     def _get_bounds(self):
@@ -52,7 +53,8 @@ class ColoredGeometry(Shape):
                 # invalidate old geometry bounds
                 if self._bounds is None:
                     self._bounds = self._get_bounds()
-                self.surface.damage(self._bounds)
+                if self.surface:
+                    self.surface.damage(self._bounds)
             self.geometry = geometry
             # bounds are no longer valid
             self._bounds = None
