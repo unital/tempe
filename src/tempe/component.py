@@ -71,7 +71,7 @@ class Component:
     def draw(self):
         if self.style["background_color"] is not None:
             self.shapes["background"] = self.surface.rectangles(
-                "BACKGROUND",
+                BACKGROUND,
                 RowGeometry.from_lists([self.bounds]),
                 [self.style["background_color"]],
                 clip=self.bounds,
@@ -116,7 +116,7 @@ class Label(Component):
     def draw(self):
         super().draw()
         self.shapes["text"] = self.surface.text(
-            "DRAWING",
+            DRAWING,
             RowGeometry.from_lists([self.bounds[:2]]),
             [self.style["color"]],
             [self.format(self.value)],
@@ -204,7 +204,7 @@ class LinePlot(Component):
         super().draw()
         vertices = self.map_xy()
         self.shapes["lines"] = self.surface.lines(
-            "DRAWING",
+            DRAWING,
             StripGeometry(vertices),
             self.colors,
             clip=self.bounds,
@@ -294,7 +294,7 @@ class ScatterPlot(Component):
         super().draw()
         xs, ys, sizes = self.map_xy()
         self.shapes["markers"] = self.surface.points(
-            "DRAWING",
+            DRAWING,
             ColumnGeometry([xs, ys, sizes]),
             self.colors,
             self.markers,
@@ -389,7 +389,7 @@ class BarPlot(Component):
         super().draw()
         geometry = self.map_xy()
         self.shapes["rects"] = self.surface.rectangles(
-            "DRAWING",
+            DRAWING,
             ColumnGeometry(geometry),
             self.colors,
             clip=self.bounds,

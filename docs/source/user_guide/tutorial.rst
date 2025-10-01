@@ -22,11 +22,11 @@ that are drawn to it::
 
     # fill the background with white pixels
     background = Rectangles([(0, 0, 320, 240)], [0xffff])
-    surface.add_shape('BACKGROUND', background)
+    surface.add_shape(BACKGROUND, background)
 
     # draw some black text in the main drawing layer
     hello_tempe = Text([(160, 120)], [0x0000], ["Hello Tempe!"], [(CENTER, CENTER)])
-    surface.add_shape('DRAWING', hello_tempe)
+    surface.add_shape(DRAWING, hello_tempe)
 
 To actually render the image, you need to provide a |Display| subclass
 that can handle copying a buffer to a rectangle on the physical device.
@@ -83,7 +83,7 @@ to draw three rectangles with three different colors, so you can call::
         [(4, 4, 8, 100), (4, 16, 8, 80), (4, 28, 8, 50)],
         [red, lime, blue],
     )
-    surface.add_shape('DRAWING', bars)
+    surface.add_shape(DRAWING, bars)
 
 Where these rectangles are a related part of a larger graphical entity,
 it will generally be more efficient than drawing the three rectangles
@@ -287,8 +287,8 @@ build standard data visualizations::
             [bar_xs, ys, widths, Repeat(bar_height)],
             colors,
         )
-        surface.add_shape("OVERLAY", label_text)
-        surface.add_shape("DRAWING", bars)
+        surface.add_shape(OVERLAY, label_text)
+        surface.add_shape(DRAWING, bars)
 
 The High-Level API
 ==================
@@ -329,16 +329,16 @@ this point we have done this by writing something like::
         RowGeometry.from_lists([[0, 0, 320, 240]]),
         Repeat(colors.grey_f),
     )
-    surface.add_shape("BACKGROUND", background)
+    surface.add_shape(BACKGROUND, background)
 
 Using the convenience methods, you can instead write::
 
-    background = surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+    background = surface.rectangles(BACKGROUND, (0, 0, 320, 240), "#fff")
 
 If you never plan to modify the background, you may even be able to just
 write::
 
-    surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+    surface.rectangles(BACKGROUND, (0, 0, 320, 240), "#fff")
 
 ..  note::
 
@@ -432,7 +432,7 @@ These fonts are typically shipped as modules::
     font = TempeFont(ubuntu16bold)
 
     surface.text(
-        "DRAWING",
+        DRAWING,
         (160, 120),
         "#000",
         "Hello Tempe!",
@@ -640,7 +640,7 @@ plot is clipped to the screen region we want to use, otherwise points
 will be drawn in the margins::
 
     surface.points(
-        "DRAWING",
+        DRAWING,
         points,
         Repeat(colors.grey_3),
         Repeat(Marker.PIXEL),
@@ -671,7 +671,7 @@ We could manually do this by slicing::
     lines = ColumnGeometry([x0s, y0s, x1s, y1s])
 
     surface.lines(
-        "DRAWING",
+        DRAWING,
         lines,
         Repeat(colors.grey_3),
         clip=(x, y, w, h),
@@ -692,7 +692,7 @@ do::
     lines = PointsToLines(points)
 
     surface.lines(
-        "DRAWING",
+        DRAWING,
         lines,
         Repeat(colors.grey_3),
         clip=(x, y, w, h),
@@ -743,7 +743,7 @@ all the plots in your application.
         ..  code-block::
 
             surface.rects(
-                'BACKGROUND',
+                BACKGROUND,
                 (x, y, w, h),
                 colors.grey_d,
                 fill=False,
@@ -756,7 +756,7 @@ all the plots in your application.
         ..  code-block::
 
             surface.rects(
-                'BACKGROUND',
+                BACKGROUND,
                 (x, y, w, h),
                 colors.white,
             )
@@ -846,7 +846,7 @@ appropriately scaled values::
 
     # draw the plot
     surface.markers(
-        "DRAWING",
+        DRAWING,
         markers,
         marker_colors,
         Repeat(Marker.CIRCLE),
@@ -958,7 +958,7 @@ as an annulus::
         ),
     )
     surface.polygons(
-        "DRAWING",
+        DRAWING,
         time_scale_geometry,
         time_scale.scale_values([i * 3600 + 6 * 3600 for i in range(24)]),
     )
@@ -1006,7 +1006,7 @@ markers and text giving the corresponding values::
 
     sample_humidities = [40, 50, 60, 70]
     surface.markers(
-        "DRAWING",
+        DRAWING,
         ColumnGeometry(
             [
                 Repeat(x1 + 30),
@@ -1018,7 +1018,7 @@ markers and text giving the corresponding values::
         Marker.CIRCLE,
     )
     surface.markers(
-        "DRAWING",
+        DRAWING,
         ColumnGeometry(
             [
                 Repeat(x1 + 40),
@@ -1061,7 +1061,7 @@ and then we can create a bar plot using rectangles::
         ]
     )
     surface.rectangles(
-        "DRAWING",
+        DRAWING,
         temp_rects,
         colors.red,
         clip=(x1, y, 20, h),
@@ -1104,7 +1104,7 @@ and from here on we proceed as a regular line plot::
     quality_lines = PointsToLines(xy_points)
 
     surface.lines(
-        "DRAWING",
+        DRAWING,
         quality_lines,
         line_colors,
     )
@@ -1146,7 +1146,7 @@ Grids can be drawn using combinations of unfilled circles::
     quality_label_rs = air_quality_scale.scale_values(quality_label_values)
 
     surface.circles(
-        "UNDERLAY",
+        UNDERLAY,
         ColumnGeometry(
             [
                 Repeat(cx),
@@ -1172,7 +1172,7 @@ and radial lines::
     )
     xy_lines = polar_r_lines(cx, cy, r_lines)
 
-    surface.lines("UNDERLAY", xy_lines colors.grey_3)
+    surface.lines(UNDERLAY, xy_lines colors.grey_3)
 
 In a similar manner, other plot decorations can be positioned by
 computing their position in polar coordinates, and then transforming
@@ -1203,7 +1203,7 @@ do something like::
 
     surface = Surface()
     time_field = surface.text(
-                "DRAWING",
+                DRAWING,
         [[10, 10]],
         [colors.grey_a],
         [""],

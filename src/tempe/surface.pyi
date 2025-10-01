@@ -14,6 +14,13 @@ Layers : tuple[str, ...]
     The default set of layers used by Surfaces, in order from back to front.
     The default value is ``("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")``
 
+BACKGROUND : str
+UNDERLAY : str
+IMAGE : str
+DRAWING : str
+OVERLAY : str
+    Constants holding the default values for the surface layers as strings.
+
 """
 
 import asyncio
@@ -44,8 +51,16 @@ from .bitmaps import Bitmaps, ColoredBitmaps
 from .text import Text, HALIGN, VALIGN, LEFT, TOP
 from .util import contains
 
+
+
 #: The default set of layers used by Surfaces, in order from back to front.
-LAYERS = ("BACKGROUND", "UNDERLAY", "IMAGE", "DRAWING", "OVERLAY")
+BACKGROUND: str = "BACKGROUND"
+UNDERLAY: str = "UNDERLAY"
+IMAGE: str = "IMAGE"
+DRAWING: str = "DRAWING"
+OVERLAY: str = "OVERLAY"
+
+LAYERS: tuple[str, ...] = (BACKGROUND, UNDERLAY, IMAGE, DRAWING, OVERLAY)
 
 class Surface:
     """A layered space for drawing shapes.

@@ -16,7 +16,7 @@ from tempe.data_view import Range, Repeat
 from tempe.geometry import ColumnGeometry, RowGeometry
 from tempe.markers import Marker
 from tempe.polar_geometry import polar_rects
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, UNDERLAY, DRAWING, OVERLAY
 from tempe.text import TOP, BOTTOM, CENTER, RIGHT
 
 
@@ -32,7 +32,7 @@ working_buffer = bytearray(2 * 320 * 121)
 surface = Surface()
 
 # fill the background with off-white pixels
-surface.rectangles("BACKGROUND", [(0, 0, 320, 240)], [colors.grey_f])
+surface.rectangles(BACKGROUND, [(0, 0, 320, 240)], [colors.grey_f])
 
 
 class LinearScale:
@@ -185,7 +185,7 @@ markers = ColumnGeometry([xs, ys, marker_sizes])
 
 # draw the plot
 surface.markers(
-    "DRAWING",
+    DRAWING,
     markers,
     marker_colors,
     Repeat(Marker.CIRCLE),
@@ -216,7 +216,7 @@ temp_rects = ColumnGeometry(
     ]
 )
 surface.rectangles(
-    "DRAWING",
+    DRAWING,
     temp_rects,
     Repeat(colors.red),
     clip=(x1, y, 20, h),
@@ -231,7 +231,7 @@ quality_rects = ColumnGeometry(
     ]
 )
 surface.rectangles(
-    "DRAWING",
+    DRAWING,
     quality_rects,
     Repeat(colors.green),
     clip=(x, y - 20, w, 20),
@@ -253,12 +253,12 @@ time_scale_geometry = polar_rects(
     ),
 )
 surface.polygons(
-    "DRAWING",
+    DRAWING,
     time_scale_geometry,
     time_scale.scale_values([i * 3600 + 6 * 3600 for i in range(24)]),
 )
 surface.text(
-    "DRAWING",
+    DRAWING,
     RowGeometry.from_lists([[cx, cy - 35], [cx, cy + 38]]),
     Repeat(colors.grey_a),
     ["0:00", "12:00"],
@@ -267,7 +267,7 @@ surface.text(
 
 sample_humidities = [40, 50, 60, 70]
 surface.markers(
-    "DRAWING",
+    DRAWING,
     ColumnGeometry(
         [
             Repeat(x1 + 30),
@@ -279,7 +279,7 @@ surface.markers(
     Repeat(Marker.CIRCLE),
 )
 surface.markers(
-    "DRAWING",
+    DRAWING,
     ColumnGeometry(
         [
             Repeat(x1 + 40),
@@ -295,12 +295,12 @@ surface.markers(
 # Plot Decoration:
 
 # fill the plot with white pixels
-surface.rectangles("BACKGROUND", (x, y, w, h), colors.white)
+surface.rectangles(BACKGROUND, (x, y, w, h), colors.white)
 # border the plot
-# surface.rects('BACKGROUND', (x, y, w, h), colors.grey_d, fill=False)
+# surface.rects(BACKGROUND, (x, y, w, h), colors.grey_d, fill=False)
 # draw axes
-surface.hlines("UNDERLAY", (x, y1, w), colors.grey_c)
-surface.vlines("UNDERLAY", (x, y, h), colors.grey_c)
+surface.hlines(UNDERLAY, (x, y1, w), colors.grey_c)
+surface.vlines(UNDERLAY, (x, y, h), colors.grey_c)
 
 
 # Temperature axis: tick marks, grid lines, labels
@@ -309,17 +309,17 @@ temp_marks = temperature_scale.scale_values(list(range(12, 22)))
 label_temps = [15, 20]
 temp_labels = temperature_scale.scale_values([15, 20])
 surface.hlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([Repeat(x - tick_length), temp_marks, Repeat(tick_length)]),
     Repeat(colors.grey_c),
 )
 surface.hlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([Repeat(x), temp_labels, Repeat(w)]),
     Repeat(colors.grey_f),
 )
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([Repeat(x - tick_length), temp_labels]),
     Repeat(colors.grey_a),
     [f"{t}" for t in label_temps],
@@ -332,17 +332,17 @@ quality_marks = air_quality_scale.scale_values(tick_quality)
 label_air_quality = [50, 100]
 air_quality_labels = air_quality_scale.scale_values(label_air_quality)
 surface.vlines(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([quality_marks, Repeat(y1), Repeat(tick_length)]),
     Repeat(colors.grey_c),
 )
 surface.vlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([air_quality_labels, Repeat(y), Repeat(h)]),
     Repeat(colors.grey_f),
 )
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([air_quality_labels, Repeat(y1 + 8)]),
     Repeat(colors.grey_a),
     [str(t) for t in label_air_quality],
@@ -354,21 +354,21 @@ from tempe.fonts import ubuntu16bold
 from tempe.font import TempeFont
 
 surface.text(
-    "DRAWING",
+    DRAWING,
     (4, 0),
     colors.grey_a,
     "Temperature (°C) vs. Air Quality (ppb)",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
-    "DRAWING",
+    DRAWING,
     (x1 + 20, y - 20),
     colors.grey_a,
     "20-22/8/24",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
-    "DRAWING",
+    DRAWING,
     (x1 + 20, cy + 50),
     colors.grey_a,
     "Humidity",

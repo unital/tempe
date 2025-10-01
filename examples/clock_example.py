@@ -13,7 +13,7 @@ from tempe.geometry import ColumnGeometry, RowGeometry
 from tempe.data_view import Repeat
 from tempe.font import TempeFont
 from tempe.polar_geometry import polar_r_lines, polar_points, polar_point_arrays
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, UNDERLAY, DRAWING, OVERLAY
 from tempe.text import CENTER
 from example_fonts import roboto24boldnumbers
 
@@ -37,9 +37,9 @@ class Clock:
         self.h, self.m, self.s = self.rtc.datetime()[4:7]
 
     def create_shapes(self, surface):
-        surface.circles("BACKGROUND", (self.cx, self.cy, self.r), colors.grey_1)
+        surface.circles(BACKGROUND, (self.cx, self.cy, self.r), colors.grey_1)
         surface.circles(
-            "BACKGROUND", (self.cx, self.cy, self.r), colors.grey_2, fill=False
+            BACKGROUND, (self.cx, self.cy, self.r), colors.grey_2, fill=False
         )
 
         minute_angles = [360 * i // 60 for i in range(0, 60)]
@@ -48,19 +48,19 @@ class Clock:
             self.cy,
             ColumnGeometry([Repeat(self.r), minute_angles, Repeat(-5)]),
         )
-        surface.lines("UNDERLAY", minue_ticks, colors.grey_3)
+        surface.lines(UNDERLAY, minue_ticks, colors.grey_3)
 
         hour_angles = [360 * i // 12 - 90 for i in range(1, 13)]
         hour_ticks = polar_r_lines(
             self.cx, self.cy, ColumnGeometry([Repeat(self.r), hour_angles, Repeat(-10)])
         )
-        surface.lines("UNDERLAY", hour_ticks, colors.grey_4)
+        surface.lines(UNDERLAY, hour_ticks, colors.grey_4)
 
         hour_numbers = polar_points(
             self.cx, self.cy, ColumnGeometry([Repeat(self.r - 28), hour_angles])
         )
         surface.text(
-            "UNDERLAY",
+            UNDERLAY,
             hour_numbers,
             colors.grey_6,
             [str(i) for i in range(1, 13)],
@@ -69,14 +69,14 @@ class Clock:
         )
 
         self.hour_hand = surface.polygons(
-            "DRAWING", self.hour_geometry(), colors.grey_8
+            DRAWING, self.hour_geometry(), colors.grey_8
         )
         self.minute_hand = surface.polygons(
-            "DRAWING", self.minute_geometry(), colors.grey_a
+            DRAWING, self.minute_geometry(), colors.grey_a
         )
-        self.second_hand = surface.lines("DRAWING", self.second_geometry(), "#c22")
+        self.second_hand = surface.lines(DRAWING, self.second_geometry(), "#c22")
 
-        surface.circles("OVERLAY", (self.cx, self.cy, 3), colors.grey_2)
+        surface.circles(OVERLAY, (self.cx, self.cy, 3), colors.grey_2)
 
     def hour_geometry(self):
         angle = int(360 * (self.h % 12 + self.m / 60) / 12 - 90)
@@ -171,7 +171,7 @@ async def run(display=None):
 
     rtc = RTC()
     surface = Surface()
-    surface.rectangles("BACKGROUND", (0, 0) + display.size, colors.black)
+    surface.rectangles(BACKGROUND, (0, 0) + display.size, colors.black)
     clock = Clock(
         rtc, display.size[0] // 2, display.size[1] // 2, min(display.size) // 2
     )

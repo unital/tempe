@@ -17,7 +17,7 @@ from tempe.colormaps.magma import magma
 from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat, Range, Interpolated
 from tempe.geometry import RowGeometry, ColumnGeometry
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING, OVERLAY
 from tempe.text import Text
 from tempe.markers import Marker, Markers
 from tempe.shapes import (
@@ -49,7 +49,7 @@ surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
-surface.add_shape("BACKGROUND", background)
+surface.add_shape(BACKGROUND, background)
 
 # draw some black text in the main drawing layer
 font = TempeFont(ubuntu16bold)
@@ -79,21 +79,21 @@ labels = Text(
     ],
     font=font,
 )
-surface.add_shape("OVERLAY", labels)
+surface.add_shape(OVERLAY, labels)
 
 # draw some lines
 lines = Lines(
     ColumnGeometry([Range(4, 44, 4), Repeat(20), Range(8, 88, 8), Repeat(40)]),
     Interpolated(magma, 10),
 )
-surface.add_shape("DRAWING", lines)
+surface.add_shape(DRAWING, lines)
 
 # draw some hlines
 hlines = HLines(
     ColumnGeometry([Range(4, 44, 4), Range(60, 80, 2), Range(8, 88, 8)]),
     Interpolated(magma, 10),
 )
-surface.add_shape("DRAWING", hlines)
+surface.add_shape(DRAWING, hlines)
 
 # draw some vlines
 vlines = VLines(
@@ -106,7 +106,7 @@ vlines = VLines(
     ),
     Interpolated(magma, 20),
 )
-surface.add_shape("DRAWING", vlines)
+surface.add_shape(DRAWING, vlines)
 
 # draw some polygons
 stars = [
@@ -123,13 +123,13 @@ polys = Polygons(
     RowGeometry.from_lists([[x for p in star for x in p] for star in stars[:3]]),
     Interpolated(viridis, 3),
 )
-surface.add_shape("DRAWING", polys)
+surface.add_shape(DRAWING, polys)
 outlines = Polygons(
     RowGeometry.from_lists([[x for p in star for x in p] for star in stars]),
     Repeat(0x0000),
     fill=False,
 )
-surface.add_shape("DRAWING", outlines)
+surface.add_shape(DRAWING, outlines)
 
 # draw some circles
 circles = Circles(
@@ -142,7 +142,7 @@ circles = Circles(
     ),
     Interpolated(viridis, 3),
 )
-surface.add_shape("DRAWING", circles)
+surface.add_shape(DRAWING, circles)
 circle_outlines = Circles(
     ColumnGeometry(
         [
@@ -154,7 +154,7 @@ circle_outlines = Circles(
     Repeat(0x0000),
     fill=False,
 )
-surface.add_shape("DRAWING", circle_outlines)
+surface.add_shape(DRAWING, circle_outlines)
 
 # draw some markers
 star = array(
@@ -211,7 +211,7 @@ markers = Markers(
         "#",
     ],
 )
-surface.add_shape("DRAWING", markers)
+surface.add_shape(DRAWING, markers)
 
 # draw some buffers
 t_buf = framebuf.FrameBuffer(bytearray(32 * 32 * 2), 32, 32, framebuf.RGB565)
@@ -228,7 +228,7 @@ bitmaps = Bitmaps(
     [t_buf],
     key=BLIT_KEY_RGB565,
 )
-surface.add_shape("DRAWING", bitmaps)
+surface.add_shape(DRAWING, bitmaps)
 
 grey_buf = framebuf.FrameBuffer(bytearray(32 * 32), 32, 32, framebuf.GS8)
 grey_buf.fill(0)
@@ -244,7 +244,7 @@ greyscale = Bitmaps(
     key=magma[0],
     palette=magma,
 )
-surface.add_shape("DRAWING", greyscale)
+surface.add_shape(DRAWING, greyscale)
 
 smileys = ColoredBitmaps(
     ColumnGeometry(
@@ -258,7 +258,7 @@ smileys = ColoredBitmaps(
     Interpolated(viridis, 20),
     Repeat(smiley),
 )
-surface.add_shape("DRAWING", smileys)
+surface.add_shape(DRAWING, smileys)
 
 colormap = framebuf.FrameBuffer(bytearray(128 * 8), 128, 8, framebuf.GS8)
 for x in range(128):
@@ -268,13 +268,13 @@ v = Bitmaps(
     [colormap],
     palette=viridis,
 )
-surface.add_shape("DRAWING", v)
+surface.add_shape(DRAWING, v)
 m = Bitmaps(
     [(164, 106, 128, 8)],
     [colormap],
     palette=magma,
 )
-surface.add_shape("DRAWING", m)
+surface.add_shape(DRAWING, m)
 
 # draw some rectangles
 rectangles = Rectangles(
@@ -288,7 +288,7 @@ rectangles = Rectangles(
     ),
     Interpolated(viridis, 3),
 )
-surface.add_shape("DRAWING", rectangles)
+surface.add_shape(DRAWING, rectangles)
 rectangles_outlines = Rectangles(
     ColumnGeometry(
         [
@@ -301,7 +301,7 @@ rectangles_outlines = Rectangles(
     Repeat(0x0000),
     fill=False,
 )
-surface.add_shape("DRAWING", rectangles_outlines)
+surface.add_shape(DRAWING, rectangles_outlines)
 
 # draw some ellipses
 ellipses = Ellipses(
@@ -315,7 +315,7 @@ ellipses = Ellipses(
     ),
     Interpolated(viridis, 3),
 )
-surface.add_shape("DRAWING", ellipses)
+surface.add_shape(DRAWING, ellipses)
 ellipses_outlines = Ellipses(
     ColumnGeometry(
         [
@@ -328,7 +328,7 @@ ellipses_outlines = Ellipses(
     Repeat(0x0000),
     fill=False,
 )
-surface.add_shape("DRAWING", ellipses_outlines)
+surface.add_shape(DRAWING, ellipses_outlines)
 
 
 def main(display=None):

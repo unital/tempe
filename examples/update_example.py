@@ -10,7 +10,7 @@ import gc
 
 from tempe import colors
 from tempe.font import TempeFont
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.text import BOTTOM, CENTER, TOP
 
 # maximize available memory before allocating buffer
@@ -25,13 +25,13 @@ def init_surface(surface, size):
     from example_fonts import roboto32boldnumbers
 
     # fill the background with off-white pixels
-    surface.rectangles("BACKGROUND", (0, 0) + size, "#fff")
+    surface.rectangles(BACKGROUND, (0, 0) + size, "#fff")
 
     center = (size[0] // 2, size[1] // 2)
 
     # prepare the text fields
     time_field = surface.text(
-        "DRAWING",
+        DRAWING,
         center,
         "#aaa",
         "",
@@ -39,7 +39,7 @@ def init_surface(surface, size):
         font=TempeFont(roboto32boldnumbers),
     )
     temp_field = surface.text(
-        "DRAWING",
+        DRAWING,
         center,
         colors.grey_a,
         "",
