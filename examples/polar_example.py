@@ -19,7 +19,7 @@ from tempe.polar_geometry import (
     polar_points,
     polar_r_lines,
 )
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, UNDERLAY, DRAWING, OVERLAY
 from tempe.shapes import Rectangles, Polygons, Circles, Lines
 from tempe.markers import Markers
 
@@ -38,7 +38,7 @@ surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
-surface.add_shape("BACKGROUND", background)
+surface.add_shape(BACKGROUND, background)
 
 
 # draw a coxcomb plot
@@ -54,7 +54,7 @@ circle_grid = Circles(
     fill=False,
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("UNDERLAY", circle_grid)
+surface.add_shape(UNDERLAY, circle_grid)
 ray_grid = Lines(
     polar_r_lines(
         64,
@@ -70,7 +70,7 @@ ray_grid = Lines(
     Repeat(grey_e),
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("UNDERLAY", ray_grid)
+surface.add_shape(UNDERLAY, ray_grid)
 coxcomb = Polygons(
     polar_rects(
         64,
@@ -82,7 +82,7 @@ coxcomb = Polygons(
     Interpolated(viridis, 6),
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("DRAWING", coxcomb)
+surface.add_shape(DRAWING, coxcomb)
 
 # draw a radar plot
 circle_grid = Circles(
@@ -97,7 +97,7 @@ circle_grid = Circles(
     fill=False,
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("UNDERLAY", circle_grid)
+surface.add_shape(UNDERLAY, circle_grid)
 ray_grid = Lines(
     polar_r_lines(
         196,
@@ -113,7 +113,7 @@ ray_grid = Lines(
     Repeat(grey_e),
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("UNDERLAY", ray_grid)
+surface.add_shape(UNDERLAY, ray_grid)
 radar = Polygons(
     polar_point_arrays(
         196,
@@ -129,7 +129,7 @@ radar = Polygons(
     fill=False,
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("DRAWING", radar)
+surface.add_shape(DRAWING, radar)
 markers = Markers(
     Extend(
         [
@@ -150,7 +150,7 @@ markers = Markers(
     [f" {x}" for x in [6, 3, 9, 1, 9, 12]],
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("OVERLAY", markers)
+surface.add_shape(OVERLAY, markers)
 
 circle_bar = Polygons(
     polar_rects(
@@ -169,7 +169,7 @@ circle_bar = Polygons(
     Interpolated(viridis, 3),
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("DRAWING", circle_bar)
+surface.add_shape(DRAWING, circle_bar)
 circle_bar_ends = Circles(
     Extend(
         [
@@ -190,7 +190,7 @@ circle_bar_ends = Circles(
     fill=True,
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("DRAWING", circle_bar_ends)
+surface.add_shape(DRAWING, circle_bar_ends)
 
 values = [6, 3, 9, 1, 9, 12]
 cumsum = [sum(values[:i]) for i in range(len(values) + 1)]
@@ -215,7 +215,7 @@ donut = Polygons(
     fill=True,
     clip=(0, 0, 320, 240),
 )
-surface.add_shape("DRAWING", donut)
+surface.add_shape(DRAWING, donut)
 
 
 def main(display=None):

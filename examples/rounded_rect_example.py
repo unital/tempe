@@ -11,7 +11,7 @@ import gc
 from tempe.colormaps.viridis import viridis
 from tempe.data_view import Repeat, Range, Interpolated
 from tempe.geometry import ColumnGeometry
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.shapes import Rectangles, RoundedRectangles
 
 # maximize available memory before allocating buffer
@@ -27,7 +27,7 @@ surface = Surface()
 
 # fill the background with white pixels
 background = Rectangles([(0, 0, 320, 240)], [0xFFFF])
-surface.add_shape("BACKGROUND", background)
+surface.add_shape(BACKGROUND, background)
 
 
 # draw some rectangles
@@ -43,10 +43,10 @@ rectangles = RoundedRectangles(
     Interpolated(viridis, 3),
     fill=True,
 )
-surface.add_shape("DRAWING", rectangles)
+surface.add_shape(DRAWING, rectangles)
 
 surface.rounded_rectangles(
-    "DRAWING",
+    DRAWING,
     ColumnGeometry([
             Range(24, 240, 80),
             Range(96, 48, -16),
@@ -59,7 +59,7 @@ surface.rounded_rectangles(
 )
 
 surface.rounded_rectangles(
-    "DRAWING",
+    DRAWING,
     ColumnGeometry([
             Range(24, 240, 80),
             Repeat(160),

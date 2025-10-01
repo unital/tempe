@@ -12,7 +12,7 @@ import time
 from tempe import colors
 from tempe.data_view import Repeat
 from tempe.geometry import ColumnGeometry, PointsToLines
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, UNDERLAY, DRAWING, OVERLAY
 from tempe.text import CENTER, TOP, RIGHT
 
 
@@ -28,7 +28,7 @@ working_buffer = bytearray(2 * 320 * 121)
 surface = Surface()
 
 # fill the background with off-white pixels
-surface.rectangles("BACKGROUND", (0, 0, 320, 240), colors.grey_f)
+surface.rectangles(BACKGROUND, (0, 0, 320, 240), colors.grey_f)
 
 
 class LinearScale:
@@ -79,7 +79,7 @@ lines = PointsToLines(points)
 
 # draw the plot
 surface.lines(
-    "DRAWING",
+    DRAWING,
     lines,
     colors.grey_3,
     clip=(x, y, w, h),
@@ -88,12 +88,12 @@ surface.lines(
 # Plot Decoration:
 
 # fill the plot with white pixels
-surface.rectangles("BACKGROUND", (x, y, w, h), colors.white)
+surface.rectangles(BACKGROUND, (x, y, w, h), colors.white)
 # border the plot
-# surface.rects('BACKGROUND', (x, y, w, h), colors.grey_d, fill=False)
+# surface.rects(BACKGROUND, (x, y, w, h), colors.grey_d, fill=False)
 # draw axes
-surface.hlines("UNDERLAY", (x, y1, w), colors.grey_c)
-surface.vlines("UNDERLAY", (x, y, h), colors.grey_c)
+surface.hlines(UNDERLAY, (x, y1, w), colors.grey_c)
+surface.vlines(UNDERLAY, (x, y, h), colors.grey_c)
 
 
 # Temperature axis: tick marks, grid lines, labels
@@ -102,17 +102,17 @@ temp_marks = temperature_scale.scale_values(list(range(12, 22)))
 label_temps = [15, 20]
 temp_labels = temperature_scale.scale_values([15, 20])
 surface.hlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([Repeat(x - tick_length), temp_labels, Repeat(tick_length)]),
     colors.grey_c,
 )
 surface.hlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([Repeat(x), temp_labels, Repeat(w)]),
     colors.grey_f,
 )
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([Repeat(x - tick_length - 1), temp_labels]),
     colors.grey_a,
     [f"{t}" for t in label_temps],
@@ -130,17 +130,17 @@ time_labels = time_scale.scale_values(
     [day_start + t * 3600 for t in label_times],
 )
 surface.vlines(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([time_marks, Repeat(y1), Repeat(tick_length)]),
     colors.grey_c,
 )
 surface.vlines(
-    "UNDERLAY",
+    UNDERLAY,
     ColumnGeometry([time_labels, Repeat(y), Repeat(h)]),
     colors.grey_f,
 )
 surface.text(
-    "OVERLAY",
+    OVERLAY,
     ColumnGeometry([time_labels, Repeat(y1 + 8)]),
     colors.grey_a,
     [f"{t % 24}:00" for t in label_times],
@@ -152,14 +152,14 @@ from tempe.fonts import ubuntu16bold, ubuntu16
 from tempe.font import TempeFont
 
 surface.text(
-    "DRAWING",
+    DRAWING,
     (4, 0),
     colors.grey_a,
     "Temperature (°C)",
     font=TempeFont(ubuntu16bold),
 )
 surface.text(
-    "DRAWING",
+    DRAWING,
     (320, 0),
     colors.grey_a,
     "October 21-22, 2024",

@@ -10,7 +10,7 @@ from machine import Signal, Pin
 
 from tempe.font import TempeFont
 from tempe.fonts import ubuntu16bold
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.text import CENTER, TOP
 from tempe.window import Window
 from example_fonts import ubuntu12italic
@@ -94,12 +94,12 @@ class Scroller:
 
 async def init_surface(surface):
     # fill the background with off-white pixels
-    surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
-    title = surface.text("DRAWING", (0, 0, 160, 16), "#222", "Jabberwocky", font=TempeFont(ubuntu16bold))
+    surface.rectangles(BACKGROUND, (0, 0, 320, 240), "#fff")
+    title = surface.text(DRAWING, (0, 0, 160, 16), "#222", "Jabberwocky", font=TempeFont(ubuntu16bold))
 
     window = Window(offset=(4, 20), clip=(4, 20, 312, 212))
-    surface.add_shape("DRAWING", window)
-    text = window.subsurface.text("DRAWING", (156, 0), "#222", JABBERWOCKY, (CENTER, TOP), font=TempeFont(ubuntu12italic))
+    surface.add_shape(DRAWING, window)
+    text = window.subsurface.text(DRAWING, (156, 0), "#222", JABBERWOCKY, (CENTER, TOP), font=TempeFont(ubuntu12italic))
     x, y, w, h = text._get_bounds()
     scroller = Scroller(window, h, text.font.height)
     return scroller

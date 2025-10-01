@@ -30,7 +30,7 @@ from tempe.geometry import RowGeometry
 from tempe.font import TempeFont
 from tempe.fonts import ubuntu16bold
 from tempe.markers import Marker
-from tempe.surface import Surface
+from tempe.surface import Surface, BACKGROUND, DRAWING
 from tempe.component import LinePlot, ScatterPlot, BarPlot
 from tempe.text import LEFT, RIGHT, TOP
 from tempe.colormaps.plasma import plasma
@@ -87,7 +87,7 @@ def u16_to_celcius(value: int) -> float:
 
 async def display_temperature(surface, value):
     temp_display = surface.text(
-        "DRAWING",
+        DRAWING,
         (316, 20),
         "#000",
         "",
@@ -108,7 +108,7 @@ def format_memory(memory):
 async def display_free(surface, value):
     free = await value()
     free_display = surface.text(
-        "DRAWING",
+        DRAWING,
         (244, 144),
         free_to_color(free),
         str(free),
@@ -117,7 +117,7 @@ async def display_free(surface, value):
         clip=(164, 144, 80, 60),
     )
     free_units = surface.text(
-        "DRAWING",
+        DRAWING,
         (252, 144),
         free_to_color(free),
         "KiB",
@@ -134,7 +134,7 @@ async def display_free(surface, value):
 async def display_alloc(surface, value):
     alloc = await value()
     alloc_display = surface.text(
-        "DRAWING",
+        DRAWING,
         (244, 84),
         "#000",
         str(alloc),
@@ -143,7 +143,7 @@ async def display_alloc(surface, value):
         clip=(164, 84, 80, 60),
     )
     alloc_units = surface.text(
-        "DRAWING",
+        DRAWING,
         (252, 84),
         "#000",
         "KiB",
@@ -160,7 +160,7 @@ async def display_alloc(surface, value):
 async def display_stack(surface, value):
     stack = await value()
     stack_display = surface.text(
-        "DRAWING",
+        DRAWING,
         (128, 204),
         "#000",
         str(stack),
@@ -169,7 +169,7 @@ async def display_stack(surface, value):
         clip=(4, 204, 128, 35),
     )
     stack_units = surface.text(
-        "DRAWING",
+        DRAWING,
         (132, 204),
         "#000",
         "B",
@@ -333,16 +333,16 @@ async def run(display=None):
         display = await init_display()
 
     surface = Surface()
-    surface.rectangles("BACKGROUND", (0, 0, 320, 240), "#fff")
+    surface.rectangles(BACKGROUND, (0, 0, 320, 240), "#fff")
     labels = surface.text(
-        "DRAWING",
+        DRAWING,
         RowGeometry.from_lists([(4, 4), (4, 64), (4, 124), (4, 184), (164, 184)]),
         "#aaa",
         ["Temperature", "Memory Pressure", "Free Memory", "Stack Use", "Frequency"],
         font=TempeFont(ubuntu16bold),
     )
     freq_display = surface.text(
-        "DRAWING",
+        DRAWING,
         (240, 204),
         grey_7,
         str(freq() // 1000000),
@@ -351,7 +351,7 @@ async def run(display=None):
         clip=(164, 204, 76, 35),
     )
     freq_units = surface.text(
-        "DRAWING",
+        DRAWING,
         (252, 204),
         grey_7,
         "MHz",
