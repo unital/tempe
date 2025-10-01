@@ -41,16 +41,17 @@ class Window(Shape):
 
     def update(self, offset=None):
         if offset is None:
-            for rect in self.subsurface._damage:
-                x, y, w, h = rect
-                self.surface.damage(
-                    (
-                        (x + self.offset[0]),
-                        (y + self.offset[1]),
-                        w,
-                        h,
+            if self.surface:
+                for rect in self.subsurface._damage:
+                    x, y, w, h = rect
+                    self.surface.damage(
+                        (
+                            (x + self.offset[0]),
+                            (y + self.offset[1]),
+                            w,
+                            h,
+                        )
                     )
-                )
             self.subsurface._damage = []
             self.subsurface.refresh_needed.clear()
         elif self.clip is None:
@@ -68,4 +69,5 @@ class Window(Shape):
             self.update()
         else:
             self.offset = offset
-            self.surface.damage(self.clip)
+            if self.surface:
+                self.surface.damage(self.clip)
