@@ -119,7 +119,8 @@ class Text(ColoredGeometry):
                 # invalidate old text bounds
                 if self._bounds is None:
                     self._bounds = self._get_bounds()
-                self.surface.damage(self._bounds)
+                if self.surface:
+                    self.surface.damage(self._bounds)
             if texts is not None:
                 self.texts = texts
             if alignments is not None:
