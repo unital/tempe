@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Generator
 from typing import Any, Literal, TypeAlias
 import framebuf
 
@@ -15,8 +15,8 @@ from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
 LEFT: Literal[0] = 0
 RIGHT: Literal[1] = 1
 CENTER: Literal[2] = 2
-TOP: Literal[0] = 3
-BOTTOM: Literal[1] = 4
+TOP: Literal[3] = 3
+BOTTOM: Literal[4] = 4
 
 type HALIGN = Literal[0, 1, 2]
 type VALIGN = Literal[2, 3, 4]
@@ -37,7 +37,7 @@ class Text(ColoredGeometry[point]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-    def __iter__(self) -> tuple[Geometry[point], int, str, tuple[HALIGN, VALIGN]]: ...
+    def __iter__(self) -> Generator[tuple[Geometry[point], int, str, tuple[HALIGN, VALIGN]], None, None]: ...
     def update(
         self,
         geometry: Iterable[point] | None = None,

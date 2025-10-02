@@ -20,6 +20,7 @@ from .colors import grey_1, grey_2, grey_e, grey_f
 from .geometry import RowGeometry, ColumnGeometry, StripGeometry
 from .data_view import DataView, Range
 from .markers import Marker
+from .surface import BACKGROUND, DRAWING
 
 try:
     from .fonts import ubuntu16

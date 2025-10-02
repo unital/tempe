@@ -12,9 +12,10 @@ can send updates to the underlying device.
 """
 
 from array import array
-from typing import Self
+from typing import Self, Protocol, runtime_checkable
 
-class Display:
+@runtime_checkable
+class Display(Protocol):
     """Abstract base class for Displays"""
 
     size: tuple[int, int]
