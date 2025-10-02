@@ -15,9 +15,7 @@ The following informal types are used in this module:
 from collections.abc import Sequence, Iterator, Iterable
 from typing import Any, Generic, TypeVar
 
-DataType = TypeVar("DataType")
-
-class DataView(Generic[DataType]):
+class DataView[DataType]:
     """The base dataview class"""
 
     @classmethod
@@ -51,22 +49,22 @@ class DataView(Generic[DataType]):
     def __abs__(self) -> DataView[DataType]: ...
     def __invert__(self) -> DataView[DataType]: ...
 
-class Cycle(DataView[DataType]):
+class Cycle[DataType](DataView[DataType]):
     """A DataView which extends an iterable by repeating cyclically."""
 
     def __len__(self) -> None: ...
 
-class ReflectedCycle(DataView[DataType]):
+class ReflectedCycle[DataType](DataView[DataType]):
     """A DataView which extends an iterable by repeating in reverse."""
 
     def __len__(self) -> None: ...
 
-class RepeatLast(DataView[DataType]):
+class RepeatLast[DataType](DataView[DataType]):
     """A DataView which extends an iterable by repeating the last value."""
 
     def __len__(self) -> None: ...
 
-class Repeat(DataView[DataType]):
+class Repeat[DataType](DataView[DataType]):
     """A DataView broadcasts a scalar as an infinitely repeating value."""
 
     def __init__(self, data: DataType): ...
@@ -84,7 +82,7 @@ class Range(DataView[int]):
     def __init__(self, start: int, stop: int | None = None, step: int = 1): ...
     def __len__(self) -> int: ...
 
-class Slice(DataView[DataType]):
+class Slice[DataType](DataView[DataType]):
     """Take a slice of another DataView"""
 
     def __init__(
@@ -95,7 +93,7 @@ class Slice(DataView[DataType]):
         step: int = 1,
     ): ...
 
-class Interpolated(DataView[DataType]):
+class Interpolated[DataType](DataView[DataType]):
     """Produce n evenly spaced elements from the data source."""
 
     def __init__(self, data: Sequence[DataType], n: int): ...

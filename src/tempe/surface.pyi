@@ -183,7 +183,7 @@ class Surface:
     def rectangles(
         self,
         layer: Any,
-        geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        geometry: Geometry[rectangle] | Sequence[rectangle] | rectangle,
         colors: Iterable[int] | int | str,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
@@ -194,7 +194,7 @@ class Surface:
         ----------
         layer : Any
             The layer that the Rectangles object is added to.
-        geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
+        geometry : Geometry[tuple[int, int, int, int]] | Sequence[tuple[int, int, int, int]] | tuple[int, int, int, int],
             The geometry to use, or if a tuple of 4 ints, a single rectangle.
         colors : Iterable[int] | int | str
             The colors of each rectangle, or a color to use for all rectangles.
@@ -466,5 +466,13 @@ class Surface:
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the bitmaps.
         """
+
+    def _check_geometry[T](
+        self,
+        geometry: Geometry[T] | array | list[int] | tuple[int, ...],
+        coords: int | None,
+    ) -> Geometry[T]: ...
+
+    def _check_colors[T](self, colors: T | int | str) -> Iterable[int] | T: ...
 
 __all__ = ["Surface"]
