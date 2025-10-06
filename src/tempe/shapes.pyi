@@ -325,7 +325,20 @@ class RoundedRectangles(Rectangles):
         colors = Iterable[int] | None,
         fill = bool | None,
         radius = int | None
-    ) -> None: ...
+    ) -> None:
+        """Update the state of the Shape, marking a redraw as needed.
+
+        Parameters
+        ----------
+        geometry : Geometry[geom] | None
+            The sequence of geometries to render.
+        colors : Iterable[int] | None
+            The sequence of colors for each geometry.
+        fill : bool | None
+            Whether to fill the shape or to draw the outline.
+        radius  : int | None
+            The corner radii for the rectangles.
+        """
 
 
 class Circles(FillableGeometry[point_length]):
