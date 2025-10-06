@@ -46,10 +46,11 @@ def from_str(color_str):
     color_str = color_str.lower()
     if color_str.startswith("#"):
         if len(color_str) == 4:
-            return rgb444_to_rgb565(*(int(c, 16) for c in color_str[1:]))
+            return rgb444_to_rgb565(*(int(c, 16) for c in color_str[1:]), big_endian=True)
         elif len(color_str) == 7:
             return rgb24_to_rgb565(
-                *(int(f"{color_str[i:i+2]}", 16) for i in range(1, len(color_str), 2))
+                *(int(f"{color_str[i:i+2]}", 16) for i in range(1, len(color_str), 2)),
+                big_endian=True,
             )
     else:
         # is it a named Tempe color?

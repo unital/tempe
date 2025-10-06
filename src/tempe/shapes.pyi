@@ -58,7 +58,7 @@ BLIT_KEY_RGB565 : int
 
 from array import array
 import asyncio
-from collections.abc import Sequence, Iterable
+from collections.abc import Sequence, Iterable, Generator
 from framebuf import FrameBuffer
 from typing import Any, Generic, TypeVar, TypeAlias
 
@@ -66,12 +66,12 @@ from .geometry import Geometry
 from .data_view import DataView
 
 geom = TypeVar("geom", bound=Sequence[int])
-point: TypeAlias = tuple[int, int]
-points: TypeAlias = tuple[int, int, int, int]
-point_array: TypeAlias = array[int]
-point_length: TypeAlias = tuple[int, int, int]
-rectangle: TypeAlias = tuple[int, int, int, int]
-ellipse: TypeAlias = tuple[int, int, int, int]
+type point = tuple[int, int]
+type points = tuple[int, int, int, int]
+type point_array = array[int]
+type point_length = tuple[int, int, int]
+type rectangle = tuple[int, int, int, int]
+type ellipse = tuple[int, int, int, int]
 
 #: Transparent color when blitting bitmaps.
 BLIT_KEY_RGB565 = 0b0000000000100000
@@ -127,7 +127,7 @@ class Shape:
         Subclasses need to override this.
         """
 
-class ColoredGeometry(Shape, Generic[geom]):
+class ColoredGeometry[geom](Shape):
     """ABC for geometries with colors applied.
 
     These classes draw each shape from the Geometry using the
@@ -171,9 +171,9 @@ class ColoredGeometry(Shape, Generic[geom]):
             The sequence of colors for each geometry.
         """
 
-    def __iter__(self) -> tuple: ...
+    def __iter__(self) -> Generator[tuple, None, None]: ...
 
-class FillableGeometry(ColoredGeometry[geom]):
+class FillableGeometry[geom](ColoredGeometry[geom]):
     """ABC for geometries which can either be filled or stroked.
 
     Stroked outlines always have line with 1.
