@@ -45,7 +45,7 @@ class StripGeometry(Geometry[point_array]):
 class PointsToLines(Geometry[points]):
     """Turn a generator of x, y values into a generator of (x0, y0, x1, y1)."""
 
-    def __init__(self, geometry: Geometry[point]]) -> None: ...
+    def __init__(self, geometry: Geometry[point]) -> None: ...
 
 class Extend[DataType](Geometry[DataType]):
     """Concatenate multiple geometries row-wise."""
