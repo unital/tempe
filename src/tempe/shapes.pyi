@@ -111,7 +111,7 @@ class Shape:
             surface.
         """
 
-    def update(self, **kwargs: Any) -> None:
+    def update(self) -> None:
         """Update the state of the Shape, marking a redraw as needed.
 
         This adds the clipping rectangle to the damaged regions of the
@@ -160,7 +160,6 @@ class ColoredGeometry(Shape, Generic[geom]):
         self,
         geometry: Iterable[geom] | None = None,
         colors: Iterable[int] | None = None,
-        **kwargs: DataView[Any] | None,
     ):
         """Update the state of the Shape, marking a redraw as needed.
 
@@ -203,6 +202,23 @@ class FillableGeometry(ColoredGeometry[geom]):
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
+    def update(
+        self,
+        geometry: Iterable[geom] | None = None,
+        colors: Iterable[int] | None = None,
+        fill: bool | None = None,
+    ):
+        """Update the state of the Shape, marking a redraw as needed.
+
+        Parameters
+        ----------
+        geometry : Geometry[geom] | None
+            The sequence of geometries to render.
+        colors : Iterable[int] | None
+            The sequence of colors for each geometry.
+        fill : bool | None
+            Whether to fill the shape or to draw the outline.
+        """
 
 class Lines(ColoredGeometry[points]):
     """Render multiple colored line segments with line-width 1.
@@ -302,6 +318,15 @@ class RoundedRectangles(Rectangles):
         clip: rectangle | None = None,
     ): ...
     def __iter__(self) -> tuple[rectangle, int]: ...
+
+    def update(
+        self,
+        geometry = Iterable[rectangle] | None,
+        colors = Iterable[int] | None,
+        fill = bool | None,
+        radius = int | None
+    ) -> None: ...
+
 
 class Circles(FillableGeometry[point_length]):
     """Render multiple circles.
