@@ -54,7 +54,7 @@ class Extend[DataType](Geometry[DataType]):
 
 class ProductGeometry[DataType](Geometry[DataType]):
 
-    def __init__(self, geometry: tuple[Sequence, Sequence])
+    def __init__(self, geometry: tuple[Sequence, Sequence]) -> None: ...
 
 class Select[DataType](Geometry[DataType]):
 
