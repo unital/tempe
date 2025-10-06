@@ -79,6 +79,11 @@ class FillableGeometry(ColoredGeometry):
         super().__init__(geometry, colors, surface=surface, clip=clip)
         self.fill = fill
 
+    def update(self, geometry=None, colors=None, fill=None):
+        if fill is not None:
+            self.fill = fill
+        super().update(geometry=geometry, colors=colors)
+
 
 class Lines(ColoredGeometry):
     """Render multiple colored line segments with line-width 1.
@@ -317,10 +322,10 @@ class RoundedRectangles(Rectangles):
                 buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
                 buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
 
-    def update(self, geometry=None, colors=None, radius=None):
+    def update(self, geometry=None, colors=None, fill=None, radius=None):
         if radius is not None:
             self.radius = radius
-        super().update(geometry=geometry, colors=colors)
+        super().update(geometry=geometry, colors=colors, fill=fill)
 
 
 class Circles(FillableGeometry):
