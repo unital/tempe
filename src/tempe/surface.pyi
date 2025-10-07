@@ -27,7 +27,7 @@ import asyncio
 from array import array
 import framebuf
 from collections.abc import Iterable, Sequence
-from typing import Any
+from typing import Any, Final
 
 import tempe
 from .display import Display
@@ -50,17 +50,18 @@ from .markers import Marker, Markers, Points
 from .bitmaps import Bitmaps, ColoredBitmaps
 from .text import Text, HALIGN, VALIGN, LEFT, TOP
 from .util import contains
+from .colors import color, rgb565
 
 
 
 #: The default set of layers used by Surfaces, in order from back to front.
-BACKGROUND: str = "BACKGROUND"
-UNDERLAY: str = "UNDERLAY"
-IMAGE: str = "IMAGE"
-DRAWING: str = "DRAWING"
-OVERLAY: str = "OVERLAY"
+BACKGROUND: Final[str] = "BACKGROUND"
+UNDERLAY: Final[str] = "UNDERLAY"
+IMAGE: Final[str] = "IMAGE"
+DRAWING: Final[str] = "DRAWING"
+OVERLAY: Final[str] = "OVERLAY"
 
-LAYERS: tuple[str, ...] = (BACKGROUND, UNDERLAY, IMAGE, DRAWING, OVERLAY)
+LAYERS: Final[tuple[str, ...]] = (BACKGROUND, UNDERLAY, IMAGE, DRAWING, OVERLAY)
 
 class Surface:
     """A layered space for drawing shapes.
@@ -140,7 +141,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[array] | Sequence[int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Polygons:
@@ -152,7 +153,7 @@ class Surface:
             The layer that the Polygons object is added to.
         geometry : Geometry[array] | Sequence[int]
             The geometry to use, or if a sequence of ints, a single polygon.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each polygon, or a color to use for all polygons.
         fill : bool
             Whether to fill the polygon or draw a one-pixel-wide outline.
@@ -164,6 +165,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[array] | Sequence[int],
+        colors: Iterable[rgb565] | color,
         clip: tuple[int, int, int, int] | None = None,
     ) -> PolyLines:
         """Create a new PolyLines object and add it to the layer.
@@ -174,7 +176,7 @@ class Surface:
             The layer that the PolyLines object is added to.
         geometry : Geometry[array] | Sequence[int]
             The geometry to use, or if a sequence of ints, a single polyline.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each polyline, or a color to use for all polylines.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the polylines.
@@ -184,7 +186,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[rectangle] | Sequence[rectangle] | rectangle,
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Rectangles:
@@ -208,7 +210,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         radius: int = 4,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
@@ -221,7 +223,7 @@ class Surface:
             The layer that the RoundedRectangles object is added to.
         geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
             The geometry to use, or if a tuple of 4 ints, a single rectangle.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each rectangle, or a color to use for all rectangles.
         radius : int
             The default corner radius.  The actual radius used for a particular
@@ -237,7 +239,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Circles:
@@ -249,7 +251,7 @@ class Surface:
             The layer that the Circles object is added to.
         geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
             The geometry to use, or if a tuple of 3 ints, a single circle.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each circle, or a color to use for all circles.
         fill : bool
             Whether to fill the polygon or draw a one-pixel-wide outline.
@@ -261,7 +263,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         fill: bool = True,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Ellipses:
@@ -273,7 +275,7 @@ class Surface:
             The layer that the Ellipses object is added to.
         geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int]
             The geometry to use, or if a tuple of 4 ints, a single ellipse.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each ellipse, or a color to use for all ellipses.
         fill : bool
             Whether to fill the polygon or draw a one-pixel-wide outline.
@@ -285,7 +287,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Lines:
         """Create a new Lines object and add it to the layer.
@@ -296,7 +298,7 @@ class Surface:
             The layer that the Lines object is added to.
         geometry : Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int]
             The geometry to use, or if a tuple of 4 ints, a single line.
-        colors : Iterable[int] | int | str
+        colors : Iterable[rgb565] | color
             The colors of each line, or a color to use for all lines.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
@@ -306,7 +308,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         clip: tuple[int, int, int, int] | None = None,
     ) -> VLines:
         """Create a new VLines object and add it to the layer.
@@ -317,7 +319,7 @@ class Surface:
             The layer that the VLines object is added to.
         geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int, int]
             The geometry to use, or if a tuple of 3 ints, a single vertical line.
-        colors : Iterable[int] | int
+        colors : Iterable[rgb565] | color
             The colors of each line, or a color to use for all lines.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
@@ -327,7 +329,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         clip: tuple[int, int, int, int] | None = None,
     ) -> HLines:
         """Create a new HLines object and add it to the layer.
@@ -338,7 +340,7 @@ class Surface:
             The layer that the HLines object is added to.
         geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
             The geometry to use, or if a tuple of 3 ints, a single vertical line.
-        colors : Iterable[int] | int
+        colors : Iterable[rgb565] | color
             The colors of each line, or a color to use for all lines.
         clip :  tuple[int, int, int, int] | None
             A clipping rectangle for the lines.
@@ -348,7 +350,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int]] | tuple[int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Points:
@@ -360,7 +362,7 @@ class Surface:
             The layer that the Points object is added to.
         geometry : Geometry[tuple[int, int]] | tuple[int, int]
             The geometry to use, or if a tuple of 2 ints, a single point.
-        colors : Iterable[int] | int
+        colors : Iterable[rgb565] | color
             The colors of each marker, or a color to use for all markers.
         markers : Iterable[Any] | int | str | framebuf.FrameBuffer
             The type of each marker, or a single marker to use for all points.
@@ -372,7 +374,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int, int]] | tuple[int, int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         markers: Iterable[Any] | int | str | framebuf.FrameBuffer,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Markers:
@@ -386,7 +388,7 @@ class Surface:
             The layer that the Markers object is added to.
         geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
             The geometry to use, or if a tuple of 3 ints, a single point and radius.
-        colors : Iterable[int] | int
+        colors : Iterable[rgb565] | color
             The colors of each marker, or a color to use for all markers.
         markers : Iterable[Any] | int | str | framebuf.FrameBuffer
             The type of each marker, or a single marker to use for all points.
@@ -398,7 +400,7 @@ class Surface:
         self,
         layer: Any,
         geometry: Geometry[tuple[int, int]] | tuple[int, int],
-        colors: Iterable[int] | int | str,
+        colors: Iterable[rgb565] | color,
         text: Iterable[str] | str,
         alignments: Iterable[tuple[HALIGN, VALIGN]] | tuple[HALIGN, VALIGN] = (LEFT, TOP),
         font: AbstractFont | None = None,
@@ -413,7 +415,7 @@ class Surface:
             The layer that the Text object is added to.
         geometry : Geometry[tuple[int, int]] | tuple[int, int]
             The geometry to use, or if a tuple of 2 ints, a single point.
-        colors : Iterable[int] | int
+        colors : Iterable[rgb565] | color
             The colors of each string, or a color to use for all strings.
         text : Iterable[str] | str
             The strings to display at each point, or a single string to use at all points.
@@ -435,9 +437,9 @@ class Surface:
         layer: Any,
         geometry: Geometry[tuple[int, int, int, int]] | tuple[int, int, int, int],
         bitmaps: Iterable[framebuf.FrameBuffer] | framebuf.Framebuffer,
-        colors: Iterable[int] | int | str | None,
+        colors: Iterable[rgb565] | color | None,
         key: int = -1,
-        palette: array | None = None,
+        palette: array[rgb565] | None = None,
         clip: tuple[int, int, int, int] | None = None,
     ) -> Bitmaps | ColoredBitmaps:
         """Create a new Bitmaps or ColoredBitmaps object and add it to the layer.
@@ -450,7 +452,7 @@ class Surface:
             The geometry to use, or if a tuple of 4 ints, a single rectangle.
         bitmaps : Iterable[framebuf.FrameBuffer] | framebuf.Framebuffer
             The colors of each string, or a color to use for all strings.
-        colors : Iterable[int] | int | None
+        colors : Iterable[rgb565] | color | None
             If None, the bitmaps are assumed to be either RGB565 bitmaps, or
             a palette must be provided, otherwise the bitmap is assumed to be
             a 1-bit bitmap and this parameter provides the colors of each bitmap,
@@ -459,7 +461,7 @@ class Surface:
             For bitmaps that are not using ``colors``, an RGB565 color that
             will be considered transparent when rendering the bitmap.  If the
             value is -1, there is no transparent color.
-        palette : array | None
+        palette : array[rgb565] | None
             If ``colors`` is None and the bitmaps aren't RGB565 format, this is
             an array containing RGB565 color values for each color value in the
             given format.
@@ -473,6 +475,6 @@ class Surface:
         coords: int | None,
     ) -> Geometry[T]: ...
 
-    def _check_colors[T](self, colors: T | int | str) -> Iterable[int] | T: ...
+    def _check_colors(self, colors: Iterable[rgb565] | color) -> Iterable[rgb565]: ...
 
 __all__ = ["Surface"]

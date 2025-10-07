@@ -19,5 +19,6 @@ It may be possible to do slightly better, as "gray" and "grey" map to
 different entries in the current scheme, and it includes the basic web
 colors which have their own module.
 """
+from .types import rgb565
 
-def color(name: str) -> int: ...
+def color(name: str) -> rgb565: ...

@@ -2,10 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
-"""Named web color lookup
+"""Named web color lookup."""
 
-This uses a hashing approach, so will give false positives.
-"""
 import array
 
 # This module works by using a perfect hash of the names of the extended
