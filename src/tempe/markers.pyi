@@ -12,6 +12,7 @@ from typing import Any
 import tempe
 from .geometry import Geometry
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point_length, point
+from .colors import rgb565
 
 class Marker:
     """Enum for marker types"""
@@ -33,7 +34,7 @@ class Markers(ColoredGeometry[point_length]):
     ----------
     geometry : Iterable[geom] | None
         The sequence of geometries to render.
-    colors : Iterable[int] | None
+    colors : Iterable[rgb565] | None
         The sequence of colors for each geometry.
     markers : Iterable[Any] | None
         The sequence of colors for each geometry.
@@ -47,7 +48,7 @@ class Markers(ColoredGeometry[point_length]):
     def __init__(
         self,
         geometry: Geometry[point_length],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         markers: Iterable[Any],
         *,
         surface: "tempe.surface.Surface | None" = None,
@@ -56,7 +57,7 @@ class Markers(ColoredGeometry[point_length]):
     def update(
         self,
         geometry: Iterable[point_length] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
         markers: Iterable[Any] | None = None,
         **kwargs: Any,
     ):
@@ -66,7 +67,7 @@ class Markers(ColoredGeometry[point_length]):
         ----------
         geometry : Iterable[geom] | None
             The sequence of geometries to render.
-        colors : Iterable[int] | None
+        colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         markers : Iterable[Any] | None
             The sequence of colors for each geometry.
@@ -81,7 +82,7 @@ class Points(ColoredGeometry[point]):
     ----------
     geometry : Iterable[geom] | None
         The sequence of geometries to render.
-    colors : Iterable[int] | None
+    colors : Iterable[rgb565] | None
         The sequence of colors for each geometry.
     markers : Iterable[Any] | None
         The sequence of colors for each geometry.
@@ -95,7 +96,7 @@ class Points(ColoredGeometry[point]):
     def __init__(
         self,
         geometry: Geometry[point],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         markers: Iterable[Any],
         *,
         surface: Surface | None = None,
@@ -104,7 +105,7 @@ class Points(ColoredGeometry[point]):
     def update(
         self,
         geometry: Iterable[point] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
         markers: Iterable[Any] | None = None,
         **kwargs: Any,
     ):
@@ -114,7 +115,7 @@ class Points(ColoredGeometry[point]):
         ----------
         geometry : Iterable[geom] | None
             The sequence of geometries to render.
-        colors : Iterable[int] | None
+        colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         markers : Iterable[Any] | None
             The sequence of colors for each geometry.

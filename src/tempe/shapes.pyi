@@ -60,10 +60,12 @@ from array import array
 import asyncio
 from collections.abc import Sequence, Iterable, Generator
 from framebuf import FrameBuffer
-from typing import Any, Generic, TypeVar, TypeAlias
+from typing import Any, Generic, TypeVar, TypeAlias, Final
 
+import tempe.surface
 from .geometry import Geometry
 from .data_view import DataView
+from .colors import rgb565
 
 geom = TypeVar("geom", bound=Sequence[int])
 type point = tuple[int, int]
@@ -74,7 +76,7 @@ type rectangle = tuple[int, int, int, int]
 type ellipse = tuple[int, int, int, int]
 
 #: Transparent color when blitting bitmaps.
-BLIT_KEY_RGB565 = 0b0000000000100000
+BLIT_KEY_RGB565: Final[rgb565] = 0b0000000000100000
 
 class Shape:
     """ABC for drawable objects.
@@ -139,7 +141,7 @@ class ColoredGeometry[geom](Shape):
     ----------
     geometry : Iterable[geom]
         The sequence of geometries to render.
-    colors : Iterable[int]
+    colors : Iterable[rgb565]
         The sequence of colors for each geometry.
     surface : Surface | None
         The surface which this shape is associated with.
@@ -151,7 +153,7 @@ class ColoredGeometry[geom](Shape):
     def __init__(
         self,
         geometry: Iterable[geom],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
@@ -159,7 +161,7 @@ class ColoredGeometry[geom](Shape):
     def update(
         self,
         geometry: Iterable[geom] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
     ):
         """Update the state of the Shape, marking a redraw as needed.
 
@@ -167,7 +169,7 @@ class ColoredGeometry[geom](Shape):
         ----------
         geometry : Geometry[geom] | None
             The sequence of geometries to render.
-        colors : Iterable[int] | None
+        colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         """
 
@@ -182,7 +184,7 @@ class FillableGeometry[geom](ColoredGeometry[geom]):
     ----------
     geometry : Iterable[geom]
         The sequence of geometries to render.
-    colors : Iterable[int]
+    colors : Iterable[rgb565]
         The sequence of colors for each geometry.
     fill : bool
         Whether to fill the shape or to draw the outline.
@@ -196,7 +198,7 @@ class FillableGeometry[geom](ColoredGeometry[geom]):
     def __init__(
         self,
         geometry: Iterable[geom],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         fill: bool = True,
         surface: "tempe.surface.Surface | None" = None,
@@ -205,7 +207,7 @@ class FillableGeometry[geom](ColoredGeometry[geom]):
     def update(
         self,
         geometry: Iterable[geom] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
         fill: bool | None = None,
     ):
         """Update the state of the Shape, marking a redraw as needed.
@@ -214,7 +216,7 @@ class FillableGeometry[geom](ColoredGeometry[geom]):
         ----------
         geometry : Geometry[geom] | None
             The sequence of geometries to render.
-        colors : Iterable[int] | None
+        colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         fill : bool | None
             Whether to fill the shape or to draw the outline.
@@ -229,7 +231,7 @@ class Lines(ColoredGeometry[points]):
     def __init__(
         self,
         geometry: Iterable[points],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
@@ -245,7 +247,7 @@ class HLines(ColoredGeometry[point_length]):
     def __init__(
         self,
         geometry: Iterable[point_length],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
@@ -261,7 +263,7 @@ class VLines(ColoredGeometry[point_length]):
     def __init__(
         self,
         geometry: Iterable[point_length],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
@@ -293,7 +295,7 @@ class Rectangles(FillableGeometry[rectangle]):
     def __init__(
         self,
         geometry: Iterable[rectangle],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         fill: bool = True,
         surface: "tempe.surface.Surface | None" = None,
@@ -310,7 +312,7 @@ class RoundedRectangles(Rectangles):
     def __init__(
         self,
         geometry: Iterable[rectangle],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         radius: int = 4,
         fill: bool = True,
@@ -322,7 +324,7 @@ class RoundedRectangles(Rectangles):
     def update(
         self,
         geometry = Iterable[rectangle] | None,
-        colors = Iterable[int] | None,
+        colors = Iterable[rgb565] | None,
         fill = bool | None,
         radius = int | None
     ) -> None:
@@ -332,7 +334,7 @@ class RoundedRectangles(Rectangles):
         ----------
         geometry : Geometry[geom] | None
             The sequence of geometries to render.
-        colors : Iterable[int] | None
+        colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         fill : bool | None
             Whether to fill the shape or to draw the outline.
@@ -350,7 +352,7 @@ class Circles(FillableGeometry[point_length]):
     def __init__(
         self,
         geometry: Iterable[point_length],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         fill: bool = True,
         surface: "tempe.surface.Surface | None" = None,
@@ -367,7 +369,7 @@ class Ellipses(FillableGeometry[ellipse]):
     def __init__(
         self,
         geometry: Iterable[ellipse],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         fill: bool = True,
         surface: "tempe.surface.Surface | None" = None,

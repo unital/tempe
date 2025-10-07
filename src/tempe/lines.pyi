@@ -23,6 +23,7 @@ from math import sqrt
 from typing import TypeAlias
 
 from .shapes import ColoredGeometry, point_array, rectangle
+from .colors import rgb565
 
 points_widths: TypeAlias = tuple[int, int, int, int, int]
 
@@ -40,7 +41,7 @@ class WideLines(ColoredGeometry[points_widths]):
     ----------
     geometry : Iterable[geom]
         The sequence of geometries to render.
-    colors : Iterable[int]
+    colors : Iterable[rgb565]
         The sequence of colors for each geometry.
     round : bool
         Whether to round the ends with circles, or to leave as a flat end.
@@ -54,7 +55,7 @@ class WideLines(ColoredGeometry[points_widths]):
     def __init__(
         self,
         geometry: Iterable[points_widths],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         *,
         round: bool = True,
         surface: "tempe.surface.Surface | None" = None,

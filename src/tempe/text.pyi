@@ -11,6 +11,7 @@ from .data_view import Repeat
 from .geometry import Geometry
 from .font import AbstractFont
 from .shapes import ColoredGeometry, BLIT_KEY_RGB565, rectangle, point
+from .colors import rgb565
 
 LEFT: Literal[0] = 0
 RIGHT: Literal[1] = 1
@@ -27,7 +28,7 @@ class Text(ColoredGeometry[point]):
     def __init__(
         self,
         geometry: Iterable[point],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         texts: Iterable[str],
         alignment: Iterable[tuple[HALIGN, VALIGN]] = Repeat((LEFT, TOP)),
         *,
@@ -41,7 +42,7 @@ class Text(ColoredGeometry[point]):
     def update(
         self,
         geometry: Iterable[point] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
         texts: Iterable[str] | None = None,
         alignment: Iterable[tuple[HALIGN, VALIGN]] | None = None,
         **kwargs: Any,

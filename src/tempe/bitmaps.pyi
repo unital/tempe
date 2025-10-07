@@ -9,8 +9,9 @@ from collections.abc import Sequence, Iterable
 import framebuf
 from typing import Any
 
-import tempe
+import tempe.surface
 from .shapes import ColoredGeometry, Shape, BLIT_KEY_RGB565, point, rectangle
+from .colors import rgb565
 
 class Bitmaps(Shape):
     """Draw framebuffer bitmaps at points"""
@@ -21,7 +22,7 @@ class Bitmaps(Shape):
         buffers: Iterable[framebuf.FrameBuffer],
         *,
         key: int | None = None,
-        palette: Sequence[int] | None = None,
+        palette: Sequence[rgb565] | None = None,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
@@ -39,7 +40,7 @@ class ColoredBitmaps(ColoredGeometry[point]):
     def __init__(
         self,
         geometry: Iterable[point],
-        colors: Iterable[int],
+        colors: Iterable[rgb565],
         buffers: Iterable[framebuf.FrameBuffer],
         *,
         surface: "tempe.surface.Surface | None" = None,
@@ -48,7 +49,7 @@ class ColoredBitmaps(ColoredGeometry[point]):
     def update(
         self,
         geometry: Iterable[point] | None = None,
-        colors: Iterable[int] | None = None,
+        colors: Iterable[rgb565] | None = None,
         buffers: Iterable[framebuf.FrameBuffer] | None = None,
         **kwargs: Any,
     ): ...
