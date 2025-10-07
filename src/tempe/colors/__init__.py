@@ -23,21 +23,21 @@ from .basic import (
     white,
     yellow,
 )
-from .convert import from_str, rgb444_to_rgb565, rgb565
+from .convert import from_str, rgb444_to_rgb565, rgb_to_rgb565, normalize_color
 
-grey_0 = 0x0000
-grey_1 = rgb444_to_rgb565(0x1, 0x1, 0x1)
-grey_2 = rgb444_to_rgb565(0x2, 0x2, 0x2)
-grey_3 = rgb444_to_rgb565(0x3, 0x3, 0x3)
-grey_4 = rgb444_to_rgb565(0x4, 0x4, 0x4)
-grey_5 = rgb444_to_rgb565(0x5, 0x5, 0x5)
-grey_6 = rgb444_to_rgb565(0x6, 0x6, 0x6)
-grey_7 = rgb444_to_rgb565(0x7, 0x7, 0x7)
-grey_8 = rgb444_to_rgb565(0x8, 0x8, 0x8)
-grey_9 = rgb444_to_rgb565(0x9, 0x9, 0x9)
-grey_a = rgb444_to_rgb565(0xA, 0xA, 0xA)
-grey_b = rgb444_to_rgb565(0xB, 0xB, 0xB)
-grey_c = rgb444_to_rgb565(0xC, 0xC, 0xC)
-grey_d = rgb444_to_rgb565(0xD, 0xD, 0xD)
-grey_e = rgb444_to_rgb565(0xE, 0xE, 0xE)
-grey_f = rgb444_to_rgb565(0xF, 0xF, 0xF)
+grey_0 = const(0x0000)
+grey_1 = const(0x8210)
+grey_2 = const(0x0421)
+grey_3 = const(0x8631)
+grey_4 = const(0x0842)
+grey_5 = const(0x8a52)
+grey_6 = const(0x0c63)
+grey_7 = const(0x8e73)
+grey_8 = const(0x1084)
+grey_9 = const(0x9294)
+grey_a = const(0x14a5)
+grey_b = const(0x96b5)
+grey_c = const(0x18c6)
+grey_d = const(0x9ad6)
+grey_e = const(0x1ce7)
+grey_f = const(0x9ef7)

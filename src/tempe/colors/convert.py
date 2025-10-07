@@ -4,8 +4,21 @@
 
 """Color conversion routines."""
 
+def normalize_color(color):
+    if isinstance(color, int):
+        return color
+    elif isinstance(color, str):
+        return from_str(color)
+    elif isinstance(color, tuple) and len(color) == 3:
+        if all(0 < x < 1 for x in color):
+            return rgb_to_rgb565(*color)
+        else:
+            return rgb24_to_rgb565(*color)
+    else:
+        raise ValueError(f"Unknown color {color!r}")
 
-def rgb_to_rgb565(colors):
+
+def rgb_sequence_to_rgb565(colors):
     rgb565_colors = []
     for color in colors:
         r, g, b = color
@@ -30,7 +43,7 @@ def rgb24_to_rgb565(r, g, b, big_endian=True):
         return bytes
 
 
-def rgb565(r, g, b, big_endian=True):
+def rgb_to_rgb565(r, g, b, big_endian=True):
     bytes = (
         (int(round(r * 0x1F)) << 11)
         | (int(round(g * 0x3F)) << 5)

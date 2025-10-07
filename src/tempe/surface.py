@@ -265,12 +265,10 @@ class Surface:
         return geometry
 
     def _check_colors(self, colors):
-        if isinstance(colors, str):
-            from .colors import from_str
+        if isinstance(colors, (str, int, tuple)):
+            from .colors import normalize_color
 
-            return Repeat(from_str(colors))
-        elif isinstance(colors, int):
-            return Repeat(colors)
+            return Repeat(normalize_color(colors))
         else:
             return colors
 
