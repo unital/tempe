@@ -49,7 +49,7 @@ class Text(ColoredGeometry):
             line_height = 10 + self.line_spacing
             for geometry, color, text, alignment in self:
                 px = geometry[0] - x
-                py = geometry[1] - y
+                py = geometry[1] - y + 1
                 halign, valign = alignment
                 lines = text.splitlines()
                 text_height = len(lines) * line_height - self.line_spacing
@@ -113,7 +113,7 @@ class Text(ColoredGeometry):
                     if py > h:
                         break
 
-    def update(self, geometry=None, colors=None, texts=None, alignments=None):
+    def update(self, geometry=None, colors=None, texts=None, alignments=None, font=None):
         if texts is not None or alignments is not None:
             if self.clip is None:
                 # invalidate old text bounds
@@ -125,6 +125,8 @@ class Text(ColoredGeometry):
                 self.texts = texts
             if alignments is not None:
                 self.alignments = alignments
+            if font is not None:
+                self.font = font
             # bounds are no longer valid
             self._bounds = None
         super().update(geometry=geometry, colors=colors)
@@ -135,7 +137,7 @@ class Text(ColoredGeometry):
         max_y = -0x7FFF
         min_y = 0x7FFF
         if self.font is None:
-            line_height = 8 + self.line_spacing
+            line_height = 10 + self.line_spacing
             for geometry, text, alignments in zip(self.geometry, self.texts, self.alignments):
                 if not text:
                     continue
@@ -172,8 +174,8 @@ class Text(ColoredGeometry):
                     max_x = max(max_x, geometry[0])
                     min_x = min(min_x, geometry[0] - width)
                 elif halign == CENTER:
-                    max_x = max(max_x, geometry[0] + width // 2)
-                    min_x = min(min_x, geometry[0] - width // 2)
+                    max_x = max(max_x, geometry[0] + width // 2 + 1)
+                    min_x = min(min_x, geometry[0] - width // 2 - 1)
                 else:
                     max_x = max(max_x, geometry[0] + width)
                     min_x = min(min_x, geometry[0])
@@ -181,8 +183,8 @@ class Text(ColoredGeometry):
                     max_y = max(max_y, geometry[1])
                     min_y = min(min_y, geometry[1] - height)
                 elif valign == CENTER:
-                    max_y = max(max_y, geometry[1] + height // 2)
-                    min_y = min(min_y, geometry[1] - height // 2)
+                    max_y = max(max_y, geometry[1] + height // 2 + 1)
+                    min_y = min(min_y, geometry[1] - height // 2 - 1)
                 else:
                     max_y = max(max_y, geometry[1] + height)
                     min_y = min(min_y, geometry[1])
