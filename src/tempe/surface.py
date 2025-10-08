@@ -106,6 +106,10 @@ class Surface:
     def clear(self, layer):
         """Clear all shapes from a layer."""
         for shape in self.layers[layer]:
+            if shape.clip is not None:
+                self.damage(shape.clip)
+            elif shape._bounds is not None:
+                self.damage(shape._bounds)
             shape.surface = None
         self.layers[layer] = []
 
@@ -122,6 +126,10 @@ class Surface:
         """Remove a shape from a layer of the drawing."""
         self.layers[layer].remove(shape)
         shape.update()
+        if shape.clip is not None:
+            self.damage(shape.clip)
+        elif shape._bounds is not None:
+            self.damage(shape._bounds)
         shape.surface = None
 
     def polygons(self, layer, geometry, colors, fill=True, clip=None):

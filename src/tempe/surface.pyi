@@ -86,6 +86,10 @@ class Surface:
         at the end of a ``refresh`` call.
     """
 
+    refresh_needed: asyncio.Event
+    layers: dict[str, list[Shape]]
+    _damage: list[rectangle]
+
     def __init__(self): ...
     def refresh(self, display: Display, working_buffer: bytearray) -> None:
         """Refresh the surface's appearance in the display.
