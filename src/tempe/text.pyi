@@ -30,7 +30,7 @@ class Text(ColoredGeometry[point]):
         geometry: Iterable[point],
         colors: Iterable[rgb565],
         texts: Iterable[str],
-        alignment: Iterable[tuple[HALIGN, VALIGN]] = Repeat((LEFT, TOP)),
+        alignments: Iterable[tuple[HALIGN, VALIGN]] = Repeat((LEFT, TOP)),
         *,
         bold: bool = False,
         font: AbstractFont | None = None,
@@ -44,6 +44,7 @@ class Text(ColoredGeometry[point]):
         geometry: Iterable[point] | None = None,
         colors: Iterable[rgb565] | None = None,
         texts: Iterable[str] | None = None,
-        alignment: Iterable[tuple[HALIGN, VALIGN]] | None = None,
+        alignments: Iterable[tuple[HALIGN, VALIGN]] | None = None,
+        font: AbstractFont | None = None,
         **kwargs: Any,
     ): ...

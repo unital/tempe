@@ -343,7 +343,7 @@ surface.vlines(
 )
 surface.text(
     OVERLAY,
-    ColumnGeometry([air_quality_labels, Repeat(y1 + 8)]),
+    ColumnGeometry([air_quality_labels, Repeat(y1 + 6)]),
     Repeat(colors.grey_a),
     [str(t) for t in label_air_quality],
     (CENTER, TOP),

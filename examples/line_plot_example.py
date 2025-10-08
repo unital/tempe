@@ -141,7 +141,7 @@ surface.vlines(
 )
 surface.text(
     OVERLAY,
-    ColumnGeometry([time_labels, Repeat(y1 + 8)]),
+    ColumnGeometry([time_labels, Repeat(y1 + 6)]),
     colors.grey_a,
     [f"{t % 24}:00" for t in label_times],
     (CENTER, TOP),
