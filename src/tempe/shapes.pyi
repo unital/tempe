@@ -90,6 +90,10 @@ class Shape:
         this region will not show on the display.
     """
 
+    clip: rectangle | None
+    surface: "tempe.surface.Surface | None"
+    _bounds: rectangle | None
+
     def __init__(
         self,
         surface: "tempe.surface.Surface | None" = None,

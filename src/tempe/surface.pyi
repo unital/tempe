@@ -78,13 +78,17 @@ class Surface:
     Actual drawing is carried out by the ``draw`` method, but most users of
     Surface objects should call ``refresh``, which handles managing damaged
     regions and clipping to minimise the actual work that's needed.
-
-    Attributes
-    ----------
-    refresh_needed : asyncio.Event
-        An Event that is set when the surface is damaged, and cleared
-        at the end of a ``refresh`` call.
     """
+
+    #: An Event that is set when the surface is damaged, and cleared
+    #: at the end of a ``refresh`` call.
+    refresh_needed: asyncio.Event
+
+    #: The layers and the shapes they contain.
+    layers: dict[str, list[Shape]]
+
+    # Internal attributes
+    _damage: list[rectangle]
 
     def __init__(self): ...
     def refresh(self, display: Display, working_buffer: bytearray) -> None:
