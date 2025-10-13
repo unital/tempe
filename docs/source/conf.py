@@ -29,6 +29,11 @@ extensions = [
 templates_path = ["_templates"]
 exclude_patterns = []
 
+# -- Python options ----------------------------------------------------------
+
+add_module_names = False
+python_use_unqualified_type_names = True
+
 # -- Options for intersphinx -------------------------------------------------
 
 intersphinx_mapping = {
@@ -88,7 +93,6 @@ autoapi_file_patterns = ["*.pyi", "*.py"]
 autoapi_options = [
     "members",
     "undoc-members",
-    "private-members",
     "show-inheritance",
     "show-module-summary",
     "imported-members",
