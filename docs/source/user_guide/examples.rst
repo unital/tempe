@@ -7,7 +7,7 @@ involved in working with Tempe as a library.  Most of the code was written to
 work on Raspberry Pi Picos with Pimoroni 320x240 ST7789-based SPI displays.
 Users have had success with other ST7789-based displays, and in principle any
 display which allows blitting a 16-bit framebuffer into a windowed region of
-memory should be able to work.
+memory should work.
 
 Support Modules
 ===============
@@ -18,7 +18,7 @@ Extra Fonts and Data Modules
 Some examples use additional modules to provide fonts and data that are not installed
 by the usual `mip` install.  You will either need to install the directories
 `example_fonts` and `data` on your device manually, or use the `ci.deploy_to_device`
-command as discussed in Development Installation.
+command as discussed in Installation, Development Installation.
 
 The `tempe_config` Module
 -------------------------
@@ -53,7 +53,7 @@ Ultimo documentation.
 Running the Examples
 ====================
 
-Once installed the examples can be run in a number of ways.
+Once installed, the examples can be run in a number of ways:
 
 Running using your IDE
 ----------------------
