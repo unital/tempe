@@ -4,7 +4,7 @@ Introduction
 
 .. currentmodule:: tempe
 
-Tempe is a pure-Micropython graphics system designed to be make using the
+Tempe is a pure-Micropython graphics system designed to make using the
 full capabilities of display devices more accessible, particularly on
 memory-constrained microcontrollers.  The aim is to allow data scientists,
 user interface designers and data visualization specialists to be able to
@@ -51,7 +51,7 @@ shouldn't attempt to draw themselves at all.
 
 At its core, Tempe solves this problem: it provides a high-level drawing API
 that lets users concentrate on what they want to draw and not how those drawing
-commands are translated to bytes in a framebuffer or transmitted to the screen.
+commands are translated into bytes in a framebuffer or transmitted to the screen.
 It handles partial re-draws of the display with automatic clipping of shapes
 which are outside of the drawing area, and where memory is constrained it can
 automatically break the updates into multiple smaller updates that fit into
@@ -62,7 +62,7 @@ specifying the geometry and aesthetics of the graphical objects being drawn.
 
 It does this using Micropython only, meaning users do not need to cross-compile
 C code or create a custom firmware: it can be installed using standard mechanisms
-lime ``mip`` by users who are comfortable working with Micropython.
+like ``mip`` by users who are comfortable working with Micropython.
 
 What Tempe Isn't
 ================
