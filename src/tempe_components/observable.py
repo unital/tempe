@@ -12,7 +12,6 @@ def is_undefined(obj):
 class Updatable:
 
     _obs_fields = {}
-    strict = False
 
     def __init__(self, **kwargs):
         # Hack to work around lack of PEP 487 support.

@@ -45,6 +45,10 @@ class Field[Accepts, Stores]:
 
     stored_name: str
 
+    adapter: Callable[[Accepts], Stores] | None
+
+    cls: type[Stores] | None
+
     @overload
     def __init__(
             self,
