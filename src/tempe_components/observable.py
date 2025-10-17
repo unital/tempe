@@ -74,13 +74,14 @@ class Observable(Updatable):
         for name, value in update.items():
             if name in self._update_tasks:
                 self._update_tasks[name].cancel()
+                del self._update_tasks[name]
 
         super().update(update)
 
         for name in update:
             value = self.__dict__[name]
             if isinstance(value, Observable):
-                self._update_tasks[name] = asyncio.create_task(aobserve(value, self._attr_updated))
+                self._update_tasks[name] = observe(value, self._attr_updated)
 
         self.updated.set()
         self.updated.clear()
@@ -88,8 +89,15 @@ class Observable(Updatable):
 
 async def aobserve(observable, callback):
     while True:
-        await observable.updated.wait()
+        try:
+            await observable.updated.wait()
+        except asyncio.CancelledError:
+            break
         callback(observable)
+
+
+def observe(observable, callback):
+    return asyncio.create_task(aobserve(observable, callback))
 
 
 class Field:

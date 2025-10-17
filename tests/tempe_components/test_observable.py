@@ -5,7 +5,7 @@
 import asyncio
 import unittest
 
-from tempe_components.observable import Field, Observable, Updatable, field, undefined
+from tempe_components.observable import Field, Observable, Updatable, aobserve, observe, field, undefined
 
 
 class TestUpdatable(unittest.TestCase):
@@ -181,7 +181,6 @@ class TestObservable(unittest.TestCase):
         finally:
             data.close()
 
-
     def test_remove_observable(self):
         sub_data = Observable(test=0)
         data = Observable(sub_data=sub_data)
@@ -210,6 +209,73 @@ class TestObservable(unittest.TestCase):
         finally:
             sub_data.close()
             data.close()
+
+
+class TestObservers(unittest.TestCase):
+
+    async def update_waiter(self, data, callback):
+        await data.updated.wait()
+        callback(data)
+
+    async def update_later(self, data, update, delay=0.01):
+        await asyncio.sleep(delay)
+        data.update(update)
+
+    async def cancel_task_later(self, task, delay=1.0):
+        await asyncio.sleep(delay)
+        task.cancel()
+
+    def test_observe(self):
+        data = Observable()
+
+        result = []
+
+        def test_changed(data):
+            print("----->", data.test)
+            result.append(data.test)
+
+        obs = observe(data, test_changed)
+
+        async def test():
+            await asyncio.gather(
+                asyncio.wait_for(obs, 10),
+                self.update_later(data, {'test': 1}, 0.01),
+                self.update_later(data, {'test': 2}, 0.05),
+                self.cancel_task_later(obs, 0.1)
+            )
+
+        try:
+            asyncio.run(test())
+        finally:
+            data.close()
+
+        self.assertEqual(result, [1, 2])
+
+    def test_aobserve(self):
+        data = Observable()
+
+        result = []
+
+        def test_changed(data):
+            print("----->", data.test)
+            result.append(data.test)
+
+        obs = asyncio.create_task(aobserve(data, test_changed))
+
+        async def test():
+            await asyncio.gather(
+                asyncio.wait_for(obs, 10),
+                self.update_later(data, {'test': 1}, 0.01),
+                self.update_later(data, {'test': 2}, 0.05),
+                self.cancel_task_later(obs, 0.1)
+            )
+
+        try:
+            asyncio.run(test())
+        finally:
+            data.close()
+
+        self.assertEqual(result, [1, 2])
 
 
 class TestField(unittest.TestCase):
