@@ -15,11 +15,11 @@ def test():
     """Run unit tests in micropython"""
     print("Running Tests")
     failures = []
-    test_dir = Path("tests/tempe")
+    test_dir = Path("tests")
     os.environ["MICROPYPATH"] = "src:" + os.environ.get(
         "MICROPYPATH", ":examples:.frozen:~/.micropython/lib:/usr/lib/micropython"
     )
-    for path in sorted(test_dir.glob("test_*.py")):
+    for path in sorted(test_dir.glob("*/test_*.py")):
         print(path.name, "... ", end="", flush=True)
         result = run_test(path)
         if result:
