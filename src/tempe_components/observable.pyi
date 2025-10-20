@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-present Unital Software <info@unital.dev>
+#
+# SPDX-License-Identifier: MIT
+
 import asyncio
 from typing import Callable, Any, ClassVar, ParamSpec, dataclass_transform, overload
 
@@ -15,7 +19,6 @@ params = ParamSpec("params")
 class Updatable:
 
     _obs_fields: ClassVar[dict[str, Field]] = {}
-    strict: ClassVar[bool] = False
 
     def update(
         self,
@@ -39,7 +42,7 @@ async def aobserve(observable: Observable, callback: Callable[[Observable], None
 def observe(observable: Observable, callback: Callable[[Observable], None]) -> asyncio.Task: ...
 
 
-class Field[Accepts, Stores]:
+class Field[Accepts, Stores, Target: Updatable]:
 
     name: str
 
@@ -67,21 +70,21 @@ class Field[Accepts, Stores]:
             cls: type[Stores] | None = None,
         ) -> None: ...
 
-    def __set_name__(self, cls: type[Updatable], name: str) -> None: ...
+    def __set_name__(self, cls: type[Target], name: str) -> None: ...
 
     @overload
-    def __get__(self, obj: Updatable, cls: type[Updatable] | None = None) -> Stores: ...
+    def __get__(self, obj: Target, cls: type[Target] | None = None) -> Stores: ...
 
     @overload
-    def __get__(self, obj: None, cls: type[Updatable]) -> Stores: ...
+    def __get__(self, obj: None, cls: type[Target]) -> Stores: ...
 
-    def __set__(self, obj: Updatable, value: Accepts) -> None: ...
+    def __set__(self, obj: Target, value: Accepts) -> None: ...
 
-    def default_factory(self, obj: Updatable) -> Stores | Undefined: ...
+    def default_factory(self, obj: Target) -> Stores | Undefined: ...
 
-    def default(self, obj: Updatable) -> Stores | Undefined: ...
+    def default(self) -> Stores | Undefined: ...
 
-    def validator(self, obj: Updatable, value: Accepts) -> Stores: ...
+    def validator(self, obj: Target, value: Accepts) -> Stores: ...
 
 
 @overload
@@ -89,12 +92,12 @@ def field[Accepts, Stores](
         default: Stores,
         adapter: Callable[[Accepts], Stores] | None = None,
         cls: type[Stores] | None = None,
-    ) -> Field[Accepts, Stores]: ...
+    ) -> Stores: ...
 
 @overload
 def field[Accepts, Stores](
         default_factory: Callable[[], Stores] | None = None,
         adapter: Callable[[Accepts], Stores] | None = None,
         cls: type[Stores] | None = None,
-    ) -> Field[Accepts, Stores]: ...
+    ) -> Stores: ...
 
