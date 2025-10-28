@@ -4,11 +4,15 @@
 
 """Color conversion routines."""
 
+from typing import overload
 from collections.abc import Iterable
 from .types import color, rgb, rgb565
 
-
+@overload
 def normalize_color(color: color) -> rgb565: ...
+
+@overload
+def normalize_color(color: None) -> None: ...
 
 def rgb_sequence_to_rgb565(colors: Iterable[rgb]) -> list[rgb565]: ...
 

@@ -17,17 +17,20 @@ params = ParamSpec("params")
 
 @dataclass_transform(eq_default=False, field_specifiers=(Field, field,))
 class Updatable:
+    """A dataclass-like class that allows atomic updates of attributes."""
 
     _obs_fields: ClassVar[dict[str, Field]] = {}
 
     def update(
         self,
         update: dict[str, object] | None = None,
+        /,
         **kwargs: object,
     ) -> None: ...
 
 
 class Observable(Updatable):
+    """A dataclass-like class that fires an asyncio.Event when updated."""
 
     _obs_fields: ClassVar[dict[str, Field]] = {}
 
@@ -43,6 +46,7 @@ def observe(observable: Observable, callback: Callable[[Observable], None]) -> a
 
 
 class Field[Accepts, Stores, Target: Updatable]:
+    """A dataclass-like field that can validate and adapt values on setting."""
 
     name: str
 

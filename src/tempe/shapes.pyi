@@ -320,6 +320,7 @@ class RoundedRectangles(Rectangles):
         *,
         radius: int = 4,
         fill: bool = True,
+        fill_center: bool = True,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
@@ -330,6 +331,7 @@ class RoundedRectangles(Rectangles):
         geometry = Iterable[rectangle] | None,
         colors = Iterable[rgb565] | None,
         fill = bool | None,
+        fill_center: bool = True,
         radius = int | None
     ) -> None:
         """Update the state of the Shape, marking a redraw as needed.
@@ -342,6 +344,8 @@ class RoundedRectangles(Rectangles):
             The sequence of colors for each geometry.
         fill : bool | None
             Whether to fill the shape or to draw the outline.
+        fill : bool | None
+            Whether to fill the central rectangle (only applies when fill=True).
         radius  : int | None
             The corner radii for the rectangles.
         """
