@@ -26,17 +26,6 @@ class Label(Component):
     _anchor = (0, 0)
     _text_shape = None
 
-    @property
-    def text_color(self):
-        if self.style.text is None:
-            return None
-        else:
-            return self.style.text[self.state]
-
-    @property
-    def font(self):
-        return self.style.font
-
     def _update_text(self):
         if self.style.text is not None:
             text_color = self.style.text[self.state]
@@ -52,7 +41,7 @@ class Label(Component):
                 [text_color],
                 [self.text],
                 [(CENTER, CENTER)],
-                font=self.font,
+                font=self.style.font,
             )
             self.surface.add_shape(DRAWING, self._text_shape)
         else:
@@ -60,7 +49,7 @@ class Label(Component):
                 geometry=[self._anchor],
                 colors=[text_color],
                 texts=[self.text],
-                font=self.font,
+                font=self.style.font,
             )
 
 

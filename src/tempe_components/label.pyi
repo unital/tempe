@@ -16,17 +16,12 @@ label_style: Final[Style]
 
 
 class Label(Component):
+    """A Component which displays text."""
 
     text = Field("", cls=str)
 
     _anchor = (0, 0)
     _text_shape = None
-
-    @property
-    def text_color(self) -> rgb565: ...
-
-    @property
-    def font(self) -> AbstractFont: ...
 
     def _update_text(self) -> None: ...
 
