@@ -62,7 +62,7 @@ class Style(Observable):
 
     This object holds styling information, such as color selections for
     different parts of the component, font information, and box shape
-    paremeters.
+    parameters.
 
     Styles can have a parent style, and inherit non-specified values from
     that and will react to changes in their parent, signalling classes which
