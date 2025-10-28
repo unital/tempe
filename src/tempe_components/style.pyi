@@ -18,6 +18,7 @@ STATES: Final[tuple[State, ...]] = (ENABLED, DISABLED, ACTIVE)
 
 
 class StateColorField(Field[color, rgb565, StateColor]):
+    """A Field subclass for storing color information."""
 
     @overload
     def __init__(
@@ -38,8 +39,12 @@ class StateColorField(Field[color, rgb565, StateColor]):
     def default_factory(self, obj: StateColor) -> rgb565: ...
 
 
-
 class StateColor(Observable):
+    """Color information for different states of a UI component.
+
+    This object holds information about how a particular aspect of a component
+    changes color as the component's state changes.
+    """
 
     enabled = StateColorField()
     disabled = StateColorField()
@@ -53,11 +58,22 @@ class StateColor(Observable):
 
 
 class Style(Observable):
+    """Styling information for Ui components.
+
+    This object holds styling information, such as color selections for
+    different parts of the component, font information, and box shape
+    paremeters.
+
+    Styles can have a parent style, and inherit non-specified values from
+    that and will react to changes in their parent, signalling classes which
+    use them that they may have had values updated.
+    """
 
     parent: Style | None = None
 
     background: StateColor | None = None
     border: StateColor | None = None
+    shadow: StateColor | None = None
     radius: int = 0
     text: StateColor | None = None
     font: AbstractFont | None = None

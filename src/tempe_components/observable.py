@@ -82,7 +82,7 @@ class Observable(Updatable):
         super().update(update)
 
         for name in update:
-            value = self.__dict__[name]
+            value = getattr(self, name)
             if isinstance(value, Observable):
                 self._update_tasks[name] = observe(value, self._attr_updated)
 

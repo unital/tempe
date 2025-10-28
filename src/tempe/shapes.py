@@ -280,12 +280,14 @@ class RoundedRectangles(Rectangles):
     Geometry should produce x, y, w, h arrays.
     """
 
-    def __init__(self, geometry, colors, *, radius=4, fill=True, surface=None, clip=None):
+    def __init__(self, geometry, colors, *, radius=4, fill=True, fill_center=True, surface=None, clip=None):
         super().__init__(geometry, colors, fill=fill, surface=surface, clip=clip)
         self.radius = radius
+        self.fill_center = fill_center
 
     def draw(self, buffer, x=0, y=0):
         fill = self.fill
+        fill_center = self.fill_center
         for rect, color in self:
             px = rect[0] - x
             py = rect[1] - y
@@ -302,9 +304,15 @@ class RoundedRectangles(Rectangles):
             h -= 1
             r = min(self.radius, w // 2, h // 2)
             if fill:
-                buffer.rect(px + r, py, w - 2*r, h + 1, color, fill)
-                buffer.rect(px, py + r, r, h - 2*r, color, fill)
-                buffer.rect(px + w - r, py + r, r + 1, h - 2*r, color, fill)
+                if fill_center:
+                    buffer.rect(px + r, py, w - 2*r, h + 1, color, fill)
+                    buffer.rect(px, py + r, r, h - 2*r, color, fill)
+                    buffer.rect(px + w - r, py + r, r + 1, h - 2*r, color, fill)
+                else:
+                    buffer.rect(px + r, py, w - 2*r, r, color, fill)
+                    buffer.rect(px + r, py + h - r + 1 , w - 2*r, r, color, fill)
+                    buffer.rect(px, py + r, r, h - 2*r, color, fill)
+                    buffer.rect(px + w - r + 1, py + r, r, h - 2*r, color, fill)
             else:
                 buffer.hline(px + r, py, w - 2*r, color)
                 buffer.hline(px + r, py + h, w - 2*r, color)
@@ -322,9 +330,11 @@ class RoundedRectangles(Rectangles):
                 buffer.ellipse(px + r, py + h - r, r, r, color, fill, 4)
                 buffer.ellipse(px + r, py + r, r, r, color, fill, 2)
 
-    def update(self, geometry=None, colors=None, fill=None, radius=None):
+    def update(self, geometry=None, colors=None, fill=None, radius=None, fill_center=None):
         if radius is not None:
             self.radius = radius
+        if fill_center is not None:
+            self.fill_center = fill_center
         super().update(geometry=geometry, colors=colors, fill=fill)
 
 
