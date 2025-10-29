@@ -32,7 +32,7 @@ class FrameBufferDisplay(Display):
             self.fbuf.blit((buffer, w, h, framebuf.RGB565), x, y, -1, self.palette)
 
     def clear(self) -> None:
-        memoryview(self.fbuf)[:] = b'\x00'
+        self.fbuf.rectangle(0, 0, *self.size, 0, True)
 
 
 class FileDisplay(Display):
