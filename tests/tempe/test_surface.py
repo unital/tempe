@@ -32,6 +32,8 @@ class TestSurface(unittest.TestCase):
         del self.surface
         del self.shape
         del self.working_buffer
+        del self.display
+        del self.display_buffer
 
     def refresh_surface(self):
         self.surface._damage = []
@@ -69,6 +71,8 @@ class TestSurface(unittest.TestCase):
 
     def test_refresh(self):
         self.surface.rectangles(DRAWING, (25, 10, 50, 50), "white")
+        self.display.clear()
+
         self.surface.refresh(self.display, self.working_buffer)
 
         self.assertTrue(any(x != 0 for x in self.display_buffer))
