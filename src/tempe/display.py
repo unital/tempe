@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import framebuf
+
 
 class Display:
     """Abstract base class for Displays"""
@@ -10,6 +12,27 @@ class Display:
 
     def blit(self, buffer, x, y, w, h):
         raise NotImplementedError
+
+
+class FrameBufferDisplay(Display):
+    """Display that renders into a FrameBuffer."""
+
+    fbuf: framebuf.FrameBuffer
+    palette: framebuf.FrameBuffer | None = None
+
+    def __init__(self, fbuf, size, palette=None):
+        self.fbuf = fbuf
+        self.size = size
+        self.palette = palette
+
+    def blit(self, buffer, x, y, w, h):
+        if isinstance(buffer, framebuf.FrameBuffer):
+            self.fbuf.blit(buffer, x, y, palette=self.palette)
+        else:
+            self.fbuf.blit((buffer, w, h, framebuf.RGB565), x, y, palette=self.palette)
+
+    def clear(self) -> None:
+        memoryview(self.fbuf)[:] = b'\x00'
 
 
 class FileDisplay(Display):

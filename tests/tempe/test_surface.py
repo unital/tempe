@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+import framebuf
 import unittest
 
+from tempe.display import FrameBufferDisplay
 from tempe.surface import Surface, DRAWING
 from tempe.shapes import Shape
 from tempe.raster import Raster
@@ -19,12 +21,17 @@ class TestSurface(unittest.TestCase):
     def setUp(self):
         self.surface = Surface()
         self.shape = DummyShape()
-        self.buffer = bytearray(2 * 50 * 50)
+        self.working_buffer = bytearray(2 * 50 * 50)
+        self.display_buffer = bytearray(2 * 75 * 50)
+        self.display = FrameBufferDisplay(
+            framebuf.FrameBuffer(self.display_buffer, 75, 50, framebuf.RGB565),
+            (75, 50),
+        )
 
     def tearDown(self):
         del self.surface
         del self.shape
-        del self.buffer
+        del self.working_buffer
 
     def refresh_surface(self):
         self.surface._damage = []
@@ -59,6 +66,13 @@ class TestSurface(unittest.TestCase):
         self.assertEqual(self.shape.surface, None)
         self.assertEqual(self.surface._damage, [self.shape._bounds])
         self.assertTrue(self.surface.refresh_needed.is_set())
+
+    def test_refresh(self):
+        self.surface.rectangles(DRAWING, (25, 10, 50, 50), "white")
+        self.surface.refresh(self.display, self.working_buffer)
+
+        self.assertTrue(any(x != 0 for x in self.display_buffer))
+
 
 
 if __name__ == "__main__":
