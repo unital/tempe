@@ -179,9 +179,9 @@ class ColoredGeometry[geom](Shape):
             The sequence of colors for each geometry.
         """
 
-    def __iter__(self) -> Generator[tuple, None, None]: ...
+    def __iter__(self) -> Generator[tuple[geom, rgb565], None, None]: ...
 
-class SizedGeometry[geom](ColoredGeometry):
+class SizedGeometry[geom](ColoredGeometry[geom]):
     """ABC for shapes where each geometry has a size associated with it.
 
     These classes draw each shape from the Geometry using the
@@ -232,7 +232,7 @@ class SizedGeometry[geom](ColoredGeometry):
             The sequence of sizes for each geometry.
         """
 
-    def __iter__(self) -> Generator[tuple, None, None]: ...
+    def __iter__(self) -> Generator[tuple[geom, rgb565, int], None, None]: ...
 
 
 class FillableGeometry[geom](ColoredGeometry[geom]):
