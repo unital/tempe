@@ -468,8 +468,8 @@ for each point and what to display at each point.  This can be:
 - a :py:class:`framebuf.FrameBuffer` containing a 1-bit image
 - a :py:class:`array` of 16-bit integers giving a polygon to fill
 
-The |Markers| shape expects a geometry consisting of an x, y point and a
-marker size, the colors for each marker and the shape of each marker.
+The |Markers| shape expects a geometry consisting of an x, y point, the colors
+for each marker, the size of each marker, and the shape of each marker.
 The marker shapes can be specified in the same way as |Points| (which are
 not scaled by size), but additionally as constants :py:attr:`Marker.CIRCLE`,
 :py:attr:`Marker.SQUARE`, etc. which will be scaled according to the sizes.
@@ -1011,10 +1011,10 @@ markers and text giving the corresponding values::
             [
                 Repeat(x1 + 30),
                 Range(cy + 74, cy + 114, 12),
-                humidity_scale.scale_values(sample_humidities),
             ]
         ),
         colors.blue,
+        humidity_scale.scale_values(sample_humidities),
         Marker.CIRCLE,
     )
     surface.markers(
@@ -1023,10 +1023,10 @@ markers and text giving the corresponding values::
             [
                 Repeat(x1 + 40),
                 Range(cy + 75, cy + 115, 12),
-                humidity_scale.scale_values(sample_humidities),
             ]
         ),
         colors.grey_a,
+        humidity_scale.scale_values(sample_humidities),
         [f"{h}%" for h in sample_humidities],
     )
 

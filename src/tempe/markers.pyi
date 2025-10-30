@@ -28,15 +28,17 @@ class Marker:
 class Markers(ColoredGeometry[point_length]):
     """Display sized, colored markers at points.
 
-    Markers expect a geometry of the form (x, y, radius).
+    Markers expect a geometry of the form (x, y).
 
     Parameters
     ----------
-    geometry : Iterable[geom] | None
+    geometry : Iterable[geom]
         The sequence of geometries to render.
-    colors : Iterable[rgb565] | None
+    colors : Iterable[rgb565]
         The sequence of colors for each geometry.
-    markers : Iterable[Any] | None
+    sizes : Iterable[int]
+        The sequence of sizes for each geometry.
+    markers : Iterable[Any]
         The sequence of colors for each geometry.
     surface : Surface | None
         The surface which this shape is associated with.
@@ -44,11 +46,13 @@ class Markers(ColoredGeometry[point_length]):
         An (x, y, w, h) tuple to clip drawing to - anything drawn outside
         this region will not show on the display.
     """
+    markers: Iterable[Any]
 
     def __init__(
         self,
         geometry: Geometry[point_length],
         colors: Iterable[rgb565],
+        sizes: Iterable[int],
         markers: Iterable[Any],
         *,
         surface: "tempe.surface.Surface | None" = None,
@@ -58,6 +62,7 @@ class Markers(ColoredGeometry[point_length]):
         self,
         geometry: Iterable[point_length] | None = None,
         colors: Iterable[rgb565] | None = None,
+        sizes: Iterable[int] | None = None,
         markers: Iterable[Any] | None = None,
         **kwargs: Any,
     ):
@@ -67,6 +72,8 @@ class Markers(ColoredGeometry[point_length]):
         ----------
         geometry : Iterable[geom] | None
             The sequence of geometries to render.
+        sizes : Iterable[int] | None
+            The sequence of sizes for each geometry.
         colors : Iterable[rgb565] | None
             The sequence of colors for each geometry.
         markers : Iterable[Any] | None

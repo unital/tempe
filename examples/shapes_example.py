@@ -115,7 +115,7 @@ stars = [
             16 + x + int((16 - 8 * (a % 2)) * math.sin(math.pi * a / 5)),
             160 - int((16 - 8 * (a % 2)) * math.cos(math.pi * a / 5)),
         )
-        for a in range(10)
+        for a in range(11)
     ]
     for x in range(0, 128, 32)
 ]
@@ -194,10 +194,10 @@ markers = Markers(
         [
             Range(160, 320, 16),
             Repeat(30),
-            Range(1, 13, 1),
         ]
     ),
     Interpolated(viridis, 10),
+    Range(1, 13, 1),
     [
         Marker.PIXEL,
         Marker.CIRCLE,

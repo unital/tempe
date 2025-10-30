@@ -5,7 +5,8 @@
 from array import array
 import framebuf
 
-from .shapes import ColoredGeometry, BLIT_KEY_RGB565
+from .data_view import Repeat
+from .shapes import SizedGeometry, BLIT_KEY_RGB565
 
 
 class Marker:
@@ -18,13 +19,13 @@ class Marker:
     CROSS = 6
 
 
-class Markers(ColoredGeometry):
-    def __init__(self, geometry, colors, markers, *, surface=None, clip=None):
-        super().__init__(geometry, colors, surface=surface, clip=clip)
+class Markers(SizedGeometry):
+    def __init__(self, geometry, colors, sizes, markers, *, surface=None, clip=None):
+        super().__init__(geometry, colors, sizes, surface=surface, clip=clip)
         self.markers = markers
 
     def __iter__(self):
-        yield from zip(self.geometry, self.colors, self.markers)
+        yield from zip(self.geometry, self.colors, self.sizes, self.markers)
 
     def draw_raster(self, raster):
         buffer = raster.fbuf
@@ -34,10 +35,9 @@ class Markers(ColoredGeometry):
         h = raster.h
         palette_buf = array("H", [BLIT_KEY_RGB565, 0x0000])
         palette = framebuf.FrameBuffer(palette_buf, 2, 1, framebuf.RGB565)
-        for geometry, color, marker in self:
+        for geometry, color, size, marker in self:
             px = geometry[0] - x
             py = geometry[1] - y
-            size = geometry[2]
             if px + size < 0 or px - size > w or py + size < 0 or py - size > h:
                 continue
             if size < 1 or marker == Marker.PIXEL:
@@ -67,26 +67,32 @@ class Markers(ColoredGeometry):
             elif isinstance(marker, array):
                 buffer.poly(px, py, marker, color, True)
 
-    def update(self, geometry=None, colors=None, markers=None):
+    def update(self, geometry=None, colors=None, sizes=None, markers=None):
         if markers is not None:
             self.markers = markers
-        super().update(geometry=geometry, colors=colors)
+        super().update(geometry=geometry, colors=colors, sizes=sizes)
 
     def _get_bounds(self):
         max_x = -0x7FFF
         min_x = 0x7FFF
         max_y = -0x7FFF
         min_y = 0x7FFF
-        for geometry in self.geometry:
-            max_x = max(max_x, geometry[0] + abs(geometry[2]))
-            min_x = min(min_x, geometry[0] - abs(geometry[2]))
-            max_y = max(max_y, geometry[1] + abs(geometry[2]))
-            min_y = min(min_y, geometry[1] - abs(geometry[2]))
+        for geometry, size in zip(self.geometry, self.sizes):
+            max_x = max(max_x, geometry[0] + abs(size))
+            min_x = min(min_x, geometry[0] - abs(size))
+            max_y = max(max_y, geometry[1] + abs(size))
+            min_y = min(min_y, geometry[1] - abs(size))
 
         return (min_x - 1, min_y - 1, max_x - min_x + 2, max_y - min_y + 2)
 
 
 class Points(Markers):
+    def __init__(self, geometry, colors, markers, *, surface=None, clip=None):
+        sizes = Repeat(0)  # Dummy
+        super().__init__(geometry, colors, sizes, surface=surface, clip=clip)
+
+    def __iter__(self):
+        yield from zip(self.geometry, self.colors, self.markers)
 
     def draw_raster(self, raster):
         buffer = raster.fbuf

@@ -390,10 +390,12 @@ class Surface:
         ----------
         layer : Any
             The layer that the Markers object is added to.
-        geometry : Geometry[tuple[int, int, int]] | tuple[int, int, int]
+        geometry : Geometry[tuple[int, int]] | tuple[int, int]
             The geometry to use, or if a tuple of 3 ints, a single point and radius.
         colors : Iterable[rgb565] | color
             The colors of each marker, or a color to use for all markers.
+        sizes : Iterable[int] | int
+            The size of each marker, or a size to use for all markers.
         markers : Iterable[Any] | int | str | framebuf.FrameBuffer
             The type of each marker, or a single marker to use for all points.
         clip :  tuple[int, int, int, int] | None
