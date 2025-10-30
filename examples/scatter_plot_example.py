@@ -181,13 +181,14 @@ marker_sizes = humidity_scale.scale_values(humidity)
 marker_colors = time_scale.scale_values(timestamps)
 
 # Create point-size geometry for the data points
-markers = ColumnGeometry([xs, ys, marker_sizes])
+markers = ColumnGeometry([xs, ys])
 
 # draw the plot
 surface.markers(
     DRAWING,
     markers,
     marker_colors,
+    marker_sizes,
     Repeat(Marker.CIRCLE),
     clip=(x, y, w, h),
 )
@@ -272,10 +273,10 @@ surface.markers(
         [
             Repeat(x1 + 30),
             Range(cy + 74, cy + 114, 12),
-            humidity_scale.scale_values(sample_humidities),
         ]
     ),
     Repeat(colors.blue),
+    humidity_scale.scale_values(sample_humidities),
     Repeat(Marker.CIRCLE),
 )
 surface.markers(
@@ -284,10 +285,10 @@ surface.markers(
         [
             Repeat(x1 + 40),
             Range(cy + 75, cy + 115, 12),
-            humidity_scale.scale_values(sample_humidities),
         ]
     ),
     Repeat(colors.grey_a),
+    humidity_scale.scale_values(sample_humidities),
     [f"{h}%" for h in sample_humidities],
     clip=(x1 + 30, cy + 70, 40, 48),
 )

@@ -39,9 +39,10 @@ surface.add_shape(BACKGROUND, background)
 # draw some lines
 lines = WideLines(
     ColumnGeometry(
-        [Range(8, 96, 8), Repeat(20), Range(8, 184, 16), Repeat(100), Range(1, 11)]
+        [Range(8, 96, 8), Repeat(20), Range(8, 184, 16), Repeat(100)]
     ),
     Interpolated(viridis, 10),
+    Range(1, 11),
     clip=(0, 0, 160, 120),
 )
 surface.add_shape(DRAWING, lines)
@@ -55,10 +56,10 @@ lines = WideLines(
             Repeat(100),
             Range(8, 184, 16) + 160,
             Repeat(20),
-            Range(1, 11),
         ]
     ),
     Interpolated(viridis, 10),
+    Range(1, 11),
     clip=(160, 0, 160, 120),
     round=False,
 )
@@ -82,12 +83,12 @@ polylines = WidePolyLines(
                     10 + 30 * i,
                     125,
                 ]
-                + [i + 1],
             )
             for i in range(10)
         ]
     ),
     Interpolated(viridis, 10),
+    Range(1, 11),
     clip=(0, 120, 320, 120),
 )
 surface.add_shape(DRAWING, polylines)
