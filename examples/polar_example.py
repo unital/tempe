@@ -131,22 +131,18 @@ radar = Polygons(
 )
 surface.add_shape(DRAWING, radar)
 markers = Markers(
-    Extend(
-        [
-            polar_points(
-                196,
-                64,
-                ColumnGeometry(
-                    [
-                        [30, 15, 45, 5, 45, 60],
-                        Range(0, 360, 60),
-                    ]
-                ),
-            ),
-            ColumnGeometry([Repeat(12)]),
-        ]
+    polar_points(
+        196,
+        64,
+        ColumnGeometry(
+            [
+                [30, 15, 45, 5, 45, 60],
+                Range(0, 360, 60),
+            ]
+        ),
     ),
     Repeat(grey_3),
+    Repeat(12),
     [f" {x}" for x in [6, 3, 9, 1, 9, 12]],
     clip=(0, 0, 320, 240),
 )

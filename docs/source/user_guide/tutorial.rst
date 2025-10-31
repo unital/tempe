@@ -59,7 +59,7 @@ entire screen), and automatically handles situations where the working
 buffer is too small for the size of the region which needs to be rendered.
 Under the covers, it is making calls to the built-in :py:mod:`framebuf`
 module to set the pixels in the working buffer for the region that is
-being updated, before copying the data across to screen device.
+being updated, before copying the data across to the screen device.
 
 This should display something like the following:
 
@@ -143,7 +143,7 @@ less than half as much memory.
 ----------------
 
 When building geometry it can sometimes be more convenient to specify
-the geometrip properties in different ways than "row-oriented".  For
+the geometric properties in different ways than "row-oriented".  For
 example, when building a horizontal bar chart, the principal information
 that you are working with is a sequence of bar widths.  It's natural then
 to want to build the geometry instead in a "column-oriented" fashion:
@@ -196,7 +196,7 @@ in the next, Tempe provides the |StripGeometry| class, where vertices can
 simply be provided as an array of x, y values and it will generate the
 appropriate sets of values for each iteration.
 
-For example, out line plot can be written as::
+For example, a line plot can be written as::
 
     line_plot = Lines(
         StripGeometry(
@@ -356,7 +356,7 @@ through to the device.  However, working directly with integer color values
 in a format like RGB565 is awkward, particularly if the endianness of the
 target device is different from the microcontroller.
 
-From a high-level API, we'd like to be able to specify the colors used in a
+For a high-level API, we'd like to be able to specify the colors used in a
 more human-friendly way.  Tempe provides a number of facilities in
 ~:py:mod:`tempe.colors` to help with this:
 
@@ -468,8 +468,8 @@ for each point and what to display at each point.  This can be:
 - a :py:class:`framebuf.FrameBuffer` containing a 1-bit image
 - a :py:class:`array` of 16-bit integers giving a polygon to fill
 
-The |Markers| shape expects a geometry consisting of an x, y point and a
-marker size, the colors for each marker and the shape of each marker.
+The |Markers| shape expects a geometry consisting of an x, y point, the colors
+for each marker, the size of each marker, and the shape of each marker.
 The marker shapes can be specified in the same way as |Points| (which are
 not scaled by size), but additionally as constants :py:attr:`Marker.CIRCLE`,
 :py:attr:`Marker.SQUARE`, etc. which will be scaled according to the sizes.
@@ -526,15 +526,15 @@ coordinates::
 
 This can then be converted to cartesian coordinates using the
 :py:func:`~tempe.polar_geometry.polar_rects` function, which returns arrays
-pf x, y values suitable for use as polygons or polylines::
+of x, y values suitable for use as polygons or polylines::
 
     donut = Polygons(
         polar_rects(segments, decimation=10),
         colormap,
     )
 
-The `decimation` parameter lets you control how coarse is the approximation
-of the circular arcs by polygon lines.
+The `decimation` parameter lets you control how coarse or fine to approximate
+the circular arcs by polygon lines.
 
 Data Visualization
 ==================
@@ -543,13 +543,13 @@ Data visualization is, at its core, using data to make patterns with
 geometry, color and other aesthetic properties.  But data visualizations
 also need to provide enough context for a viewer to understand what the
 patterns are saying, through axes, scales, legends, titles and so forth.
-Keeping this in mind, we can easily build standard data visualizations out
+With this in mind, we can easily build standard data visualizations out
 of the building blocks that Tempe provides.
 
 Time Plots
 ----------
 
-Microcontrollers are frequently going to read data from sensors of
+Microcontrollers frequently read data from sensors of
 various sorts, so a common need is to plot these values as they vary
 over time.  Line and point plots are a common visualizations that
 will be understood by most end-users.
@@ -570,7 +570,7 @@ the range for the actual data, of course).  Our screen has a height of
 240 pixels, and we want some space for titles, axes, etc. so we will use
 the region from pixel row 20 to pixel row 220 for the plot.  Note that
 because plots usually have the y-axis oriented upwards but raster graphics
-has row 0 at the top, we have that row 20 corresponds to 21°C and row
+has row 0 at the top, row 20 corresponds to 21°C and row
 220 corresponds to 11°C.
 
 We can define a simple generic scaling class like::
@@ -631,9 +631,9 @@ sample points using a |ColumnGeometry|::
     points = ColumnGeometry([xs, ys])
 
 We want constant values for color and the marker type, so we can use
-``Repeat(colors.grey_3)`` to get an dark grey color for all points and
+``Repeat(colors.grey_3)`` to get a dark grey color for all points and
 ``Repeat(Marker.PIXEL)`` to mark each data point with a pixel, and then
-we can display with the convenience function
+we can display it with the convenience function
 :py:meth:`~tempe.surface.Surface.point`.  Because the data covers two
 days but we only are showing the last, we want to make sure that the
 plot is clipped to the screen region we want to use, otherwise points
@@ -708,13 +708,13 @@ Plot Decorations
 
 Now we have the data displayed, we need to put it into context so the
 user can make sense of the values.  Due to the small screen sizes, care
-needs to be taken to ensure that the display is legible.
+must be taken to ensure that the display is legible.
 
 We likely want to indicate to the user which parts of the screen are part
 of the plot and which are not.  You can do this in a couple of ways, such as
 by drawing distinct axis lines or by distinguishing the rectangle of the
 plot region (eg. with a border or color change).  All are acceptable, but
-whatever combination you decide you prefer you should be consistent across
+whatever combination you prefer you should be consistent across
 all the plots in your application.
 
 .. grid::
@@ -932,7 +932,7 @@ clipping, which gives us a scale something like the following::
 
 To be effective this needs a colormap which wraps around as well, so that the
 minimum and maximum colors are close.  The :py:mod:`tempe.colormaps.twilight`
-colormap is designed for such situations, for example, and suits the
+colormap is designed for such situations and suits the
 visualization as well.
 
 Except for the most intuitive situations, color scales need to have some sort
@@ -1011,10 +1011,10 @@ markers and text giving the corresponding values::
             [
                 Repeat(x1 + 30),
                 Range(cy + 74, cy + 114, 12),
-                humidity_scale.scale_values(sample_humidities),
             ]
         ),
         colors.blue,
+        humidity_scale.scale_values(sample_humidities),
         Marker.CIRCLE,
     )
     surface.markers(
@@ -1023,10 +1023,10 @@ markers and text giving the corresponding values::
             [
                 Repeat(x1 + 40),
                 Range(cy + 75, cy + 115, 12),
-                humidity_scale.scale_values(sample_humidities),
             ]
         ),
         colors.grey_a,
+        humidity_scale.scale_values(sample_humidities),
         [f"{h}%" for h in sample_humidities],
     )
 
@@ -1043,7 +1043,7 @@ appropriately.  For example, for temperature we might put the data into
         temp_hist[int(t)] += 1
     temp_hist_temps, temp_hist_counts = zip(*sorted(temp_hist.items()))
 
-We then can need a simple scale for the counts::
+We then need a simple scale for the counts::
 
     temp_count_scale = LinearScale(0, 0, 100, 20)
 
@@ -1079,7 +1079,7 @@ Polar Plots
 
 To create plots which use polar coordinates, you first want to create your
 polar geometry in polar (r, theta) screen coordinates, where r is radial
-pixels from the center point, and theta is a the angle in degrees of a point.
+pixels from the center point, and theta is the angle in degrees of a point.
 
 For example, to create a polar line plot of the air quality data, we set
 up our geometry as if we were creating a regular line plot, but with scales
@@ -1110,7 +1110,7 @@ and from here on we proceed as a regular line plot::
     )
 
 We can color the lines by absolute time to give a bit more
-context for newer vs. older values as the line wraps around::
+context for newer verses older values as the line wraps around::
 
     color_scale = ColorScale(viridis, 1729500000, 1729500000 + 48 * 3600)
     line_colors = color_scale.scale_values(timestamps)

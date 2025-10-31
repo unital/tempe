@@ -153,6 +153,8 @@ class ColoredGeometry[geom](Shape):
         An (x, y, w, h) tuple to clip drawing to - anything drawn outside
         this region will not show on the display.
     """
+    geometry: Iterable[geom]
+    colors: Iterable[rgb565]
 
     def __init__(
         self,
@@ -177,7 +179,61 @@ class ColoredGeometry[geom](Shape):
             The sequence of colors for each geometry.
         """
 
-    def __iter__(self) -> Generator[tuple, None, None]: ...
+    def __iter__(self) -> Generator[tuple[geom, rgb565], None, None]: ...
+
+class SizedGeometry[geom](ColoredGeometry[geom]):
+    """ABC for shapes where each geometry has a size associated with it.
+
+    These classes draw each shape from the Geometry using the
+    corresponding color from the color data and a size associated with the
+    corresponding size data.  SizeedGeometries are iterable with the iterator
+    producing (geometry, color, size) tupled.
+
+    Parameters
+    ----------
+    geometry : Iterable[geom]
+        The sequence of geometries to render.
+    colors : Iterable[rgb565]
+        The sequence of colors for each geometry.
+    sizes : Iterable[int]
+        The sequence of sizes for each geometry.
+    surface : Surface | None
+        The surface which this shape is associated with.
+    clip : rectangle | None
+        An (x, y, w, h) tuple to clip drawing to - anything drawn outside
+        this region will not show on the display.
+    """
+    sizes: Iterable[int]
+
+    def __init__(
+        self,
+        geometry: Iterable[geom],
+        colors: Iterable[rgb565],
+        sizes: Iterable[int],
+        *,
+        surface: "tempe.surface.Surface | None" = None,
+        clip: rectangle | None = None,
+    ): ...
+    def update(
+        self,
+        geometry: Iterable[geom] | None = None,
+        colors: Iterable[rgb565] | None = None,
+        sizes: Iterable[int] | None = None,
+    ):
+        """Update the state of the Shape, marking a redraw as needed.
+
+        Parameters
+        ----------
+        geometry : Geometry[geom] | None
+            The sequence of geometries to render.
+        colors : Iterable[rgb565] | None
+            The sequence of colors for each geometry.
+        sizes : Iterable[int]
+            The sequence of sizes for each geometry.
+        """
+
+    def __iter__(self) -> Generator[tuple[geom, rgb565, int], None, None]: ...
+
 
 class FillableGeometry[geom](ColoredGeometry[geom]):
     """ABC for geometries which can either be filled or stroked.
@@ -198,6 +254,7 @@ class FillableGeometry[geom](ColoredGeometry[geom]):
         An (x, y, w, h) tuple to clip drawing to - anything drawn outside
         this region will not show on the display.
     """
+    fill: bool
 
     def __init__(
         self,

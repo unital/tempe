@@ -20,17 +20,16 @@ by rendering circles at the vertices.
 from array import array
 from collections.abc import Sequence, Iterable
 from math import sqrt
-from typing import TypeAlias
+from typing import Generator, TypeAlias
 
-from .shapes import ColoredGeometry, point_array, rectangle
+from .shapes import SizedGeometry, point_array, rectangle, points
 from .colors import rgb565
 
-points_widths: TypeAlias = tuple[int, int, int, int, int]
 
-class WideLines(ColoredGeometry[points_widths]):
+class WideLines(SizedGeometry[points]):
     """Render multiple colored line segments with variable width.
 
-    Geometry should produce x0, y0, x1, y1, width arrays.
+    Geometry should produce x0, y0, x1, y1 arrays.
 
     For line widths less than 2, this renders using the standard framebuf
     line drawing routines.  For line widths of 2 or more, this renders each
@@ -40,9 +39,11 @@ class WideLines(ColoredGeometry[points_widths]):
     Parameters
     ----------
     geometry : Iterable[geom]
-        The sequence of geometries to render.
+        The sequence of line segments to render.
     colors : Iterable[rgb565]
-        The sequence of colors for each geometry.
+        The sequence of colors for each line segment.
+    sizes : Iterable[rgb565]
+        The sequence of line widths for each line segment.
     round : bool
         Whether to round the ends with circles, or to leave as a flat end.
     surface : Surface | None
@@ -54,19 +55,18 @@ class WideLines(ColoredGeometry[points_widths]):
 
     def __init__(
         self,
-        geometry: Iterable[points_widths],
+        geometry: Iterable[points],
         colors: Iterable[rgb565],
         *,
         round: bool = True,
         surface: "tempe.surface.Surface | None" = None,
         clip: rectangle | None = None,
     ): ...
-    def __iter__(self) -> tuple[points_widths, int]: ...
 
-class WidePolyLines(ColoredGeometry[point_array]):
+class WidePolyLines(SizedGeometry[point_array]):
     """Render multiple colored polylines with variable width.
 
-    Geometry should produce array of [x0, y0, x1, y1, ..., width].
+    Geometry should produce array of [x0, y0, x1, y1, ...].
 
     For line widths less than 2, this renders using the standard framebuf
     line drawing routines.  For line widths of 2 or more, this renders each

@@ -289,15 +289,16 @@ class ScatterPlot(Component):
             xs[i] = int(x)
             ys[i] = int(y)
 
-        return xs, ys, self.sizes
+        return xs, ys
 
     def draw(self):
         super().draw()
-        xs, ys, sizes = self.map_xy()
+        xs, ys = self.map_xy()
         self.shapes["markers"] = self.surface.points(
             DRAWING,
-            ColumnGeometry([xs, ys, sizes]),
+            ColumnGeometry([xs, ys]),
             self.colors,
+            self.sizes,
             self.markers,
             clip=self.bounds,
         )

@@ -205,13 +205,14 @@ class Surface:
         self.add_shape(layer, points)
         return points
 
-    def markers(self, layer, geometry, colors, markers, clip=None):
+    def markers(self, layer, geometry, colors, sizes, markers, clip=None):
         from .markers import Markers
 
-        geometry = self._check_geometry(geometry, 3)
+        geometry = self._check_geometry(geometry, 2)
         colors = self._check_colors(colors)
+        sizes = self._check_sizes(sizes)
         markers = self._check_markers(markers)
-        points = Markers(geometry, colors, markers, clip=clip)
+        points = Markers(geometry, colors, sizes, markers, clip=clip)
         self.add_shape(layer, points)
         return points
 
@@ -279,6 +280,12 @@ class Surface:
             return Repeat(normalize_color(colors))
         else:
             return colors
+
+    def _check_sizes(self, sizes):
+        if isinstance(sizes, int):
+            return Repeat(sizes)
+        else:
+            return sizes
 
     def _check_markers(self, markers):
         if isinstance(markers, (int, str, framebuf.FrameBuffer)):

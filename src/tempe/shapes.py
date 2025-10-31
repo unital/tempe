@@ -69,6 +69,37 @@ class ColoredGeometry(Shape):
         yield from zip(self.geometry, self.colors)
 
 
+class SizedGeometry(ColoredGeometry):
+    """ABC for geometries where there is a size associated with each object."""
+
+    def __init__(self, geometry, colors, sizes, *, surface=None, clip=None):
+        super().__init__(geometry, colors, surface=surface, clip=clip)
+        self.sizes = sizes
+
+    def update(self, geometry=None, colors=None, sizes=None):
+        if sizes is not None:
+            if self.clip is None:
+                # invalidate old geometry bounds
+                if self._bounds is None:
+                    self._bounds = self._get_bounds()
+                if self.surface:
+                    self.surface.damage(self._bounds)
+            self.sizes = sizes
+            if geometry is not None:
+                # don't need to redo bounds in super call, just record changes
+                self.geometry = geometry
+                geometry = None
+            # bounds are no longer valid
+            self._bounds = None
+        super().update(geometry, colors)
+
+    def __len__(self):
+        return len(self.geometry)
+
+    def __iter__(self):
+        yield from zip(self.geometry, self.colors, self.sizes)
+
+
 class FillableGeometry(ColoredGeometry):
     """ABC for geometries which can either be filled or stroked.
 
