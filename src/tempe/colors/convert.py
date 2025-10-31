@@ -14,6 +14,8 @@ def normalize_color(color):
             return rgb_to_rgb565(*color)
         else:
             return rgb24_to_rgb565(*color)
+    elif color is None:
+        return None
     else:
         raise ValueError(f"Unknown color {color!r}")
 
